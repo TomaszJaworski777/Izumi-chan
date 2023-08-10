@@ -10,12 +10,8 @@ namespace Greg
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
             get => Data[16].GetBitValue( GameBoard.SideIndex ) > 0;
-            set {
-                if (IsWhiteToMove)
-                    Data[16].SetBitToOne( GameBoard.SideIndex );
-                else
-                    Data[16].SetBitToZero( GameBoard.SideIndex );
-            }
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            set => Data[16].SetValueChunk( GameBoard.SideIndex, 1, value ? 1UL : 0UL );
         }
         public ulong HalfMoves
         {
@@ -39,106 +35,28 @@ namespace Greg
             set => Data[16].SetValueChunk( GameBoard.EnPassantIndex, GameBoard.EnPassantMask, value );
         }
 
-        public Board(string fen) //low impact on overall performance
+        public Board( string fen )
         {
-            string[] fenParts = fen.Split(' ');
-            string[] positionSegments = fenParts[0].Split('/');
-
-            for (int rank = 0; rank < positionSegments.Length; rank++)
-            {
-                for (int file = 0; file < 8; file++)
-                {
-                    int squareIndex = (7 - rank) * 8 + file;
-                    char currentCharacter = positionSegments[rank][file];
-
-                    if (int.TryParse(currentCharacter.ToString(), out int output))
-                    {
-                        file += output - 1;
-                        continue;
-                    }
-
-                    bool isWhite = currentCharacter < 'a';
-
-                    switch (currentCharacter)
-                    {
-                        case 'p':
-                        case 'P':
-                            SetPieceOnSquare(PieceType.Pawn, isWhite, squareIndex);
-                            break;
-                        case 'n':
-                        case 'N':
-                            SetPieceOnSquare(PieceType.Knight, isWhite, squareIndex);
-                            break;
-                        case 'b':
-                        case 'B':
-                            SetPieceOnSquare(PieceType.Bishop, isWhite, squareIndex);
-                            break;
-                        case 'r':
-                        case 'R':
-                            SetPieceOnSquare(PieceType.Rook, isWhite, squareIndex);
-                            break;
-                        case 'q':
-                        case 'Q':
-                            SetPieceOnSquare(PieceType.Queen, isWhite, squareIndex);
-                            break;
-                        case 'k':
-                        case 'K':
-                            SetPieceOnSquare(PieceType.King, isWhite, squareIndex);
-                            break;
-                    }
-                }
-            }
-
-            IsWhiteToMove = fenParts[1] == "w";
-
-            Data[16].SetBitToZero( 0 );
-            Data[16].SetBitToZero( 1 );
-            Data[16].SetBitToZero( 2 );
-            Data[16].SetBitToZero( 3 );
-            for (int i = 0; i < fenParts[2].Length; i++)
-            {
-                if (fenParts[2][i] == '-')
-                    break;
-                else if (fenParts[2][i] == 'Q')
-                    Data[16].SetBitToOne( 0 );
-                else if (fenParts[2][i] == 'K')
-                    Data[16].SetBitToOne( 1 );
-                else if (fenParts[2][i] == 'q')
-                    Data[16].SetBitToOne( 2 );
-                else if (fenParts[2][i] == 'k')
-                    Data[16].SetBitToOne( 3 );
-            }
-
-            if (fenParts[3] == "-")
-                EnPassantSquareIndex = 0;
-            else
-                EnPassantSquareIndex = (ulong)new Square( fenParts[3] ).SquareIndex;
-
-            if (ulong.TryParse( fenParts[4], out ulong moveCount ))
-                HalfMoves = moveCount;
-
-            if (ulong.TryParse( fenParts[5], out moveCount ))
-                Moves = moveCount;
-
+            FenSystem.CreateBoard( ref this, fen );
             DrawBoard();
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public unsafe Board(Board other)
-        {
-            Data = other.Data;
-        }
+        public unsafe Board( Board other ) => Data = other.Data;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Bitboard GetBitboardForPiece(PieceType type, bool isWhite) => Data[(int)type + (isWhite ? 0 : 6)];
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public Bitboard GetBitboardForPiece( PieceType type, bool isWhite ) => Data[(int)type + (isWhite ? 0 : 6)];
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetPieceOnSquare(PieceType type, bool isWhite, int squareIndex) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToOne(squareIndex);
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public void SetPieceOnSquare( PieceType type, bool isWhite, int squareIndex ) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToOne( squareIndex );
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemovePieceOnSquare(PieceType type, bool isWhite, int squareIndex) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToZero(squareIndex);
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public void RemovePieceOnSquare( PieceType type, bool isWhite, int squareIndex ) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToZero( squareIndex );
 
-        public void DrawBoard() //low impact on overall performance
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public void MakeMove( Move move ) => MoveController.MakeMove( ref this, move );
+
+        public void DrawBoard()
         {
 #if DEBUG
             Array64<byte> pieces = new();
@@ -149,7 +67,7 @@ namespace Greg
                 {
                     if (Data[pieceIndex].GetBitValue( i ) == 0)
                     {
-                        if(pieces[i] == 0)
+                        if (pieces[i] == 0)
                             pieces[i] = 42;
                         continue;
                     }
@@ -173,7 +91,7 @@ namespace Greg
 
                 byte value = pieces[i ^ 56];
                 Console.ForegroundColor = value < 'a' ? ConsoleColor.Yellow : ConsoleColor.Blue;
-                if(value is 42)
+                if (value is 42)
                     Console.ForegroundColor = ConsoleColor.Gray;
                 Console.Write( string.Format( "{0, 2}", (char)value ) );
             }
@@ -193,7 +111,7 @@ namespace Greg
         }
     }
 
-    [InlineArray(17)]
+    [InlineArray( 17 )]
     internal struct GameBoard
     {
         public const ulong HalfMovesMask = 127;

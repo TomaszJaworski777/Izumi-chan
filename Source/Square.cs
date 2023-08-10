@@ -19,7 +19,7 @@ namespace Greg
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public Square( string signature ) => InitializeBitboard( int.Parse( signature[1].ToString() ), signature[0] - 'a' );
+        public Square( string signature ) => InitializeBitboard( int.Parse( signature[1].ToString() ) - 1, signature[0] - 'a' );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public Square( int rank, int file ) => InitializeBitboard( rank, file );
@@ -55,6 +55,6 @@ namespace Greg
             private set => _bitboard.SetValueChunk( 9, 7, value );
         }
 
-        public override string ToString() => $"{(char)('a' + File)}{Rank}";
+        public override string ToString() => $"{(char)('a' + File)}{Rank+1}";
     }
 }
