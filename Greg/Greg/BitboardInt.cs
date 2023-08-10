@@ -2,31 +2,31 @@
 
 namespace Greg
 {
-    internal struct Bitboard
+    internal struct BitboardInt
     {
-        public ulong Mask;
+        public int Mask;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public Bitboard( ulong mask = 0 ) => Mask = mask;
+        public BitboardInt( int mask = 0 ) => Mask = mask;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public ulong GetBitValue( int index ) => Mask & (1UL << index);
+        public int GetBitValue( int index ) => Mask & (1 << index);
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void SetBitToOne( int index ) => Mask |= 1UL << index;
+        public void SetBitToOne( int index ) => Mask |= 1 << index;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void SetBitToZero( int index ) => Mask &= ~(1UL << index);
+        public void SetBitToZero( int index ) => Mask &= ~(1 << index);
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public ulong GetValueChunk( int index, ulong mask ) => (Mask & (mask << index)) >> index;
+        public int GetValueChunk( int index, int mask ) => (Mask & (mask << index)) >> index;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void SetValueChunk( int index, ulong mask, ulong newValue ) => Mask = (Mask & ~(mask << index)) | newValue << index;
+        public void SetValueChunk( int index, int mask, int newValue ) => Mask = (Mask & ~(mask << index)) | newValue << index;
 
         public void Draw()
         {
-            for (int i = 0; i < 64; i++)
+            for (int i = 0; i < 32; i++)
             {
                 if (i % 8 == 0)
                     Console.WriteLine();
