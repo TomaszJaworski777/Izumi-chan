@@ -6,8 +6,14 @@
         {
             Console.ForegroundColor = ConsoleColor.Gray;
             Board board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-            var move = new Move("d2d8Q", board);
-            Console.WriteLine( $"Move: {move.ToString( board )}, moving piece: {move.MovingPiece}, target piece: {move.TargetPiece}, ispromotion: {move.IsPromotion}" );
+            while (true)
+            {
+                var move = Console.ReadLine();
+                board.MakeMove( new Move( move, board ) );
+                board.DrawBoard();
+                board.Data[12].Draw();
+                board.Data[13].Draw();
+            }
         }
     }
 }

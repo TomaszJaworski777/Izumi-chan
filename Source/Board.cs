@@ -54,7 +54,7 @@ namespace Greg
         public void RemovePieceOnSquare( PieceType type, bool isWhite, int squareIndex ) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToZero( squareIndex );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void MakeMove( Move move ) => MoveController.MakeMove( ref this, move );
+        public bool MakeMove( Move move ) => MoveController.MakeMove( ref this, move );
 
         public void DrawBoard()
         {

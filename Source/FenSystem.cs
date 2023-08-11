@@ -7,6 +7,9 @@
             string[] fenParts = fen.Split(' ');
             string[] positionSegments = fenParts[0].Split('/');
 
+            board.Data[12] = new();
+            board.Data[13] = new();
+
             for (int rank = 0; rank < positionSegments.Length; rank++)
             {
                 for (int file = 0; file < 8; file++)
@@ -21,6 +24,8 @@
                     }
 
                     bool isWhite = currentCharacter < 'a';
+
+                    board.Data[isWhite ? 12 : 13].SetBitToOne( squareIndex );
 
                     switch (currentCharacter)
                     {
@@ -82,6 +87,9 @@
 
             if (ulong.TryParse( fenParts[5], out moveCount ))
                 board.Moves = moveCount;
+
+            board.Data[14] = PieceAttack.GenerateAttackBitboard( true );
+            board.Data[15] = PieceAttack.GenerateAttackBitboard( false );
         }
     }
 }

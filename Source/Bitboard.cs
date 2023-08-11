@@ -31,9 +31,11 @@ namespace Greg
                 if (i % 8 == 0)
                     Console.WriteLine();
 
+                Console.ForegroundColor = GetBitValue( i ^ 56 ) > 0 ? ConsoleColor.Green : ConsoleColor.Gray;
                 Console.Write( string.Format( "{0, 2}", (GetBitValue( i ^ 56 ) > 0) ? 'X' : '*' ) );
             }
-            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine( $"\nValue: {Mask}" );
         }
     }
 }
