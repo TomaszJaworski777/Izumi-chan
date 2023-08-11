@@ -56,6 +56,9 @@ namespace Greg
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public bool MakeMove( Move move ) => MoveController.MakeMove( ref this, move );
 
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public bool IsKingInCheck( bool isWhite ) => (GetBitboardForPiece( PieceType.King, isWhite ).Mask & Data[isWhite ? 15 : 14].Mask) > 0;
+
         public void DrawBoard()
         {
 #if DEBUG
