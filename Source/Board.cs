@@ -60,7 +60,7 @@ namespace Greg
         public bool IsKingInCheck( bool isWhite ) => IsSquareAttacked( GetBitboardForPiece( PieceType.King, isWhite ).LsbIndex, isWhite );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool IsSquareAttacked( int squareIndex, bool isSquareWhite ) => PieceAttack.IsSquareAttacked( squareIndex, isSquareWhite, this );
+        public bool IsSquareAttacked( int squareIndex, bool isSquareWhite ) => PieceAttacks.IsSquareAttacked( squareIndex, isSquareWhite, this );
 
         public void DrawBoard()
         {
