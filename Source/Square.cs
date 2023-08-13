@@ -56,5 +56,7 @@ namespace Greg
         }
 
         public override string ToString() => $"{(char)('a' + File)}{Rank+1}";
+
+        public static implicit operator int( Square square ) => square.SquareIndex;
     }
 }

@@ -63,7 +63,7 @@
             board.Data[currentSideAllPieceIndex].SetBitToZero( fromIndex );
             board.Data[currentSideAllPieceIndex].SetBitToOne( toIndex );
 
-            if (board.IsKingInCheck(isWhiteToMove)) //king in check
+            if (board.IsKingInCheck(isWhiteToMove))
                 return false;
 
             board.IsWhiteToMove = !isWhiteToMove;

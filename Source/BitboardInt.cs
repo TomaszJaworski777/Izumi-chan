@@ -23,6 +23,18 @@ namespace Greg
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public void SetValueChunk( int index, int mask, int newValue ) => Mask = (Mask & ~(mask << index)) | newValue << index;
+        public int BitCount()
+        {
+            int maskCopy = Mask;
+            int result = 0;
+            while (maskCopy > 0)
+            {
+                maskCopy &= maskCopy - 1;
+                result++;
+            }
+
+            return result;
+        }
 
         public void Draw()
         {
