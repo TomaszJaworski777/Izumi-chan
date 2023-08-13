@@ -4,28 +4,28 @@ namespace Greg
 {
     internal struct BitboardInt
     {
-        public int Mask;
+        public int Value;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public BitboardInt( int mask = 0 ) => Mask = mask;
+        public BitboardInt( int mask = 0 ) => Value = mask;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public int GetBitValue( int index ) => Mask & (1 << index);
+        public int GetBitValue( int index ) => Value & (1 << index);
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void SetBitToOne( int index ) => Mask |= 1 << index;
+        public void SetBitToOne( int index ) => Value |= 1 << index;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void SetBitToZero( int index ) => Mask &= ~(1 << index);
+        public void SetBitToZero( int index ) => Value &= ~(1 << index);
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public int GetValueChunk( int index, int mask ) => (Mask & (mask << index)) >> index;
+        public int GetValueChunk( int index, int mask ) => (Value & (mask << index)) >> index;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void SetValueChunk( int index, int mask, int newValue ) => Mask = (Mask & ~(mask << index)) | newValue << index;
+        public void SetValueChunk( int index, int mask, int newValue ) => Value = (Value & ~(mask << index)) | newValue << index;
         public int BitCount()
         {
-            int maskCopy = Mask;
+            int maskCopy = Value;
             int result = 0;
             while (maskCopy > 0)
             {
@@ -47,7 +47,9 @@ namespace Greg
                 Console.Write( string.Format( "{0, 2}", (GetBitValue( i ^ 56 ) > 0) ? 'X' : '*' ) );
             }
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine( $"\nValue: {Mask}" );
+            Console.WriteLine( $"\nValue: {Value}" );
         }
+
+        public static implicit operator int( BitboardInt bitboard ) => bitboard.Value;
     }
 }

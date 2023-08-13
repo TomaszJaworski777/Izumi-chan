@@ -56,5 +56,8 @@ namespace Greg
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine( $"\nValue: {Value}" );
         }
+
+        public static implicit operator ulong( Bitboard bitboard ) => bitboard.Value;
+        public static implicit operator int( Bitboard bitboard ) => (int)bitboard.Value;
     }
 }

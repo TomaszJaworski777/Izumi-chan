@@ -225,14 +225,14 @@ namespace Greg
             for (int index = 0; index < occupancyIndexCount; index++)
             {
                 occupancyPatterns[index] = SetOccupancy( index, attackMask );
-                attacks[index] = forBishop ? GetFullBishopAttackPattern( squareIndex, occupancyPatterns[index].Value ) : GetFullRookAttackPattern( squareIndex, occupancyPatterns[index].Value );
+                attacks[index] = forBishop ? GetFullBishopAttackPattern( squareIndex, occupancyPatterns[index] ) : GetFullRookAttackPattern( squareIndex, occupancyPatterns[index] );
             }
 
             for (int iterationCount = 0; iterationCount < 1000000000; iterationCount++)
             {
                 ulong magicNumber = Utils.Get64Random() & Utils.Get64Random() & Utils.Get64Random();
 
-                if (((ulong)new Bitboard( (attackMask.Value * magicNumber) & 0xFF00000000000000 ).BitCount) < 6)
+                if (((ulong)new Bitboard( (attackMask * magicNumber) & 0xFF00000000000000 ).BitCount) < 6)
                     continue;
 
                 checkedAttacks.Clear();
@@ -240,11 +240,11 @@ namespace Greg
                 bool incorrectNumber = false;
                 for (int index = 0; !incorrectNumber && index < occupancyIndexCount; index++)
                 {
-                    int magicIndex = (int)((occupancyPatterns[index].Value * magicNumber) >> (64 - relevantBitsCount));
+                    int magicIndex = (int)((occupancyPatterns[index] * magicNumber) >> (64 - relevantBitsCount));
 
-                    if (checkedAttacks[magicIndex].Value == 0)
+                    if (checkedAttacks[magicIndex] == 0)
                         checkedAttacks[magicIndex] = attacks[index];
-                    else if (checkedAttacks[magicIndex].Value != attacks[index].Value)
+                    else if (checkedAttacks[magicIndex] != attacks[index])
                         incorrectNumber = true;
                 }
 
@@ -267,8 +267,8 @@ namespace Greg
                 for (int index = 0; index < occupancyIndexCount; index++)
                 {
                     Bitboard occupancy = SetOccupancy(index, BishopAttackMasks[squareIndex]);
-                    int magicIndex = (int)((occupancy.Value * MagicBitboards.BishopMagicNumbers[squareIndex]) >> (64 - BishopRelevantBitCountForSquare[squareIndex]));
-                    BishopAttacks[squareIndex][magicIndex] = GetFullBishopAttackPattern( squareIndex, occupancy.Value );
+                    int magicIndex = (int)((occupancy * MagicBitboards.BishopMagicNumbers[squareIndex]) >> (64 - BishopRelevantBitCountForSquare[squareIndex]));
+                    BishopAttacks[squareIndex][magicIndex] = GetFullBishopAttackPattern( squareIndex, occupancy );
                 }
 
                 occupancyIndexCount = 1 << RookAttackMasks[squareIndex].BitCount;
@@ -276,15 +276,15 @@ namespace Greg
                 for (int index = 0; index < occupancyIndexCount; index++)
                 {
                     Bitboard occupancy = SetOccupancy(index, RookAttackMasks[squareIndex]);
-                    int magicIndex = (int)((occupancy.Value * MagicBitboards.RookMagicNumbers[squareIndex]) >> (64 - RookRelevantBitCountForSquare[squareIndex]));
-                    RookAttacks[squareIndex][magicIndex] = GetFullRookAttackPattern( squareIndex, occupancy.Value );
+                    int magicIndex = (int)((occupancy * MagicBitboards.RookMagicNumbers[squareIndex]) >> (64 - RookRelevantBitCountForSquare[squareIndex]));
+                    RookAttacks[squareIndex][magicIndex] = GetFullRookAttackPattern( squareIndex, occupancy );
                 }
             }
         }
 
         public static Bitboard GetBishopAttacks(int squareIndex, ulong blocker )
         {
-            blocker &= BishopAttackMasks[squareIndex].Value;
+            blocker &= BishopAttackMasks[squareIndex];
             blocker *= MagicBitboards.BishopMagicNumbers[squareIndex];
             blocker >>= 64 - BishopRelevantBitCountForSquare[squareIndex];
             return BishopAttacks[squareIndex][(int)blocker];
@@ -292,7 +292,7 @@ namespace Greg
 
         public static Bitboard GetRookAttacks( int squareIndex, ulong blocker )
         {
-            blocker &= RookAttackMasks[squareIndex].Value;
+            blocker &= RookAttackMasks[squareIndex];
             blocker *= MagicBitboards.RookMagicNumbers[squareIndex];
             blocker >>= 64 - RookRelevantBitCountForSquare[squareIndex];
             return RookAttacks[squareIndex][(int)blocker];
