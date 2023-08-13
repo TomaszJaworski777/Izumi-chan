@@ -12,14 +12,14 @@
 
             for (int rank = 0; rank < positionSegments.Length; rank++)
             {
-                for (int file = 0; file < 8; file++)
+                for (int file = 0, index = 0; file < 8; file++, index++)
                 {
                     int squareIndex = (7 - rank) * 8 + file;
-                    char currentCharacter = positionSegments[rank][file];
+                    char currentCharacter = positionSegments[rank][index];
 
                     if (int.TryParse( currentCharacter.ToString(), out int output ))
                     {
-                        file += output - 1;
+                        file += output - 1;                  
                         continue;
                     }
 
