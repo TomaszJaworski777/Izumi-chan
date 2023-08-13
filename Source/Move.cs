@@ -167,8 +167,8 @@ namespace Greg
         public string ToString(Board board)
         {
             StringBuilder moveString = new ();
-            moveString.Append( new Square( From ) );
-            moveString.Append( new Square( To ) );
+            moveString.Append( new Square( From ).ToString() );
+            moveString.Append( new Square( To ).ToString() );
             if (!IsPromotion)
                 return moveString.ToString();
             moveString.Append( PromotionPiece switch

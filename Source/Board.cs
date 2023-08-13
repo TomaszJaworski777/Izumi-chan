@@ -62,6 +62,17 @@ namespace Greg
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public bool IsSquareAttacked( int squareIndex, bool isSquareWhite ) => PieceAttacks.IsSquareAttacked( squareIndex, isSquareWhite, this );
 
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public PieceType FindPieceTypeOnSquare( int squareIndex, bool forWhite )
+        {
+            for (int pieceIndex = 0; pieceIndex < 6; pieceIndex++)
+            {
+                if (Data[pieceIndex + (forWhite ? 0 : 6)].GetBitValue( squareIndex ) > 0)
+                    return (PieceType)pieceIndex;
+            }
+            return PieceType.Pawn;
+        }
+
         public void DrawBoard()
         {
 #if DEBUG
@@ -140,7 +151,7 @@ namespace Greg
          * 15 ==> 
          * 16 ==> misc data
          *      Reserved bits in misc from LSB (Total 27/64 reserved):
-         *          4 bits - castle {bk}{bq}[wK][kQ] 3 2 1 0
+         *          4 bits - castle {bk}{bq}[wK][wQ] 3 2 1 0
          *          1 bit - side to move {0 - white to move}
          *          7 bits - half moves 
          *          10 bits - moves

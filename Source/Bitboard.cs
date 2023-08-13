@@ -24,6 +24,7 @@ namespace Greg
         }
 
         public int LsbIndex => BitOperations.TrailingZeroCount( Value );
+        public int MsbIndex => BitOperations.LeadingZeroCount( Value );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public Bitboard( ulong mask = 0 ) => Value = mask;
