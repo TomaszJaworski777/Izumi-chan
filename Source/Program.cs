@@ -14,6 +14,7 @@
                 board.DrawBoard();
                 board.Data[12].Draw();
                 board.Data[13].Draw();
+                board.Data[14].Draw();
             }
         }
     }

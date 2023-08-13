@@ -88,8 +88,7 @@
             if (ulong.TryParse( fenParts[5], out moveCount ))
                 board.Moves = moveCount;
 
-            board.Data[14] = PieceAttack.GenerateAttackBitboard( true );
-            board.Data[15] = PieceAttack.GenerateAttackBitboard( false );
+            board.Data[14] = board.Data[12] | board.Data[13];
         }
     }
 }

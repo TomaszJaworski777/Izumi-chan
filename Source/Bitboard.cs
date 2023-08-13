@@ -58,6 +58,6 @@ namespace Greg
         }
 
         public static implicit operator ulong( Bitboard bitboard ) => bitboard.Value;
-        public static implicit operator int( Bitboard bitboard ) => (int)bitboard.Value;
+        public static implicit operator Bitboard( ulong mask ) => new Bitboard( mask );
     }
 }

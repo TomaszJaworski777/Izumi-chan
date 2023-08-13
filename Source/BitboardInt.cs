@@ -51,5 +51,6 @@ namespace Greg
         }
 
         public static implicit operator int( BitboardInt bitboard ) => bitboard.Value;
+        public static implicit operator BitboardInt( int mask ) => new BitboardInt( mask );
     }
 }

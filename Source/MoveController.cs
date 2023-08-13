@@ -57,11 +57,9 @@
                 }
             }
 
-            board.Data[14] = PieceAttack.GenerateAttackBitboard( true );
-            board.Data[15] = PieceAttack.GenerateAttackBitboard( false );
-
             board.Data[currentSideAllPieceIndex].SetBitToZero( fromIndex );
             board.Data[currentSideAllPieceIndex].SetBitToOne( toIndex );
+            board.Data[14] = board.Data[12] | board.Data[13];
 
             if (board.IsKingInCheck(isWhiteToMove))
                 return false;

@@ -7,6 +7,7 @@ namespace Greg
         public static Array64<Bitboard> WhitePawnAttackTable = default;
         public static Array64<Bitboard> BlackPawnAttackTable = default;
         public static Array64<Bitboard> KnightAttackTable = default;
+        public static Array64<Bitboard> KingAttacksTable = default;
         public static Array64<int> BishopRelevantBitCountForSquare = default;
         public static Array64<int> RookRelevantBitCountForSquare = default;
         public static Array64<Bitboard> BishopAttackMasks = default;
@@ -20,6 +21,7 @@ namespace Greg
             {
                 InitializePawnAttacksForIndex( squareIndex );
                 InitializeKnightAttacksForIndex( squareIndex );
+                InitializeKingAttacksForIndex( squareIndex );
                 BishopRelevantBitCountForSquare[squareIndex] = GetBishopRelevantBits( squareIndex ).BitCount;
                 RookRelevantBitCountForSquare[squareIndex] = GetRookRelevantBits( squareIndex ).BitCount;
             }
@@ -76,6 +78,22 @@ namespace Greg
             if (square.File < 6 && square.Rank > 0)
             {
                 KnightAttackTable[squareIndex].SetBitToOne( squareIndex - 6 );
+            }
+        }
+
+        private static void InitializeKingAttacksForIndex( int squareIndex )
+        {
+            Square square = new Square(squareIndex);
+
+            for (int rank = -1; rank < 2; rank++)
+            {
+                if (square.Rank + rank < 0 || square.Rank + rank > 7) continue;
+                for (int file = -1; file < 2; file++)
+                {
+                    if ((rank | file) == 0) continue;
+                    if (square.File + file < 0 || square.File + file > 7) continue;
+                    KingAttacksTable[squareIndex].SetBitToOne( new Square( square.Rank + rank, square.File + file ) );
+                }
             }
         }
 
@@ -282,7 +300,7 @@ namespace Greg
             }
         }
 
-        public static Bitboard GetBishopAttacks(int squareIndex, ulong blocker )
+        public static Bitboard GetBishopAttacks( int squareIndex, ulong blocker )
         {
             blocker &= BishopAttackMasks[squareIndex];
             blocker *= MagicBitboards.BishopMagicNumbers[squareIndex];
@@ -298,10 +316,26 @@ namespace Greg
             return RookAttacks[squareIndex][(int)blocker];
         }
 
-        public static Bitboard GenerateAttackBitboard( bool forWhite )
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public static Bitboard GetQueenAttacks( int squareIndex, ulong blocker ) => 
+            GetBishopAttacks( squareIndex, blocker ) | GetRookAttacks( squareIndex, blocker );
+
+        public static bool IsSquareAttacked( int squareIndex, bool isSquareWhite, Board board )
         {
-            Bitboard result = new();
-            return result;
+            Bitboard colorPawnAttack = isSquareWhite ? PieceAttack.WhitePawnAttackTable[squareIndex] : PieceAttack.BlackPawnAttackTable[squareIndex];
+            Bitboard attackerPieces = isSquareWhite ? board.Data[6] : board.Data[0];
+            if ((colorPawnAttack & attackerPieces) > 0) return true;
+            attackerPieces = isSquareWhite ? board.Data[7] : board.Data[1];
+            if ((PieceAttack.KnightAttackTable[squareIndex] & attackerPieces) > 0) return true;
+            attackerPieces = isSquareWhite ? board.Data[8] : board.Data[2];
+            if ((PieceAttack.GetBishopAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
+            attackerPieces = isSquareWhite ? board.Data[9] : board.Data[3];
+            if ((PieceAttack.GetRookAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
+            attackerPieces = isSquareWhite ? board.Data[10] : board.Data[4];
+            if ((PieceAttack.GetQueenAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
+            attackerPieces = isSquareWhite ? board.Data[11] : board.Data[5];
+            if ((PieceAttack.KingAttacksTable[squareIndex] & attackerPieces) > 0) return true;
+            return false;
         }
     }
 

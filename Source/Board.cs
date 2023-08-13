@@ -57,7 +57,10 @@ namespace Greg
         public bool MakeMove( Move move ) => MoveController.MakeMove( ref this, move );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool IsKingInCheck( bool isWhite ) => (GetBitboardForPiece( PieceType.King, isWhite ).Value & Data[isWhite ? 15 : 14].Value) > 0;
+        public bool IsKingInCheck( bool isWhite ) => IsSquareAttacked( GetBitboardForPiece( PieceType.King, isWhite ).LsbIndex, isWhite );
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public bool IsSquareAttacked( int squareIndex, bool isSquareWhite ) => PieceAttack.IsSquareAttacked( squareIndex, isSquareWhite, this );
 
         public void DrawBoard()
         {
@@ -110,6 +113,8 @@ namespace Greg
             Console.WriteLine( $"Half moves: {HalfMoves}, Moves: {Moves}" );
             var enPassantSquareText = EnPassantSquareIndex is 0 ? "-" : new Square((int)EnPassantSquareIndex).ToString();
             Console.WriteLine( $"En Passant: {enPassantSquareText}" );
+            Console.WriteLine( $"White king in check: {IsKingInCheck(true)}" );
+            Console.WriteLine( $"Black king in check: {IsKingInCheck(false)}" );
 #endif
         }
     }
@@ -131,8 +136,8 @@ namespace Greg
          * 6 - 11 ==> black piece tables
          * 12 ==> white pieces table (all pieces on one bitboard)
          * 13 ==> black pieces table (all pieces on one bitboard)
-         * 14 ==> white attack table
-         * 15 ==> black attack table
+         * 14 ==> all pieces table (white |= black)
+         * 15 ==> 
          * 16 ==> misc data
          *      Reserved bits in misc from LSB (Total 27/64 reserved):
          *          4 bits - castle {bk}{bq}[wK][kQ] 3 2 1 0
