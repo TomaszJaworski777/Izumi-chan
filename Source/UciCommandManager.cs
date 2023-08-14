@@ -123,8 +123,8 @@
                         bTime = int.Parse( parameters[parameterIndex + 1] );
                         break;
                     case "movetime":
-                        wTime = int.Parse( parameters[parameterIndex + 1] ) * 25;
-                        bTime = int.Parse( parameters[parameterIndex + 1] ) * 25;
+                        wTime = int.Parse( parameters[parameterIndex + 1] ) * 20;
+                        bTime = int.Parse( parameters[parameterIndex + 1] ) * 20;
                         break;
                     case "infinite":
                         infinite = true;

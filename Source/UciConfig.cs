@@ -9,6 +9,6 @@
 
         private static int _majorPatchNumber = 0;
         private static int _featureCountSiceLastMajorPatch = 3;
-        private static int _commitsSinceLastFeature = 4;
+        private static int _commitsSinceLastFeature = 5;
     }
 }
