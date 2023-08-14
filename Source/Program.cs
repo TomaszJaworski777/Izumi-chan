@@ -2,10 +2,43 @@
 {
     internal class Program
     {
-        static void Main( string[] args )
+        public static bool StopToken = false;
+        public static List<string> Commands = new();
+
+        private static void Main( string[] args )
         {
             Console.ForegroundColor = ConsoleColor.Gray;
-            Board board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
+            Thread engineThread = new Thread(CommandProcessor);
+            engineThread.Start();
+
+            while (true)
+            {
+                var command = Console.ReadLine();
+                if (command is not null)
+                    Commands.Add( command );
+
+                if (StopToken)
+                    break;
+            }
+        }
+
+        private static void CommandProcessor()
+        {
+            ChessEngine chessEngine = new();
+            UciCommandManager commandManager = new(chessEngine);
+
+            while (true)
+            {
+                if (Commands.Count > 0)
+                {
+                    string command = Commands.First();
+                    Commands.RemoveAt( 0 );
+                    commandManager.ProcessCommand( command );
+                }
+
+                if (StopToken)
+                    break;
+            }
         }
     }
 }

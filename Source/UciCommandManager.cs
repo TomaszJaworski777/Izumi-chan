@@ -11,7 +11,7 @@
         
         public void ProcessCommand(string command )
         {
-
+            Console.WriteLine( command );
         }
     }
 }
