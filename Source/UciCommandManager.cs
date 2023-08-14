@@ -41,12 +41,27 @@
         {
             if (parameters.Length == 0)
                 return;
+
             if (parameters[0] == "startpos")
                 _chessEngine.ChangePosition();
             else if (parameters[0] == "fen")
                 _chessEngine.ChangePosition( parameters[1] + ' ' + parameters[2] + ' ' + parameters[3] + ' ' + parameters[4] + ' ' + parameters[5] + ' ' + parameters[6] );
             else
                 return;
+
+            bool hasAdditionalMoves = false;
+            for (int parameterIndex = 0; parameterIndex < parameters.Length; parameterIndex++)
+            {
+                string parameter = parameters[parameterIndex];
+                if (parameter == "moves")
+                {
+                    hasAdditionalMoves = true;
+                    continue;
+                }
+
+                if (hasAdditionalMoves)
+                    _chessEngine.MakeMove( parameter );
+            }
 
             _chessEngine.DrawBoard();
         }
