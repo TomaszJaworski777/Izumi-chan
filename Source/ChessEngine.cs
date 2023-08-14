@@ -32,13 +32,13 @@ namespace Greg
         public void SplitPerft( int depth, string fen ) => _perft.Execute( depth, new Board( fen ), true );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void Search( int depth ) => _search.Execute( depth );
+        public void Search( int depth ) => _search.Execute( _currentBoard, depth );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void Search( int wTime, int bTime ) => _search.Execute( whiteTime: wTime, blackTime: bTime );
+        public void Search( int wTime, int bTime ) => _search.Execute( _currentBoard, whiteTime: wTime, blackTime: bTime );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void Search() => _search.Execute( infinite: true );
+        public void Search() => _search.Execute( _currentBoard, infinite: true );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public void DrawBoard() => _currentBoard.DrawBoard();

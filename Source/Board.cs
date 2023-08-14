@@ -54,6 +54,9 @@ namespace Greg
         public bool MakeMove( Move move ) => MoveController.MakeMove( ref this, move );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public ReadOnlySpan<Move> GeneratePseudoLegalMoves() => MoveController.GeneratePseudoLegalMoves( this );
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public bool IsKingInCheck( bool isWhite ) => IsSquareAttacked( GetBitboardForPiece( PieceType.King, isWhite ).LsbIndex, isWhite );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]

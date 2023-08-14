@@ -16,7 +16,7 @@
 
             for (int i = 1; i < depth + 1; i++)
             {
-                Console.WriteLine( $"Depth: {i}, Nodes: {PerftInternal( i, board, false )}" + (logger ? "" : $"Nps: {_nodePerSecondTracker.LatestResult}") );
+                Console.WriteLine( $"Depth: {i}, Nodes: {PerftInternal( i, board, false )}" + (logger ? "" : $", Nps: {_nodePerSecondTracker.LatestResult}") );
             }
         }
 
