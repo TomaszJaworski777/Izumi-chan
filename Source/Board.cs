@@ -35,11 +35,8 @@ namespace Greg
             set => Data[16].SetValueChunk( GameBoard.EnPassantIndex, GameBoard.EnPassantMask, value );
         }
 
-        public Board( string fen )
-        {
-            FenSystem.CreateBoard( ref this, fen );
-            DrawBoard();
-        }
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public Board( string fen ) => FenSystem.CreateBoard( ref this, fen );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public unsafe Board( Board other ) => Data = other.Data;

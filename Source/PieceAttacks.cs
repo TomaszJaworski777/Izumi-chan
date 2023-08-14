@@ -9,9 +9,9 @@ namespace Greg
         public static Array64<Bitboard> KnightAttackTable = default;
         public static Array64<Bitboard> KingAttacksTable = default;
 
-        private static readonly SlidingPieceAttacks _slidingPieceAttacks;
+        private static SlidingPieceAttacks? _slidingPieceAttacks;
 
-        static PieceAttacks()
+        public static void Initizalize()
         {
             for (int squareIndex = 0; squareIndex < 64; squareIndex++)
             {
@@ -92,10 +92,10 @@ namespace Greg
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Bitboard GetBishopAttacks( int squareIndex, ulong blocker ) => _slidingPieceAttacks.GetBishopAttacks( squareIndex, blocker );
+        public static Bitboard GetBishopAttacks( int squareIndex, ulong blocker ) => _slidingPieceAttacks!.GetBishopAttacks( squareIndex, blocker );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Bitboard GetRookAttacks( int squareIndex, ulong blocker ) => _slidingPieceAttacks.GetRookAttacks( squareIndex, blocker );
+        public static Bitboard GetRookAttacks( int squareIndex, ulong blocker ) => _slidingPieceAttacks!.GetRookAttacks( squareIndex, blocker );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Bitboard GetQueenAttacks( int squareIndex, ulong blocker ) => 
