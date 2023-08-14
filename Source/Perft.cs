@@ -2,19 +2,20 @@
 {
     internal class Perft
     {
-        private ulong _currentNps;
-        private ulong _latestNps;
-        private DateTime _latestTimeStamp;
+        private readonly NodePerSecondTracker _nodePerSecondTracker = new(false);
 
-        public void Execute(int depth, Board board, bool splitPerft )
+        public void Execute( int depth, Board board, bool splitPerft )
         {
             if (splitPerft)
+            {
                 PerftInternal( depth, board, true );
+                return;
+            }
 
-            _latestTimeStamp = DateTime.Now;
+            _nodePerSecondTracker.Reset();
             for (int i = 1; i < depth; i++)
             {
-                Console.WriteLine( $"Depth: {i}, Nodes: {PerftInternal(i, board, false)}, Nps: {_latestNps}" );
+                Console.WriteLine( $"Depth: {i}, Nodes: {PerftInternal( i, board, false )}, Nps: {_nodePerSecondTracker.LatestResult}" );
             }
         }
 
@@ -22,19 +23,14 @@
         {
             if (depth == 0)
             {
-                _currentNps++;
+                _nodePerSecondTracker.AddNode();
                 return 1UL;
             }
 
+            _nodePerSecondTracker.Update();
+
             ulong count = 0;
             var moves = MoveController.GeneratePseudoLegalMoves( board );
-
-            if ((DateTime.Now - _latestTimeStamp).TotalMilliseconds > 1000)
-            {
-                _latestTimeStamp = DateTime.Now;
-                _latestNps = _currentNps;
-                _currentNps = 0;
-            }
 
             for (int i = 0; i < moves.Length; i++)
             {

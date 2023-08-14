@@ -354,7 +354,7 @@ namespace Greg
                 _moveCount = 0;
             }
 
-            internal ReadOnlySpan<Move> Values => _values.Slice( 0, _moveCount );
+            internal readonly ReadOnlySpan<Move> Values => _values[.._moveCount];
 
             public void Add( Move move )
             {
