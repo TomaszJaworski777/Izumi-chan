@@ -39,7 +39,7 @@ namespace Greg
                 _latestNps = _currentNps;
                 _currentNps = 0;
                 if (logger)
-                    Console.WriteLine( $"nps {_latestNps}" );
+                    Console.WriteLine( $"info nps {_latestNps}" );
             }
         }
     }
