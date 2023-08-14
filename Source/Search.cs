@@ -1,4 +1,6 @@
-﻿namespace Greg
+﻿using System.Runtime.CompilerServices;
+
+namespace Greg
 {
     internal class Search
     {
@@ -23,6 +25,7 @@
             Console.WriteLine( $"bestmove {_bestRootMove.ToString(board)}" );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private int NegaMax( Board board, int depth, int alpha, int beta, int movesPlayed )
         {
             _nodePerSecondTracker.Update();
@@ -36,6 +39,7 @@
 
             ReadOnlySpan<Move> moves = board.GeneratePseudoLegalMoves();
             int value = -Infinity;
+            int legalMoveCount = 0;
 
             for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
             {
@@ -43,6 +47,7 @@
                 Move move = moves[moveIndex];
                 if (!boardCopy.MakeMove( move ))
                     continue;
+                legalMoveCount++;
                 var newValue = -NegaMax(boardCopy, depth - 1, -beta, -alpha, movesPlayed + 1);
                 if(newValue > value)
                 {
@@ -59,8 +64,8 @@
                 }
             }
 
-            if (moves.Length == 0)
-                return board.IsKingInCheck( board.IsWhiteToMove ) ? -Infinity + movesPlayed : 0; 
+            if (legalMoveCount == 0)
+                return board.IsKingInCheck( board.IsWhiteToMove ) ? (movesPlayed - Infinity) : 0; 
 
             return value;
         }

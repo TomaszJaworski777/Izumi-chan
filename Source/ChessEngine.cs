@@ -20,6 +20,9 @@ namespace Greg
         public void ChangePosition( string fen = startFen ) => _currentBoard = new Board( fen );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public void MakeMove( string move ) => _currentBoard.MakeMove( new Move( move, _currentBoard ) );
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public void Perft( int depth, bool logger = false ) => _perft.Execute( depth, _currentBoard, false, logger );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
