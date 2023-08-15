@@ -4,11 +4,12 @@ namespace Greg
 {
     internal class Program
     {
-        public static ConcurrentQueue<string> Commands = new();
+        private static ConcurrentQueue<string> _commands = new();
 
         private static void Main( string[] args )
         {
             Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine( UciConfig.Header );
 
             PieceAttacks.Initizalize();
 
@@ -25,7 +26,7 @@ namespace Greg
                 {
                     if (command is "stop" or "quit")
                         Search.CancelationToken = true;
-                    Commands.Enqueue( command );
+                    _commands.Enqueue( command );
                 }
             }
         }
@@ -37,9 +38,9 @@ namespace Greg
 
             while (true)
             {
-                if (Commands.Count > 0)
+                if (_commands.Count > 0)
                 {
-                    if (!Commands.TryDequeue( out string? command ))
+                    if (!_commands.TryDequeue( out string? command ))
                         continue;
                     commandManager.ProcessCommand( command );
                 }
