@@ -39,7 +39,7 @@ namespace Greg
                 _latestBestMove = _bestRootMove;
             }
 
-            Console.WriteLine( $"bestmove {_latestBestMove.ToString( board )}" ); //still makes illegal moves
+            Console.WriteLine( $"bestmove {_latestBestMove.ToString( board )}" );
         }
 
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]

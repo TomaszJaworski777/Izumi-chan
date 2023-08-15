@@ -35,6 +35,9 @@ namespace Greg
         public void SplitPerft( int depth, string fen ) => _perft.Execute( depth, new Board( fen ), true );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public void PerftTest() => _perft.PerftTest();
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public void Search( int depth ) => _search.Execute( _currentBoard, depth );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]

@@ -1,4 +1,6 @@
-﻿namespace Greg
+﻿using System.Collections;
+
+namespace Greg
 {
     internal class Perft
     {
@@ -45,6 +47,37 @@
             }
 
             return count;
+        }
+
+        public void PerftTest()
+        {
+            _nodePerSecondTracker = new( false );
+            ulong fullNodes = 0;
+
+            Console.WriteLine("Starting perft test...");
+            ReadOnlySpan<string> tests =  File.ReadLines( @"..\..\..\..\TestData\perftsuite.epd" ).ToArray().AsSpan();
+
+            int index = 0;
+            foreach (var test in tests)
+            {
+                index++;
+                var split = test.Split( ' ' );
+                ulong nodes = ulong.Parse( split[ 17 ] );
+                Console.WriteLine($"Test {index}/{tests.Length}, Expected value: {nodes}");
+                fullNodes += nodes;
+                string fen = split[0] + ' ' + split[1] + ' ' + split[2] + ' ' + split[3] + ' ' + split[4] + ' ' + split[5];
+                ulong result = PerftInternal(6, new Board(fen), false);
+                if (result != nodes)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine( $"FEN: {fen}" );
+                    Console.WriteLine( $"EXPECTED: {nodes}" );
+                    Console.WriteLine( $"RESULT: {result}" );
+                    Console.WriteLine();
+                }
+
+            }
+            Console.WriteLine( $"Done! Nodes searched: {fullNodes}, Nps: {_nodePerSecondTracker.LatestResult}" );
         }
     }
 }
