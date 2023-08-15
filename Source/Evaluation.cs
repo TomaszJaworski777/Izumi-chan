@@ -16,7 +16,7 @@ namespace Greg
                     result = -result;
             }
 
-            return result;
+            return result * (board.IsWhiteToMove ? 1 : -1);
         }
     }
 }
