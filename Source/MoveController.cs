@@ -6,6 +6,8 @@ namespace Greg
     {
         private static ulong rank1 = 0x000000000000FF00;
         private static ulong rank7 = 0x00FF000000000000;
+        private static ulong rank2 = 0x0000000000FF0000;
+        private static ulong rank6 = 0x0000FF0000000000;
 
         private static ulong _kingSideCastleMask = 96;
         private static ulong _kingSideCastleReverserMask = 6917529027641081952;
@@ -210,7 +212,7 @@ namespace Greg
                                 moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, findAttackedPiece, PieceType.Pawn, false, true, false, false ) );
                             }
                         }
-                        helperMask = attack & (1UL << (int)board.EnPassantSquareIndex);
+                        helperMask = attack & (1UL << (int)board.EnPassantSquareIndex) & (rank2 | rank6);
                         if (helperMask > 0)
                         {
                             int lsbIndex = helperMask.LsbIndex;
@@ -224,7 +226,7 @@ namespace Greg
 
                     if (pieceIndex == 5)
                     {
-                        if(!board.IsSquareAttacked( isWhiteToMove ? 4 : 50, isWhiteToMove ))
+                        if(!board.IsKingInCheck(isWhiteToMove))
                         {
                             ulong mask = isWhiteToMove ? _queenSideCastleMask : (_queenSideCastleMask ^ _queenSideCastleReverserMask);
                             if (board.Data[16].GetBitValue( isWhiteToMove ? 0 : 2 ) > 0 && (board.Data[14] & mask) == 0 &&
@@ -380,7 +382,7 @@ namespace Greg
                                 moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, findAttackedPiece, PieceType.Pawn, false, true, false, false ) );
                             }
                         }
-                        helperMask = attack & (1UL << (int)board.EnPassantSquareIndex);
+                        helperMask = attack & (1UL << (int)board.EnPassantSquareIndex) & (rank2 | rank6);
                         if (helperMask > 0)
                         {
                             int lsbIndex = helperMask.LsbIndex;
@@ -394,7 +396,7 @@ namespace Greg
 
                     if (pieceIndex == 5)
                     {
-                        if(!board.IsSquareAttacked( isWhiteToMove ? 4 : 50, isWhiteToMove ))
+                        if(!board.IsKingInCheck( isWhiteToMove ))
                         {
                             ulong mask = isWhiteToMove ? _queenSideCastleMask : (_queenSideCastleMask ^ _queenSideCastleReverserMask);
                             if (board.Data[16].GetBitValue( isWhiteToMove ? 0 : 2 ) > 0 && (board.Data[14] & mask) == 0 &&

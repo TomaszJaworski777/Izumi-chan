@@ -103,19 +103,19 @@ namespace Greg
 
         public static bool IsSquareAttacked( int squareIndex, bool isSquareWhite, Board board )
         {
-            Bitboard colorPawnAttack = isSquareWhite ? PieceAttacks.WhitePawnAttackTable[squareIndex] : PieceAttacks.BlackPawnAttackTable[squareIndex];
+            Bitboard colorPawnAttack = isSquareWhite ? WhitePawnAttackTable[squareIndex] : BlackPawnAttackTable[squareIndex];
             Bitboard attackerPieces = isSquareWhite ? board.Data[6] : board.Data[0];
             if ((colorPawnAttack & attackerPieces) > 0) return true;
             attackerPieces = isSquareWhite ? board.Data[7] : board.Data[1];
-            if ((PieceAttacks.KnightAttackTable[squareIndex] & attackerPieces) > 0) return true;
+            if ((KnightAttackTable[squareIndex] & attackerPieces) > 0) return true;
             attackerPieces = isSquareWhite ? board.Data[8] : board.Data[2];
-            if ((PieceAttacks.GetBishopAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
+            if ((GetBishopAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
             attackerPieces = isSquareWhite ? board.Data[9] : board.Data[3];
-            if ((PieceAttacks.GetRookAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
+            if ((GetRookAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
             attackerPieces = isSquareWhite ? board.Data[10] : board.Data[4];
-            if ((PieceAttacks.GetQueenAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
+            if ((GetQueenAttacks( squareIndex, board.Data[14] ) & attackerPieces) > 0) return true;
             attackerPieces = isSquareWhite ? board.Data[11] : board.Data[5];
-            if ((PieceAttacks.KingAttacksTable[squareIndex] & attackerPieces) > 0) return true;
+            if ((KingAttacksTable[squareIndex] & attackerPieces) > 0) return true;
             return false;
         }
     }
