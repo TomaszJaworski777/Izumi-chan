@@ -27,8 +27,6 @@ namespace Greg
 
             for (int currentDepth = 1; currentDepth <= depth; currentDepth++)
             {
-                _nodePerSecondTracker.Update();
-
                 int bestScore = NegaMax(board, currentDepth, -Infinity, Infinity, 0);
                 if (BreakCondition( _timeRemaning ))
                     break;
@@ -56,6 +54,7 @@ namespace Greg
 
             for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
             {
+                _nodePerSecondTracker.Update();
                 if (BreakCondition( _timeRemaning ))
                     break;
 

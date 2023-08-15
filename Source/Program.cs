@@ -1,8 +1,10 @@
-﻿namespace Greg
+﻿using System.Collections.Concurrent;
+
+namespace Greg
 {
     internal class Program
     {
-        public static List<string> Commands = new();
+        public static ConcurrentQueue<string> Commands = new();
 
         private static void Main( string[] args )
         {
@@ -19,11 +21,8 @@
             while (true)
             {
                 var command = Console.ReadLine();
-                commandManager.ProcessCommand( command );
-                /*
-                Console.WriteLine( command );
                 if (command is not null)
-                    Commands.Add( command );*/
+                    Commands.Enqueue( command );
             }
         }
 
@@ -36,8 +35,8 @@
             {
                 if (Commands.Count > 0)
                 {
-                    string command = Commands[0];
-                    Commands.RemoveAt( 0 );
+                    if (!Commands.TryDequeue( out string? command ))
+                        continue;
                     commandManager.ProcessCommand( command );
                 }
             }
