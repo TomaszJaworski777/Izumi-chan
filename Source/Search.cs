@@ -6,75 +6,38 @@ namespace Greg
     {
         private const int Infinity = 30000;
 
-        private SearchData _data;
         private Move _bestRootMove;
+        private Move _latestBestMove;
         private DateTime _startTime;
         private NodePerSecondTracker _nodePerSecondTracker = new(true);
         private ulong _nodes = 0;
-        private bool _stop = false;
+
+        private int _timeRemaning;
 
         private readonly Evaluation _evaluation = new();
-        private readonly Thread _thread;
-
-        public Search()
-        {
-            _thread = new( ThreadSearch );
-            _thread.Start();
-        }
 
         public void Execute( Board board, int depth = int.MaxValue, int whiteTime = int.MaxValue, int blackTime = int.MaxValue, bool infinite = false )
         {
             _nodePerSecondTracker = new( true );
             _bestRootMove = new();
+            _latestBestMove = new();
             _nodes = 0;
-            _stop = false;
             _startTime = DateTime.Now;
+            _timeRemaning = board.IsWhiteToMove ? whiteTime : blackTime;
 
             for (int currentDepth = 1; currentDepth <= depth; currentDepth++)
             {
-                _data = new SearchData
-                {
-                    Board = board,
-                    Depth = currentDepth,
-                    Done = false
-                };
-                while (!_data.Done)
-                {
-                    _nodePerSecondTracker.Update();
+                _nodePerSecondTracker.Update();
 
-                    if (Program.Commands.Contains( "stop" ) || Program.Commands.Contains( "quit" ) || (DateTime.Now - _startTime).TotalMilliseconds > ((board.IsWhiteToMove ? whiteTime : blackTime) / 20))
-                    {
-                        _stop = true;
-                        break;
-                    }
-                }
-                Console.WriteLine( $"info depth {currentDepth} score cp {_data.BestScore} nodes {_nodes}" );
-
-                if (_stop)
+                int bestScore = NegaMax(board, currentDepth, -Infinity, Infinity, 0);
+                if (BreakCondition( _timeRemaning ))
                     break;
+                Console.WriteLine( $"info depth {currentDepth} score cp {bestScore} nodes {_nodes}" );
+
+                _latestBestMove = _bestRootMove;
             }
 
-            Console.WriteLine( $"bestmove {_bestRootMove.ToString( board )}" );
-        }
-
-        private void ThreadSearch()
-        {
-            while (true)
-            {
-                if (_data.Done) 
-                    continue;
-
-                _data.BestScore = NegaMax( _data.Board, _data.Depth, -Infinity, Infinity, 0 );
-                _data.Done = true;
-            }
-        }
-
-        private struct SearchData
-        {
-            public int Depth;
-            public Board Board;
-            public bool Done;
-            public int BestScore;
+            Console.WriteLine( $"bestmove {_latestBestMove.ToString( board )}" ); //still makes illegal moves
         }
 
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]
@@ -93,6 +56,9 @@ namespace Greg
 
             for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
             {
+                if (BreakCondition( _timeRemaning ))
+                    break;
+
                 Board boardCopy = board;
                 Move move = moves[moveIndex];
                 if (!boardCopy.MakeMove( move ))
@@ -119,5 +85,7 @@ namespace Greg
 
             return value;
         }
+
+        private bool BreakCondition( int timeRemaining ) => Program.Commands.Contains( "stop" ) || Program.Commands.Contains( "quit" ) || (DateTime.Now - _startTime).TotalMilliseconds > (timeRemaining / 20);
     }
 }

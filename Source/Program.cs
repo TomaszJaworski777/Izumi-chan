@@ -13,11 +13,17 @@
             Thread engineThread = new Thread(CommandProcessor);
             engineThread.Start();
 
+            ChessEngine chessEngine = new();
+            UciCommandManager commandManager = new(chessEngine);
+
             while (true)
             {
                 var command = Console.ReadLine();
+                commandManager.ProcessCommand( command );
+                /*
+                Console.WriteLine( command );
                 if (command is not null)
-                    Commands.Add( command );
+                    Commands.Add( command );*/
             }
         }
 
@@ -30,7 +36,7 @@
             {
                 if (Commands.Count > 0)
                 {
-                    string command = Commands.First();
+                    string command = Commands[0];
                     Commands.RemoveAt( 0 );
                     commandManager.ProcessCommand( command );
                 }
