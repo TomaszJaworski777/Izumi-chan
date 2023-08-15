@@ -22,7 +22,11 @@ namespace Greg
             {
                 var command = Console.ReadLine();
                 if (command is not null)
+                {
+                    if (command is "stop" or "quit")
+                        Search.CancelationToken = true;
                     Commands.Enqueue( command );
+                }
             }
         }
 

@@ -6,6 +6,8 @@ namespace Greg
     {
         private const int Infinity = 30000;
 
+        public static bool CancelationToken = false;
+
         private Move _bestRootMove;
         private Move _latestBestMove;
         private DateTime _startTime;
@@ -18,6 +20,8 @@ namespace Greg
 
         public void Execute( Board board, int depth = int.MaxValue, int whiteTime = int.MaxValue, int blackTime = int.MaxValue, bool infinite = false )
         {
+            CancelationToken = false;
+
             _nodePerSecondTracker = new( true );
             _bestRootMove = new();
             _latestBestMove = new();
@@ -48,6 +52,9 @@ namespace Greg
                 return _evaluation.EvaluatePosition( board );
             }
 
+            if (BreakCondition( _timeRemaning ))
+                return Infinity;
+
             ReadOnlySpan<Move> moves = board.GeneratePseudoLegalMoves();
             int value = -Infinity;
             int legalMoveCount = 0;
@@ -55,8 +62,6 @@ namespace Greg
             for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
             {
                 _nodePerSecondTracker.Update();
-                if (BreakCondition( _timeRemaning ))
-                    break;
 
                 Board boardCopy = board;
                 Move move = moves[moveIndex];
@@ -85,6 +90,6 @@ namespace Greg
             return value;
         }
 
-        private bool BreakCondition( int timeRemaining ) => Program.Commands.Contains( "stop" ) || Program.Commands.Contains( "quit" ) || (DateTime.Now - _startTime).TotalMilliseconds > (timeRemaining / 20);
+        private bool BreakCondition( int timeRemaining ) => CancelationToken || (DateTime.Now - _startTime).TotalMilliseconds > (timeRemaining / 20);
     }
 }
