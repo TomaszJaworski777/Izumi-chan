@@ -21,7 +21,7 @@ namespace Izumi
 
         public void EvaluationTest()
         {
-            Console.WriteLine( "Starting evaluation test..." );
+            Console.WriteLine( "Stawting (・`w´・) evawuation ^-^ t-t-test..." );
             ReadOnlySpan<string> tests =  File.ReadLines( @"..\..\..\..\TestData\evaldata.txt" ).ToArray().AsSpan();
 
             int index = 0;
@@ -35,13 +35,13 @@ namespace Izumi
                 if (result1 != result2)
                 {
                     Console.WriteLine();
-                    Console.WriteLine( $"FEN: {test}" );
+                    Console.WriteLine( $"F-F-FEN: {test}" );
                     Console.WriteLine( $"EXPECTED: {result1}" );
-                    Console.WriteLine( $"RESULT: {result2}" );
+                    Console.WriteLine( $"WESUWT: {result2}" );
                     Console.WriteLine();
                 }
             }
-            Console.WriteLine( $"Done!" );
+            Console.WriteLine( $"Donye! ^-^" );
         }
 
         private Board FlipBoard( Board board )

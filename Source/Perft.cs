@@ -18,7 +18,7 @@ namespace Izumi
 
             for (int i = 1; i < depth + 1; i++)
             {
-                Console.WriteLine( $"Depth: {i}, Nodes: {PerftInternal( i, board, false )}" + (logger ? "" : $", Nps: {_nodePerSecondTracker.LatestResult}") );
+                Console.WriteLine( $"Depth: {i}, Nyodies: {PerftInternal( i, board, false )}" + (logger ? "" : $", Nps: {_nodePerSecondTracker.LatestResult}") );
             }
         }
 
@@ -54,7 +54,7 @@ namespace Izumi
             _nodePerSecondTracker = new( false );
             ulong fullNodes = 0;
 
-            Console.WriteLine("Starting perft test...");
+            Console.WriteLine( "Stawting (・`w´・) p-p-pewft t-t-test..." );
             ReadOnlySpan<string> tests =  File.ReadLines( @"..\..\..\..\TestData\perftsuite.epd" ).ToArray().AsSpan();
 
             int index = 0;
@@ -70,14 +70,14 @@ namespace Izumi
                 if (result != nodes)
                 {
                     Console.WriteLine();
-                    Console.WriteLine( $"FEN: {fen}" );
+                    Console.WriteLine( $"F-F-FEN: {fen}" );
                     Console.WriteLine( $"EXPECTED: {nodes}" );
-                    Console.WriteLine( $"RESULT: {result}" );
+                    Console.WriteLine( $"WESUWT: {result}" );
                     Console.WriteLine();
                 }
 
             }
-            Console.WriteLine( $"Done! Nodes searched: {fullNodes}, Nps: {_nodePerSecondTracker.LatestResult}" );
+            Console.WriteLine( $"Donye?!! Nyodies searched: {fullNodes}, Nps: {_nodePerSecondTracker.LatestResult}" );
         }
     }
 }

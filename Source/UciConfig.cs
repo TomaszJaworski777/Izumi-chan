@@ -17,4 +17,4 @@
         private const int _featureCountSiceLastMajorPatch = 4;
         private const int _commitsSinceLastFeature = 2;
     }
-}   
+}
