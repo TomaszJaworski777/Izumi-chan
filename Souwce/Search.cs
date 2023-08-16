@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Izumi
 {

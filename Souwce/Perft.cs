@@ -77,7 +77,7 @@ namespace Izumi
                 }
 
             }
-            Console.WriteLine( $"Donye?!! Nyodies searched: {fullNodes}, Nps: {_nodePerSecondTracker.LatestResult}" );
+            Console.WriteLine( $"Donye! ^-^ Nyodies searched: {fullNodes}, Nps: {_nodePerSecondTracker.LatestResult}" );
         }
     }
 }
