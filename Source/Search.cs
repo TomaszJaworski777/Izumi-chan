@@ -43,8 +43,26 @@ namespace Greg
             Console.WriteLine( $"bestmove {_latestBestMove.ToString( board )}" );
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         private bool BreakCondition( int timeRemaining ) => CancelationToken || (DateTime.Now - _startTime).TotalMilliseconds > (timeRemaining / 20);
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        private static int MoveSortRuleset( Move a, Move b )
+        {
+            int score = GetMoveValue(b) - GetMoveValue(a);
+
+            if (score is 0)
+                return 0;
+            return Math.Sign( score );
+        }
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        private static int GetMoveValue( Move move )
+        {
+            if (move.IsCapture)
+                return ((int)move.TargetPiece + 1) * 100 - (int)move.MovingPiece;
+            return 0;
+        }
 
         #region Search
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]
@@ -58,7 +76,8 @@ namespace Greg
             if (BreakCondition( _timeRemaning ))
                 return Infinity;
 
-            ReadOnlySpan<Move> moves = board.GeneratePseudoLegalMoves();
+            Span<Move> moves = board.GeneratePseudoLegalMoves();
+            moves.Sort( MoveSortRuleset );
             int value = -Infinity;
             int legalMoveCount = 0;
 
@@ -97,6 +116,7 @@ namespace Greg
             return value;
         }
 
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
         private int QuiesenceSearch( Board board, int alpha, int beta )
         {
             int eval = _evaluation.EvaluatePosition( board );
@@ -109,7 +129,8 @@ namespace Greg
             if (BreakCondition( _timeRemaning ))
                 return Infinity;
 
-            ReadOnlySpan<Move> moves = board.GeneratePseudoLegalPriorityMoves();
+            Span<Move> moves = board.GeneratePseudoLegalPriorityMoves();
+            moves.Sort( MoveSortRuleset );
 
             for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
             {

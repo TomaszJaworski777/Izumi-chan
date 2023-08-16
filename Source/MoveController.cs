@@ -137,7 +137,7 @@ namespace Greg
         }
 
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        public static ReadOnlySpan<Move> GeneratePseudoLegalMoves( Board board )
+        public static Span<Move> GeneratePseudoLegalMoves( Board board )
         {
             SpanMoveList moves = new();
 
@@ -332,7 +332,7 @@ namespace Greg
         }
 
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        public static ReadOnlySpan<Move> GeneratePseudoLegalPriorityMoves( Board board )
+        public static Span<Move> GeneratePseudoLegalPriorityMoves( Board board )
         {
             SpanMoveList moves = new();
 
@@ -504,7 +504,7 @@ namespace Greg
                 _moveCount = 0;
             }
 
-            internal readonly ReadOnlySpan<Move> Values => _values[.._moveCount];
+            internal readonly Span<Move> Values => _values[.._moveCount];
 
             public void Add( Move move )
             {
