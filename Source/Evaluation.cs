@@ -61,14 +61,5 @@ namespace Greg
 
             return result;
         }
-
-        /*
-         *  for (sq = 0; sq < 32; ++sq) {
-                s = board[sq];
-                f = board[sq^56];
-                board[sq] = f ^ (f != 0);
-                board[sq^56] = s ^ (s != 0);
-            }
-         */
     }
 }

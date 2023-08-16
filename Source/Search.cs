@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Greg
 {
@@ -43,13 +44,15 @@ namespace Greg
         }
 
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+        private bool BreakCondition( int timeRemaining ) => CancelationToken || (DateTime.Now - _startTime).TotalMilliseconds > (timeRemaining / 20);
+
+        #region Search
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
         private int NegaMax( Board board, int depth, int alpha, int beta, int movesPlayed )
         {
             if (depth <= 0)
             {
-                _nodes++;
-                _nodePerSecondTracker.AddNode();
-                return _evaluation.EvaluatePosition( board );
+                return QuiesenceSearch( board, alpha, beta );
             }
 
             if (BreakCondition( _timeRemaning ))
@@ -67,7 +70,11 @@ namespace Greg
                 Move move = moves[moveIndex];
                 if (!boardCopy.MakeMove( move ))
                     continue;
+
                 legalMoveCount++;
+                _nodes++;
+                _nodePerSecondTracker.AddNode();
+
                 var newValue = -NegaMax(boardCopy, depth - 1, -beta, -alpha, movesPlayed + 1);
                 if (newValue > value)
                 {
@@ -90,6 +97,41 @@ namespace Greg
             return value;
         }
 
-        private bool BreakCondition( int timeRemaining ) => CancelationToken || (DateTime.Now - _startTime).TotalMilliseconds > (timeRemaining / 20);
+        private int QuiesenceSearch( Board board, int alpha, int beta )
+        {
+            int eval = _evaluation.EvaluatePosition( board );
+
+            if (eval >= beta)
+                return beta;
+            if (alpha < eval)
+                alpha = eval;
+
+            if (BreakCondition( _timeRemaning ))
+                return Infinity;
+
+            ReadOnlySpan<Move> moves = board.GeneratePseudoLegalPriorityMoves();
+
+            for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
+            {
+                _nodePerSecondTracker.Update();
+
+                Board boardCopy = board;
+                Move move = moves[moveIndex];
+                if (!boardCopy.MakeMove( move ))
+                    continue;
+
+                _nodes++;
+                _nodePerSecondTracker.AddNode();
+
+                int score = -QuiesenceSearch( boardCopy, -beta, -alpha );
+
+                if (score >= beta)
+                    return beta;
+                if (score > alpha)
+                    alpha = score;
+            }
+            return alpha;
+        }
+        #endregion
     }
 }
