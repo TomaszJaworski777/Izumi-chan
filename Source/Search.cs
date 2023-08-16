@@ -61,6 +61,8 @@ namespace Greg
         {
             if (move.IsCapture)
                 return ((int)move.TargetPiece + 1) * 100 - (int)move.MovingPiece;
+            else if (move.IsCastle || move.IsPromotion)
+                return 1;
             return 0;
         }
 
