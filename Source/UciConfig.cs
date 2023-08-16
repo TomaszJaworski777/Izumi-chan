@@ -2,7 +2,7 @@
 {
     internal static class UciConfig
     {
-        public static string Header = $"Konnyichiwaa, watashi wa'm chesies enginye \"{Name}\" v{Version}. Copywight (c) 2023 {Author}.\n" +
+        public static string Header = $"Konnyichiwaa, watashi wa'm chesies enginye {Name} v{Version}. Copywight (c) 2023 {Author}.\n" +
                                        "Souwce code c-can be found at https://github.com/TomaszJaworski777/Greg. \n\n" +
                                        "Use of thiies souwce code is guvwnyed by an mit~stywe\n" +
                                        "wicense that c-can be found in the x3 LICENSE fiwe ow (・`w´・) at\n" +
@@ -15,6 +15,6 @@
 
         private const int _majorPatchNumber = 0;
         private const int _featureCountSiceLastMajorPatch = 4;
-        private const int _commitsSinceLastFeature = 3;
+        private const int _commitsSinceLastFeature = 2;
     }
 }   
