@@ -1,1 +1,1 @@
-cutechess-cli -engine conf=Greg_DEV -engine conf=Greg_0.4.2 -each tc=4+0.4 -games 2 -rounds 500 -openings file=D:\Projects\Personal\Greg\Books\8moves_v3.pgn policy=round -concurrency 10
+cutechess-cli -engine conf=Izumi-chan_DEV -engine conf=Izumi-chan_0.4.9 -each tc=4+0.04 -games 2 -rounds 250 -openings file=D:\Projects\Personal\Izumi\Books\8moves_v3.pgn policy=round -concurrency 10

@@ -4,19 +4,67 @@ namespace Izumi
 {
     internal class Evaluation
     {
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
         public int EvaluatePosition( Board board )
         {
-            int result = 0;
+            int midgame = 0;
+            int endgame = 0;
+            int phase = 24;
 
             for (int pieceIndex = 0; pieceIndex < 12; pieceIndex++)
             {
-                result -= board.Data[pieceIndex].BitCount * EvaluationConfig.PieceValues[pieceIndex % 6];
+                Bitboard bitboard = board.Data[pieceIndex];
+                int pieceCount = bitboard.BitCount;
+                midgame -= pieceCount * EvaluationConfig.MidgamePieceValues[pieceIndex % 6];
+                endgame -= pieceCount * EvaluationConfig.EndgamePieceValues[pieceIndex % 6];
+                phase -= pieceCount * EvaluationConfig.PiecePhase[pieceIndex % 6];
+
+                while(bitboard > 0)
+                {
+                    int squareIndex = bitboard.LsbIndex;
+                    bitboard &= bitboard - 1;
+
+                    if (pieceIndex > 5)
+                        squareIndex ^= 56;
+
+                    switch((PieceType)(pieceIndex % 6))
+                    {
+                        case PieceType.Pawn:
+                            midgame -= EvaluationConfig.MidgamePawnTable[squareIndex];
+                            endgame -= EvaluationConfig.EndgamePawnTable[squareIndex];
+                            break;
+                        case PieceType.Knight:
+                            midgame -= EvaluationConfig.MidgameKnightTable[squareIndex];
+                            endgame -= EvaluationConfig.EndgameKnightTable[squareIndex];
+                            break;
+                        case PieceType.Bishop:
+                            midgame -= EvaluationConfig.MidgameBishopTable[squareIndex];
+                            endgame -= EvaluationConfig.EndgameBishopTable[squareIndex];
+                            break;
+                        case PieceType.Rook:
+                            midgame -= EvaluationConfig.MidgameRookTable[squareIndex];
+                            endgame -= EvaluationConfig.EndgameRookTable[squareIndex];
+                            break;
+                        case PieceType.Queen:
+                            midgame -= EvaluationConfig.MidgameQueenTable[squareIndex];
+                            endgame -= EvaluationConfig.EndgameQueenTable[squareIndex];
+                            break;
+                        case PieceType.King:
+                            midgame -= EvaluationConfig.MidgameKingTable[squareIndex];
+                            endgame -= EvaluationConfig.EndgameKingTable[squareIndex];
+                            break;
+                    }
+                }
+
                 if (pieceIndex == 5)
-                    result = -result;
+                {
+                    midgame = -midgame;
+                    endgame = -endgame;
+                }
             }
 
-            return result * (board.IsWhiteToMove ? 1 : -1);
+            phase = (phase * 256 + 12) / 24;
+            return (((midgame * (256 - phase)) + (endgame * phase)) / 256) * (board.IsWhiteToMove ? 1 : -1);
         }
 
         public void EvaluationTest()
