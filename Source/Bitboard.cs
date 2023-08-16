@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace Greg
+namespace Izumi
 {
     internal struct Bitboard
     {

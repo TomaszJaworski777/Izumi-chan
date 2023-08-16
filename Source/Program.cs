@@ -1,6 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 
-namespace Greg
+namespace Izumi
 {
     internal class Program
     {

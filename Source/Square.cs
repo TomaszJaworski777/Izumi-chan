@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Greg
+namespace Izumi
 {
     internal struct Square
     {

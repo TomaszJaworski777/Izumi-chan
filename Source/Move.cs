@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Greg
+namespace Izumi
 {
     internal struct Move
     {

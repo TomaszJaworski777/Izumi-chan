@@ -1,4 +1,4 @@
-﻿namespace Greg
+﻿namespace Izumi
 {
     internal enum PieceType : int
     {

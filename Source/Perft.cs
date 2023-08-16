@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Greg
+namespace Izumi
 {
     internal class Perft
     {

@@ -1,4 +1,4 @@
-﻿namespace Greg
+﻿namespace Izumi
 {
     internal static class FenSystem
     {

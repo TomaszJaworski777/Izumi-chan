@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace Greg
+namespace Izumi
 {
     internal class Search
     {

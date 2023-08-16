@@ -1,4 +1,4 @@
-﻿namespace Greg
+﻿namespace Izumi
 {
     internal class UciCommandManager
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Greg
+namespace Izumi
 {
     internal static class Utils
     {
