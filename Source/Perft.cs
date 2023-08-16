@@ -62,11 +62,11 @@ namespace Greg
             {
                 index++;
                 var split = test.Split( ' ' );
-                ulong nodes = ulong.Parse( split[ 17 ] );
+                ulong nodes = ulong.Parse( split[ 15 ] );
                 Console.WriteLine($"Test {index}/{tests.Length}, Expected value: {nodes}");
                 fullNodes += nodes;
                 string fen = split[0] + ' ' + split[1] + ' ' + split[2] + ' ' + split[3] + ' ' + split[4] + ' ' + split[5];
-                ulong result = PerftInternal(6, new Board(fen), false);
+                ulong result = PerftInternal(5, new Board(fen), false);
                 if (result != nodes)
                 {
                     Console.WriteLine();

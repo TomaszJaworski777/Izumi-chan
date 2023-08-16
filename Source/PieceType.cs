@@ -7,6 +7,7 @@
         Bishop,
         Rook,
         Queen,
-        King
+        King,
+        None
     }
 }

@@ -38,6 +38,9 @@ namespace Greg
         public void PerftTest() => _perft.PerftTest();
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public void EvaluationTest() => new Evaluation().EvaluationTest();
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public void Search( int depth ) => _search.Execute( _currentBoard, depth );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]

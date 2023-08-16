@@ -73,7 +73,7 @@ namespace Greg
                 if (Data[pieceIndex + (forWhite ? 0 : 6)].GetBitValue( squareIndex ) > 0)
                     return (PieceType)pieceIndex;
             }
-            return PieceType.Pawn;
+            return PieceType.None;
         }
 
         public void DrawBoard()

@@ -20,7 +20,8 @@
                 case "position": SetPositionCommand( commandSplit[1..] ); break;
                 case "perft": PerftCommand( commandSplit[1..] ); break;
                 case "splitperft": SplitPerftCommand ( commandSplit[1..] ); break;
-                case "perftest": PerftTestCommand (); break;
+                case "perftest": PerftTestCommand(); break;
+                case "evaltest": EvaluationTestCommand(); break;
                 case "go": SearchCommand( commandSplit[1..] ); break;
                 case "quit": QuitCommand(); break;
             }
@@ -104,6 +105,8 @@
         }
 
         private void PerftTestCommand() => _chessEngine.PerftTest();
+
+        private void EvaluationTestCommand() => _chessEngine.EvaluationTest();
 
         private void SearchCommand( ReadOnlySpan<string> parameters )
         {

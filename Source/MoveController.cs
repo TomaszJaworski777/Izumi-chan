@@ -166,14 +166,14 @@ namespace Greg
                                 {
                                     int lsbIndex = helperMask.LsbIndex;
                                     helperMask &= helperMask - 1;
-                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, false, false, false, false ) );
+                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.None, false, false, false, false ) );
                                 }
                             } else if (maskedBitCount == 1)
                             {
                                 int lsbIndex = helperMask.LsbIndex;
                                 int delta = Math.Abs(squareIndex - lsbIndex);
                                 if (delta == 8)
-                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, false, false, false, false ) );
+                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.None, false, false, false, false ) );
                             }
                         } else
                         {
@@ -183,13 +183,13 @@ namespace Greg
                                 int lsbIndex = helperMask.LsbIndex;
                                 if (((1UL << squareIndex) & (isWhiteToMove ? rank7 : rank1)) > 0)
                                 {
-                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Knight, false, false, false, true ) );
-                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Bishop, false, false, false, true ) );
-                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Rook, false, false, false, true ) );
-                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Queen, false, false, false, true ) );
+                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.Knight, false, false, false, true ) );
+                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.Bishop, false, false, false, true ) );
+                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.Rook, false, false, false, true ) );
+                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.Queen, false, false, false, true ) );
                                 } else
                                 {
-                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, false, false, false, false ) );
+                                    moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.None, false, false, false, false ) );
                                 }
                             }
                         }
@@ -209,14 +209,14 @@ namespace Greg
                                 moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, findAttackedPiece, PieceType.Queen, false, true, false, true ) );
                             } else
                             {
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, findAttackedPiece, PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, findAttackedPiece, PieceType.None, false, true, false, false ) );
                             }
                         }
                         helperMask = attack & (1UL << (int)board.EnPassantSquareIndex) & (rank2 | rank6);
                         if (helperMask > 0)
                         {
                             int lsbIndex = helperMask.LsbIndex;
-                            moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, false, true, true, false ) );
+                            moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.None, false, true, true, false ) );
                         }
 
                         continue;
@@ -232,14 +232,14 @@ namespace Greg
                             if (board.Data[16].GetBitValue( isWhiteToMove ? 0 : 2 ) > 0 && (board.Data[14] & mask) == 0 &&
                                 !board.IsSquareAttacked( isWhiteToMove ? 2 : 58, isWhiteToMove ) && !board.IsSquareAttacked( isWhiteToMove ? 3 : 59, isWhiteToMove ))
                             {
-                                moves.Add( new Move( squareIndex, isWhiteToMove ? 2 : 58, PieceType.King, PieceType.Pawn, PieceType.Pawn, true, false, false, false ) );
+                                moves.Add( new Move( squareIndex, isWhiteToMove ? 2 : 58, PieceType.King, PieceType.None, PieceType.None, true, false, false, false ) );
                             }
 
                             mask = isWhiteToMove ? _kingSideCastleMask : (_kingSideCastleMask ^ _kingSideCastleReverserMask);
                             if (board.Data[16].GetBitValue( isWhiteToMove ? 1 : 3 ) > 0 && (board.Data[14] & mask) == 0 &&
                                 !board.IsSquareAttacked( isWhiteToMove ? 5 : 61, isWhiteToMove ) && !board.IsSquareAttacked( isWhiteToMove ? 6 : 62, isWhiteToMove ))
                             {
-                                moves.Add( new Move( squareIndex, isWhiteToMove ? 6 : 62, PieceType.King, PieceType.Pawn, PieceType.Pawn, true, false, false, false ) );
+                                moves.Add( new Move( squareIndex, isWhiteToMove ? 6 : 62, PieceType.King, PieceType.None, PieceType.None, true, false, false, false ) );
                             }
                         }
 
@@ -250,9 +250,9 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.King, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.King, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                             else
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.King, PieceType.Pawn, PieceType.Pawn, false, false, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.King, PieceType.None, PieceType.None, false, false, false, false ) );
                         }
 
                         continue;
@@ -267,9 +267,9 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Knight, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Knight, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                             else
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Knight, PieceType.Pawn, PieceType.Pawn, false, false, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Knight, PieceType.None, PieceType.None, false, false, false, false ) );
                         }
 
                         continue;
@@ -284,9 +284,9 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Bishop, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Bishop, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                             else
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Bishop, PieceType.Pawn, PieceType.Pawn, false, false, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Bishop, PieceType.None, PieceType.None, false, false, false, false ) );
                         }
 
                         continue;
@@ -301,9 +301,9 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Rook, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Rook, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                             else
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Rook, PieceType.Pawn, PieceType.Pawn, false, false, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Rook, PieceType.None, PieceType.None, false, false, false, false ) );
                         }
 
                         continue;
@@ -318,9 +318,9 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Queen, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Queen, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                             else
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Queen, PieceType.Pawn, PieceType.Pawn, false, false, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Queen, PieceType.None, PieceType.None, false, false, false, false ) );
                         }
 
                         continue;
@@ -357,10 +357,10 @@ namespace Greg
                             int lsbIndex = helperMask.LsbIndex;
                             if (((1UL << squareIndex) & (isWhiteToMove ? rank7 : rank1)) > 0)
                             {
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Knight, false, false, false, true ) );
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Bishop, false, false, false, true ) );
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Rook, false, false, false, true ) );
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Queen, false, false, false, true ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.Knight, false, false, false, true ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.Bishop, false, false, false, true ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.Rook, false, false, false, true ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.None, PieceType.Queen, false, false, false, true ) );
                             }
                         }
 
@@ -379,14 +379,14 @@ namespace Greg
                                 moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, findAttackedPiece, PieceType.Queen, false, true, false, true ) );
                             } else
                             {
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, findAttackedPiece, PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, findAttackedPiece, PieceType.None, false, true, false, false ) );
                             }
                         }
                         helperMask = attack & (1UL << (int)board.EnPassantSquareIndex) & (rank2 | rank6);
                         if (helperMask > 0)
                         {
                             int lsbIndex = helperMask.LsbIndex;
-                            moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.Pawn, false, true, true, false ) );
+                            moves.Add( new Move( squareIndex, lsbIndex, PieceType.Pawn, PieceType.Pawn, PieceType.None, false, true, true, false ) );
                         }
 
                         continue;
@@ -402,14 +402,14 @@ namespace Greg
                             if (board.Data[16].GetBitValue( isWhiteToMove ? 0 : 2 ) > 0 && (board.Data[14] & mask) == 0 &&
                                 !board.IsSquareAttacked( isWhiteToMove ? 2 : 58, isWhiteToMove ) && !board.IsSquareAttacked( isWhiteToMove ? 3 : 59, isWhiteToMove ))
                             {
-                                moves.Add( new Move( squareIndex, isWhiteToMove ? 2 : 58, PieceType.King, PieceType.Pawn, PieceType.Pawn, true, false, false, false ) );
+                                moves.Add( new Move( squareIndex, isWhiteToMove ? 2 : 58, PieceType.King, PieceType.None, PieceType.None, true, false, false, false ) );
                             }
 
                             mask = isWhiteToMove ? _kingSideCastleMask : (_kingSideCastleMask ^ _kingSideCastleReverserMask);
                             if (board.Data[16].GetBitValue( isWhiteToMove ? 1 : 3 ) > 0 && (board.Data[14] & mask) == 0 &&
                                 !board.IsSquareAttacked( isWhiteToMove ? 5 : 61, isWhiteToMove ) && !board.IsSquareAttacked( isWhiteToMove ? 6 : 62, isWhiteToMove ))
                             {
-                                moves.Add( new Move( squareIndex, isWhiteToMove ? 6 : 62, PieceType.King, PieceType.Pawn, PieceType.Pawn, true, false, false, false ) );
+                                moves.Add( new Move( squareIndex, isWhiteToMove ? 6 : 62, PieceType.King, PieceType.None, PieceType.None, true, false, false, false ) );
                             }
                         }
 
@@ -420,7 +420,7 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.King, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.King, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                         }
 
                         continue;
@@ -435,7 +435,7 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Knight, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Knight, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                         }
 
                         continue;
@@ -450,7 +450,7 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Bishop, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Bishop, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                         }
 
                         continue;
@@ -465,7 +465,7 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Rook, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Rook, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                         }
 
                         continue;
@@ -480,7 +480,7 @@ namespace Greg
                             int lsbIndex = attack.LsbIndex;
                             attack &= attack - 1;
                             if (helperMask.GetBitValue( lsbIndex ) > 0)
-                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Queen, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.Pawn, false, true, false, false ) );
+                                moves.Add( new Move( squareIndex, lsbIndex, PieceType.Queen, board.FindPieceTypeOnSquare( lsbIndex, !isWhiteToMove ), PieceType.None, false, true, false, false ) );
                         }
 
                         continue;
