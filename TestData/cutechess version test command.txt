@@ -1,1 +1,1 @@
-cutechess-cli -engine conf=Izumi-chan_DEV -engine conf=Izumi-chan_0.4.9 -each tc=4+0.04 -games 2 -rounds 250 -openings file=D:\Projects\Personal\Izumi\Books\8moves_v3.pgn policy=round -concurrency 10
+cutechess-cli -engine conf=Izumi-chan_DEV -engine conf=Izumi-chan_0.5.0 -each tc=4+0.04 -games 2 -rounds 1000 -openings file=D:\Projects\Personal\Izumi\Books\8moves_v3.pgn policy=round -concurrency 5 -sprt elo0=0 elo1=10 alpha=0.05 beta=0.05 -pgnout D:\Projects\Personal\Izumi\TestData\output.txt

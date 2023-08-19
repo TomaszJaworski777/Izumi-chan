@@ -70,7 +70,7 @@ namespace Izumi
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
             get => _bitboard.GetBitValue( 22 ) > 0;
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 22, 22, value ? 1 : 0 );
+            private set => _bitboard.SetValueChunk( 22, 1, value ? 1 : 0 );
         }
 
         public bool IsEnPassant
@@ -78,7 +78,7 @@ namespace Izumi
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
             get => _bitboard.GetBitValue( 23 ) > 0;
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 23, 23, value ? 1 : 0 );
+            private set => _bitboard.SetValueChunk( 23, 1, value ? 1 : 0 );
         }
 
         public bool IsPromotion
@@ -86,7 +86,7 @@ namespace Izumi
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
             get => _bitboard.GetBitValue( 24 ) > 0;
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 24, 24, value ? 1 : 0 );
+            private set => _bitboard.SetValueChunk( 24, 1, value ? 1 : 0 );
         }
 
         public Move( int from, int to, PieceType movingPiece, PieceType targetPiece, PieceType promotionPiece, bool isCastle, bool isCapture, bool isEnPassant, bool isPromotion )
@@ -132,7 +132,7 @@ namespace Izumi
 
             IsCapture = fromSet && toSet;
             IsCastle = MovingPiece is PieceType.King && Math.Abs( fromSquare.File - toSquare.File ) is 2;
-            IsEnPassant = MovingPiece is PieceType.Pawn && To == (int)board.EnPassantSquareIndex;
+            IsEnPassant = MovingPiece is PieceType.Pawn && To == (int)board.EnPassantSquareIndex && fromSquare.Rank == (board.IsWhiteToMove ? 5 : 4);
             if (IsEnPassant)
             {
                 IsCapture = true;
@@ -140,7 +140,7 @@ namespace Izumi
             }
             IsPromotion = signatureSpan.Length is 5;
 
-            if (signatureSpan.Length is 5)
+            if (IsPromotion)
             {
                 switch (signatureSpan[4])
                 {
