@@ -5,6 +5,7 @@ namespace Izumi
     internal struct Board
     {
         public GameBoard Data = default;
+        public MoveHistory History;
 
         public bool IsWhiteToMove
         {
@@ -34,7 +35,6 @@ namespace Izumi
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
             set => Data[16].SetValueChunk( GameBoard.EnPassantIndex, GameBoard.EnPassantMask, value );
         }
-
         public ulong ZobristKey
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -44,10 +44,19 @@ namespace Izumi
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public Board( string fen ) => FenSystem.CreateBoard( ref this, fen );
+        public Board( string fen )
+        {
+            History = default;
+            FenSystem.CreateBoard( ref this, fen );
+            History.Add( ZobristKey );
+        }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public unsafe Board( Board other ) => Data = other.Data;
+        public unsafe Board( Board other )
+        {
+            Data = other.Data;
+            History = other.History;
+        }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public Bitboard GetBitboardForPiece( PieceType type, bool isWhite ) => Data[(int)type + (isWhite ? 0 : 6)];
@@ -59,7 +68,13 @@ namespace Izumi
         public void RemovePieceOnSquare( PieceType type, bool isWhite, int squareIndex ) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToZero( squareIndex );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool MakeMove( Move move ) => MoveController.MakeMove( ref this, move );
+        public bool MakeMove( Move move ) 
+        {
+            if (!MoveController.MakeMove( ref this, move ))
+                return false;
+            History.Add( ZobristKey );
+            return true;
+        }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public Span<Move> GeneratePseudoLegalMoves() => MoveController.GeneratePseudoLegalMoves( this );
@@ -138,6 +153,7 @@ namespace Izumi
             Console.WriteLine( $"White king in check: {IsKingInCheck(true)}" );
             Console.WriteLine( $"Black king in check: {IsKingInCheck(false)}" );
             Console.WriteLine( $"Hash: {ZobristKey}" );
+            Console.WriteLine();
 #endif
         }
     }
