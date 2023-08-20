@@ -26,7 +26,9 @@ namespace Izumi
                 if (command is not null)
                 {
                     if (command is "stop" or "quit")
+                    {
                         Search.CancelationToken = true;
+                    }
                     _commands.Enqueue( command );
                 }
             }

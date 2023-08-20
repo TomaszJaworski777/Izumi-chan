@@ -139,7 +139,10 @@ namespace Izumi
                 board.EnPassantSquareIndex = 0UL;
 
             if (isCapture || movingPiece == PieceType.Pawn)
+            {
                 board.HalfMoves = 0;
+                board.History.Reset();
+            }
             else
                 board.HalfMoves++;
             board.Moves++;

@@ -8,8 +8,8 @@ namespace Izumi
 
         public static bool CancelationToken = false;
 
-        private Move _bestRootMove;
         private Move _latestBestMove;
+        private Move _bestRootMove;
         private DateTime _startTime;
         private NodePerSecondTracker _nodePerSecondTracker = new(true);
         private ulong _nodes = 0;
@@ -39,7 +39,7 @@ namespace Izumi
                 _latestBestMove = _bestRootMove;
             }
 
-            Console.WriteLine( $"bestmove {_latestBestMove.ToString( board )}" );
+            Console.WriteLine( $"bestmove {_latestBestMove.ToString()}" );
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]

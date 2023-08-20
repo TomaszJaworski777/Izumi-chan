@@ -43,7 +43,7 @@ namespace Izumi
                 ulong result = PerftInternal( depth - 1, copy );
                 count += result;
                 if (splitPerft)
-                    Console.WriteLine( $"{moves[i].ToString( board )} - {result}" );
+                    Console.WriteLine( $"{moves[i].ToString()} - {result}" );
             }
 
             return count;

@@ -164,21 +164,24 @@ namespace Izumi
             }
         }
 
-        public string ToString(Board board)
+        public string ToString()
         {
             StringBuilder moveString = new ();
             moveString.Append( new Square( From ).ToString() );
             moveString.Append( new Square( To ).ToString() );
             if (!IsPromotion)
                 return moveString.ToString();
+
+            bool isWhiteToMove =  To > 55;
+
             moveString.Append( PromotionPiece switch
             {
-                PieceType.Pawn => board.IsWhiteToMove ? 'P' : 'p',
-                PieceType.Knight => board.IsWhiteToMove ? 'N' : 'n',
-                PieceType.Bishop => board.IsWhiteToMove ? 'B' : 'b',
-                PieceType.Rook => board.IsWhiteToMove ? 'R' : 'r',
-                PieceType.Queen => board.IsWhiteToMove ? 'Q' : 'q',
-                PieceType.King => board.IsWhiteToMove ? 'K' : 'k',
+                PieceType.Pawn => isWhiteToMove ? 'P' : 'p',
+                PieceType.Knight => isWhiteToMove ? 'N' : 'n',
+                PieceType.Bishop => isWhiteToMove ? 'B' : 'b',
+                PieceType.Rook => isWhiteToMove ? 'R' : 'r',
+                PieceType.Queen => isWhiteToMove ? 'Q' : 'q',
+                PieceType.King => isWhiteToMove ? 'K' : 'k',
                 _ => "",
             } );
             return moveString.ToString();

@@ -68,7 +68,7 @@ namespace Izumi
         public void RemovePieceOnSquare( PieceType type, bool isWhite, int squareIndex ) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToZero( squareIndex );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool MakeMove( Move move ) 
+        public bool MakeMove( Move move )
         {
             if (!MoveController.MakeMove( ref this, move ))
                 return false;
@@ -150,9 +150,10 @@ namespace Izumi
             Console.WriteLine( $"Half moves: {HalfMoves}, Moves: {Moves}" );
             var enPassantSquareText = EnPassantSquareIndex is 0 ? "-" : new Square((int)EnPassantSquareIndex).ToString();
             Console.WriteLine( $"En Passant: {enPassantSquareText}" );
-            Console.WriteLine( $"White king in check: {IsKingInCheck(true)}" );
-            Console.WriteLine( $"Black king in check: {IsKingInCheck(false)}" );
+            Console.WriteLine( $"White king in check: {IsKingInCheck( true )}" );
+            Console.WriteLine( $"Black king in check: {IsKingInCheck( false )}" );
             Console.WriteLine( $"Hash: {ZobristKey}" );
+            Console.WriteLine( $"Is repeated: {History.IsRepetition( ZobristKey )}" );
             Console.WriteLine();
 #endif
         }
