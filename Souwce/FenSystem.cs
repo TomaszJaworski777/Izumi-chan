@@ -89,6 +89,7 @@
                 board.Moves = moveCount;
 
             board.Data[14] = board.Data[12] | board.Data[13];
+            board.ZobristKey = ZobristHashing.GenerateKey( board );
         }
     }
 }

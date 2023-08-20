@@ -35,6 +35,14 @@ namespace Izumi
             set => Data[16].SetValueChunk( GameBoard.EnPassantIndex, GameBoard.EnPassantMask, value );
         }
 
+        public ulong ZobristKey
+        {
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            get => Data[15];
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            set => Data[15] = value;
+        }
+
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public Board( string fen ) => FenSystem.CreateBoard( ref this, fen );
 
@@ -129,6 +137,7 @@ namespace Izumi
             Console.WriteLine( $"En Passant: {enPassantSquareText}" );
             Console.WriteLine( $"White king in check: {IsKingInCheck(true)}" );
             Console.WriteLine( $"Black king in check: {IsKingInCheck(false)}" );
+            Console.WriteLine( $"Hash: {ZobristKey}" );
 #endif
         }
     }
@@ -151,7 +160,7 @@ namespace Izumi
          * 12 ==> white pieces table (all pieces on one bitboard)
          * 13 ==> black pieces table (all pieces on one bitboard)
          * 14 ==> all pieces table (white |= black)
-         * 15 ==> 
+         * 15 ==> zobrist key
          * 16 ==> misc data
          *      Reserved bits in misc from LSB (Total 27/64 reserved):
          *          4 bits - castle {bk}{bq}[wK][wQ] 3 2 1 0

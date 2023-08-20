@@ -51,11 +51,17 @@ namespace Izumi
 
             ref Bitboard movingPieceBitboard = ref board.Data[GetPieceIndex(movingPiece, isWhiteToMove)];
             movingPieceBitboard.SetBitToZero( fromIndex );
+            board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( movingPiece, isWhiteToMove ) + 1) * fromIndex];
 
             if (!isPromotion)
+            {
                 movingPieceBitboard.SetBitToOne( toIndex );
-            else
+                board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( movingPiece, isWhiteToMove ) + 1) * toIndex];
+            } else
+            {
                 board.Data[GetPieceIndex( promotionPiece, isWhiteToMove )].SetBitToOne( toIndex );
+                board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( promotionPiece, isWhiteToMove ) + 1) * toIndex];
+            }
 
             if (isCapture)
             {
@@ -63,10 +69,12 @@ namespace Izumi
                 {
                     board.Data[GetPieceIndex( targetPiece, !isWhiteToMove )].SetBitToZero( toIndex + (isWhiteToMove ? -8 : 8) );
                     board.Data[isWhiteToMove ? 13 : 12].SetBitToZero( toIndex + (isWhiteToMove ? -8 : 8) );
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( targetPiece, !isWhiteToMove ) + 1) * (toIndex + (isWhiteToMove ? -8 : 8))];
                 } else
                 {
                     board.Data[GetPieceIndex( targetPiece, !isWhiteToMove )].SetBitToZero( toIndex );
                     board.Data[isWhiteToMove ? 13 : 12].SetBitToZero( toIndex );
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( targetPiece, !isWhiteToMove ) + 1) * toIndex];
                 }
             }
 
@@ -79,12 +87,16 @@ namespace Izumi
                     board.Data[GetPieceIndex( PieceType.Rook, isWhiteToMove )].SetBitToOne( toIndex - 1 );
                     board.Data[currentSideAllPieceIndex].SetBitToZero( toIndex + 1 );
                     board.Data[currentSideAllPieceIndex].SetBitToOne( toIndex - 1 );
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) + 1) * (toIndex + 1)];
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) + 1) * (toIndex - 1)];
                 } else
                 {
                     board.Data[GetPieceIndex( PieceType.Rook, isWhiteToMove )].SetBitToZero( toIndex - 2 );
                     board.Data[GetPieceIndex( PieceType.Rook, isWhiteToMove )].SetBitToOne( toIndex + 1 );
                     board.Data[currentSideAllPieceIndex].SetBitToZero( toIndex - 2 );
                     board.Data[currentSideAllPieceIndex].SetBitToOne( toIndex + 1 );
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) + 1) * (toIndex - 2)];
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) + 1) * (toIndex + 1)];
                 }
             }
 
@@ -132,6 +144,7 @@ namespace Izumi
                 board.HalfMoves++;
             board.Moves++;
 
+            board.ZobristKey = ZobristHashing.ModifyKey( board, originalBoard );
             originalBoard = board;
             return true;
         }
@@ -226,7 +239,7 @@ namespace Izumi
 
                     if (pieceIndex == 5)
                     {
-                        if(!board.IsKingInCheck(isWhiteToMove))
+                        if (!board.IsKingInCheck( isWhiteToMove ))
                         {
                             ulong mask = isWhiteToMove ? _queenSideCastleMask : (_queenSideCastleMask ^ _queenSideCastleReverserMask);
                             if (board.Data[16].GetBitValue( isWhiteToMove ? 0 : 2 ) > 0 && (board.Data[14] & mask) == 0 &&
@@ -258,7 +271,7 @@ namespace Izumi
                         continue;
                     }
 
-                    if ( pieceIndex == 1)
+                    if (pieceIndex == 1)
                     {
                         attack = PieceAttacks.KnightAttackTable[squareIndex] & ~(isWhiteToMove ? board.Data[12] : board.Data[13]);
 
@@ -396,7 +409,7 @@ namespace Izumi
 
                     if (pieceIndex == 5)
                     {
-                        if(!board.IsKingInCheck( isWhiteToMove ))
+                        if (!board.IsKingInCheck( isWhiteToMove ))
                         {
                             ulong mask = isWhiteToMove ? _queenSideCastleMask : (_queenSideCastleMask ^ _queenSideCastleReverserMask);
                             if (board.Data[16].GetBitValue( isWhiteToMove ? 0 : 2 ) > 0 && (board.Data[14] & mask) == 0 &&
@@ -426,7 +439,7 @@ namespace Izumi
                         continue;
                     }
 
-                    if ( pieceIndex == 1)
+                    if (pieceIndex == 1)
                     {
                         attack = PieceAttacks.KnightAttackTable[squareIndex] & ~(isWhiteToMove ? board.Data[12] : board.Data[13]);
 
