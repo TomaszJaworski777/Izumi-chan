@@ -1,9 +1,11 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Izumi
 {
-    internal struct Move
+    internal struct Move : IEquatable<Move>
     {
         private BitboardInt _bitboard;
         /* Reserved bits from LSB (Total 25/32 reserved):
@@ -88,6 +90,8 @@ namespace Izumi
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
             private set => _bitboard.SetValueChunk( 24, 1, value ? 1 : 0 );
         }
+
+        public bool IsNull => (From | To) == 0;
 
         public Move( int from, int to, PieceType movingPiece, PieceType targetPiece, PieceType promotionPiece, bool isCastle, bool isCapture, bool isEnPassant, bool isPromotion )
         {
@@ -186,5 +190,7 @@ namespace Izumi
             } );
             return moveString.ToString();
         }
+
+        public bool Equals( Move other ) => _bitboard.Value == other._bitboard.Value;
     }
 }

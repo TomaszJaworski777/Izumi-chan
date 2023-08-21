@@ -17,6 +17,7 @@
             {
                 case "uci": UciInitCommand(); break;
                 case "isready": IsReadyCommand(); break;
+                case "ucinewgame": UciNewGameCommand(); break;
                 case "position": SetPositionCommand( commandSplit[1..] ); break;
                 case "perft": PerftCommand( commandSplit[1..] ); break;
                 case "splitperft": SplitPerftCommand ( commandSplit[1..] ); break;
@@ -37,6 +38,11 @@
         private void IsReadyCommand()
         {
             Console.WriteLine( "readyok" );
+        }
+
+        private void UciNewGameCommand()
+        {
+            TranspositionTable.Clear();
         }
 
         private void SetPositionCommand( ReadOnlySpan<string> parameters )

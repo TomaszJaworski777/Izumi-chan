@@ -9,7 +9,18 @@ namespace Izumi
         private DateTime _latestTimeStamp;
         private bool logger;
 
-        public ulong LatestResult => _latestNps;
+        public ulong LatestResult
+        {
+            get
+            {
+                if(_latestNps == 0)
+                {
+                    double timePassed = (DateTime.Now - _latestTimeStamp).TotalSeconds;
+                    return (ulong)(_currentNps / timePassed);
+                }
+                return _latestNps;
+            }
+        }
 
         public NodePerSecondTracker(bool logger)
         {
