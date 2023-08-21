@@ -5,10 +5,12 @@ namespace Izumi
     internal class Perft
     {
         private NodePerSecondTracker _nodePerSecondTracker = new(false);
+        private Dictionary<(ulong, int), ulong> _perftTable = new();
 
         public void Execute( int depth, Board board, bool splitPerft, bool logger = false )
         {
             _nodePerSecondTracker = new( logger );
+            _perftTable.Clear();
 
             if (splitPerft)
             {
@@ -24,27 +26,38 @@ namespace Izumi
 
         private ulong PerftInternal( int depth, Board board, bool splitPerft = false )
         {
+            _nodePerSecondTracker.Update();
+
             if (depth == 0)
             {
                 _nodePerSecondTracker.AddNode();
                 return 1UL;
             }
 
-            _nodePerSecondTracker.Update();
+            if (_perftTable.TryGetValue( (board.ZobristKey, depth), out ulong storedCount ))
+            {
+                for (ulong i = 0; i < storedCount; i++)
+                    _nodePerSecondTracker.AddNode();
+
+                return storedCount;
+            }
 
             ulong count = 0;
             var moves = MoveController.GeneratePseudoLegalMoves( board );
 
+            Board copy;
             for (int i = 0; i < moves.Length; i++)
             {
-                Board copy = board;
+                copy = board;
                 if (!copy.MakeMove( moves[i] ))
                     continue;
                 ulong result = PerftInternal( depth - 1, copy );
                 count += result;
                 if (splitPerft)
-                    Console.WriteLine( $"{moves[i].ToString()} - {result}" );
+                    Console.WriteLine( $"{moves[i]} - {result}" );
             }
+
+            _perftTable.Add( (board.ZobristKey, depth), count );
 
             return count;
         }
@@ -52,6 +65,7 @@ namespace Izumi
         public void PerftTest()
         {
             _nodePerSecondTracker = new( false );
+            _perftTable.Clear();
             ulong fullNodes = 0;
 
             Console.WriteLine( "Stawting (・`w´・) p-p-pewft t-t-test..." );
