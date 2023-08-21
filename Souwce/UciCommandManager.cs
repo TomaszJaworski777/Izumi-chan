@@ -138,12 +138,34 @@
                 }
             }
 
-            if (infinite)
+            Thread searchThread = new Thread(Search);
+            searchThread.Start( new SearchConfig
+            {
+                Infinite = infinite,
+                Depth = depth,
+                WhiteTime = wTime,
+                BlackTime = bTime
+            } );
+        }
+
+        private void Search(object? state)
+        {
+            SearchConfig config = (SearchConfig)state!;
+
+            if (config.Infinite)
                 _chessEngine.Search();
-            else if (wTime > 0 || bTime > 0)
-                _chessEngine.Search( wTime, bTime );
-            else if (depth > 0)
-                _chessEngine.Search( depth );
+            else if (config.WhiteTime > 0 || config.BlackTime > 0)
+                _chessEngine.Search( config.WhiteTime, config.BlackTime );
+            else if (config.Depth > 0)
+                _chessEngine.Search( config.Depth );
+        }
+
+        private struct SearchConfig
+        {
+            public bool Infinite;
+            public int WhiteTime; 
+            public int BlackTime;
+            public int Depth;
         }
 
         private void QuitCommand()
