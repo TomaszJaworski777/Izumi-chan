@@ -132,7 +132,7 @@ namespace Izumi
 
             IsCapture = fromSet && toSet;
             IsCastle = MovingPiece is PieceType.King && Math.Abs( fromSquare.File - toSquare.File ) is 2;
-            IsEnPassant = MovingPiece is PieceType.Pawn && To == (int)board.EnPassantSquareIndex && fromSquare.Rank == (board.IsWhiteToMove ? 5 : 4);
+            IsEnPassant = MovingPiece is PieceType.Pawn && To == (int)board.EnPassantSquareIndex && fromSquare.Rank == (board.IsWhiteToMove ? 4 : 3);
             if (IsEnPassant)
             {
                 IsCapture = true;
@@ -164,7 +164,7 @@ namespace Izumi
             }
         }
 
-        public string ToString()
+        public override string ToString()
         {
             StringBuilder moveString = new ();
             moveString.Append( new Square( From ).ToString() );

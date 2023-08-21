@@ -39,7 +39,7 @@ namespace Izumi
                 _latestBestMove = _bestRootMove;
             }
 
-            Console.WriteLine( $"bestmove {_latestBestMove.ToString()}" );
+            Console.WriteLine( $"bestmove {_latestBestMove}" );
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -69,6 +69,9 @@ namespace Izumi
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]
         private int NegaMax( Board board, int depth, int alpha, int beta, int movesPlayed )
         {
+            if (movesPlayed > 0 && (board.IsRepetition() || board.HalfMoves >= 100))
+                return 0;
+
             if (depth <= 0)
             {
                 return QuiesenceSearch( board, alpha, beta );
@@ -126,6 +129,9 @@ namespace Izumi
                 return beta;
             if (alpha < eval)
                 alpha = eval;
+
+            if (board.HalfMoves >= 100)
+                return 0;
 
             if (BreakCondition( _timeRemaning ))
                 return Infinity;

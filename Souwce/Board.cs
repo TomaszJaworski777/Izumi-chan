@@ -89,6 +89,9 @@ namespace Izumi
         public bool IsSquareAttacked( int squareIndex, bool isSquareWhite ) => PieceAttacks.IsSquareAttacked( squareIndex, isSquareWhite, this );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public bool IsRepetition() => History.IsRepetition( ZobristKey );
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public PieceType FindPieceTypeOnSquare( int squareIndex, bool forWhite )
         {
             for (int pieceIndex = 0; pieceIndex < 6; pieceIndex++)
@@ -155,6 +158,9 @@ namespace Izumi
             Console.WriteLine( $"Hash: {ZobristKey}" );
             Console.WriteLine( $"Is repeated: {History.IsRepetition( ZobristKey )}" );
             Console.WriteLine();
+
+            Data[12].Draw();
+            Data[13].Draw();
 #endif
         }
     }

@@ -15,6 +15,6 @@
 
         private const int _majorPatchNumber = 0;
         private const int _featureCountSiceLastMajorPatch = 5;
-        private const int _commitsSinceLastFeature = 4;
+        private const int _commitsSinceLastFeature = 5;
     }
 }
