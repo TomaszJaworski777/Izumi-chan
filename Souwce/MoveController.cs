@@ -51,16 +51,16 @@ namespace Izumi
 
             ref Bitboard movingPieceBitboard = ref board.Data[GetPieceIndex(movingPiece, isWhiteToMove)];
             movingPieceBitboard.SetBitToZero( fromIndex );
-            board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( movingPiece, isWhiteToMove ) + 1) * fromIndex];
+            board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( movingPiece, isWhiteToMove ) * 64) + fromIndex];
 
             if (!isPromotion)
             {
                 movingPieceBitboard.SetBitToOne( toIndex );
-                board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( movingPiece, isWhiteToMove ) + 1) * toIndex];
+                board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( movingPiece, isWhiteToMove ) * 64) + toIndex];
             } else
             {
                 board.Data[GetPieceIndex( promotionPiece, isWhiteToMove )].SetBitToOne( toIndex );
-                board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( promotionPiece, isWhiteToMove ) + 1) * toIndex];
+                board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( promotionPiece, isWhiteToMove ) * 64) + toIndex];
             }
 
             if (isCapture)
@@ -69,12 +69,12 @@ namespace Izumi
                 {
                     board.Data[GetPieceIndex( targetPiece, !isWhiteToMove )].SetBitToZero( toIndex + (isWhiteToMove ? -8 : 8) );
                     board.Data[isWhiteToMove ? 13 : 12].SetBitToZero( toIndex + (isWhiteToMove ? -8 : 8) );
-                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( targetPiece, !isWhiteToMove ) + 1) * (toIndex + (isWhiteToMove ? -8 : 8))];
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( targetPiece, !isWhiteToMove ) * 64) + (toIndex + (isWhiteToMove ? -8 : 8))];
                 } else
                 {
                     board.Data[GetPieceIndex( targetPiece, !isWhiteToMove )].SetBitToZero( toIndex );
                     board.Data[isWhiteToMove ? 13 : 12].SetBitToZero( toIndex );
-                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( targetPiece, !isWhiteToMove ) + 1) * toIndex];
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( targetPiece, !isWhiteToMove ) * 64) + toIndex];
                 }
             }
 
@@ -87,16 +87,16 @@ namespace Izumi
                     board.Data[GetPieceIndex( PieceType.Rook, isWhiteToMove )].SetBitToOne( toIndex - 1 );
                     board.Data[currentSideAllPieceIndex].SetBitToZero( toIndex + 1 );
                     board.Data[currentSideAllPieceIndex].SetBitToOne( toIndex - 1 );
-                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) + 1) * (toIndex + 1)];
-                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) + 1) * (toIndex - 1)];
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) * 64) + (toIndex + 1)];
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) * 64) + (toIndex - 1)];
                 } else
                 {
                     board.Data[GetPieceIndex( PieceType.Rook, isWhiteToMove )].SetBitToZero( toIndex - 2 );
                     board.Data[GetPieceIndex( PieceType.Rook, isWhiteToMove )].SetBitToOne( toIndex + 1 );
                     board.Data[currentSideAllPieceIndex].SetBitToZero( toIndex - 2 );
                     board.Data[currentSideAllPieceIndex].SetBitToOne( toIndex + 1 );
-                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) + 1) * (toIndex - 2)];
-                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) + 1) * (toIndex + 1)];
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) * 64) + (toIndex - 2)];
+                    board.ZobristKey ^= ZobristHashing.Seeds[(GetPieceIndex( PieceType.Rook, isWhiteToMove ) * 64) + (toIndex + 1)];
                 }
             }
 

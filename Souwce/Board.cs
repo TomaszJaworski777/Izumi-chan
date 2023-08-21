@@ -158,9 +158,6 @@ namespace Izumi
             Console.WriteLine( $"Hash: {ZobristKey}" );
             Console.WriteLine( $"Is repeated: {History.IsRepetition( ZobristKey )}" );
             Console.WriteLine();
-
-            Data[12].Draw();
-            Data[13].Draw();
 #endif
         }
     }

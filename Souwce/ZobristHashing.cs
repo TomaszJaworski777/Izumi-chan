@@ -787,6 +787,17 @@
             4899758872716476522,
         };
 
+/*        static ZobristHashing()
+        {
+            Console.WriteLine( "Generate new seeds" );
+            for (int i = 0; i < Seeds.Length; i++)
+            {
+                Seeds[i] = Utils.Get64Random();
+            }
+
+            Console.WriteLine( "done " + Seeds[0] );
+        }*/
+
         public static ulong GenerateKey( Board board )
         {
             ulong result = 0;
@@ -799,7 +810,7 @@
                     int squareIndex = bitboard.LsbIndex;
                     bitboard &= bitboard - 1;
 
-                    result ^= Seeds[(pieceIndex + 1) * squareIndex];
+                    result ^= Seeds[(pieceIndex * 64) + squareIndex];
                 }
             }
 
