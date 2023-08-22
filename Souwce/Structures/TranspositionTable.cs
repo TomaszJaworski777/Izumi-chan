@@ -1,4 +1,6 @@
-﻿namespace Izumi.Structures
+﻿using Izumi.Structures.Data;
+
+namespace Izumi.Structures
 {
     internal static class TranspositionTable
     {

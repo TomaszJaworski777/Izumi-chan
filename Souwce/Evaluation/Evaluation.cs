@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Izumi.Structures;
+using Izumi.Structures.Data;
 
 namespace Izumi.EvaluationScripts
 {

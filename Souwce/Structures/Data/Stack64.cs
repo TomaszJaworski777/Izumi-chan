@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Izumi.Structures
+namespace Izumi.Structures.Data
 {
     internal struct Stack64<T>
     {

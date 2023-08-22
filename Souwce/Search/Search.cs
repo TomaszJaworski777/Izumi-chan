@@ -2,6 +2,7 @@
 using System.Text;
 using Izumi.Structures;
 using Izumi.EvaluationScripts;
+using Izumi.Structures.Data;
 
 namespace Izumi.SearchScripts
 {

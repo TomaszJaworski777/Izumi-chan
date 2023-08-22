@@ -1,4 +1,4 @@
-﻿namespace Izumi.Structures
+﻿namespace Izumi.Structures.Data
 {
     internal enum PieceType : int
     {

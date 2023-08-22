@@ -1,5 +1,5 @@
 ﻿using Izumi.Misc;
-using Izumi.Structures;
+using Izumi.Structures.Data;
 
 namespace Izumi.Helpers
 {

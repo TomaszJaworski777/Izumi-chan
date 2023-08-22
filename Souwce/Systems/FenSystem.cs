@@ -1,5 +1,6 @@
 ﻿using Izumi.Helpers;
 using Izumi.Structures;
+using Izumi.Structures.Data;
 
 namespace Izumi.Systems
 {

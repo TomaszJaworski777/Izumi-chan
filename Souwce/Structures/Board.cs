@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Izumi.Helpers;
+using Izumi.Structures.Data;
 using Izumi.Systems;
 
 namespace Izumi.Structures
