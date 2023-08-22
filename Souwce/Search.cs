@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Izumi
 {
@@ -36,12 +37,30 @@ namespace Izumi
                 int bestScore = NegaMax(board, currentDepth, -Infinity, Infinity, 0);
                 if (BreakCondition( _timeRemaning ))
                     break;
-                Console.WriteLine( $"info depth {currentDepth} score cp {bestScore} nodes {_nodes} nps {_nodePerSecondTracker.LatestResult} hashfull {TranspositionTable.HashFull}" );
+                Console.WriteLine( $"info depth {currentDepth} score cp {bestScore} nodes {_nodes} nps {_nodePerSecondTracker.LatestResult} hashfull {TranspositionTable.HashFull} pv {PrintPV(board, currentDepth)}" );
 
                 _latestBestMove = _bestRootMove;
             }
 
             Console.WriteLine( $"bestmove {_latestBestMove}" );
+        }
+
+        private string PrintPV(Board board, int depth)
+        {
+            StringBuilder pvLine = new();
+
+            for (int i = 0; i < depth; i++)
+            {
+                ulong key = board.ZobristKey;
+                TranspositionTableEntry? entry = TranspositionTable.Probe(key);
+                if (entry is null)
+                    break;
+                Move move = entry.Value.bestMove;
+                pvLine.Append( $"{move} " );
+                board.MakeMove( move );
+            }
+
+            return pvLine.ToString();
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -114,7 +133,7 @@ namespace Izumi
                 if (!boardCopy.MakeMove( move ))
                     continue;
 
-                if (_bestRootMove.IsNull)
+                if(_bestRootMove.IsNull)
                     _bestRootMove = move;
 
                 legalMoveCount++;

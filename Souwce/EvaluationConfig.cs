@@ -2,9 +2,6 @@
 {
     internal static class EvaluationConfig
     {
-        public static int MidgameMobilityMultiplier = 225;
-        public static int EndgameMobilityMultiplier = 275;
-
         public static int[] PiecePhase = { 0, 1, 1, 2, 4, 0 };
 
         public static int[] MidgamePieceValues = { 100, 300, 310, 500, 910, 10000 };

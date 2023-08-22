@@ -7,9 +7,27 @@ namespace Izumi
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]
         public int EvaluatePosition( Board board )
         {
+            (int midgame, int endgame, int phase) = PieceEvaluation( board );
+            PieceMobility( board, ref midgame, ref endgame );
+            PassedPawnBonus( board, ref midgame, ref endgame );
+            DoublePawnsPunishment( board, ref midgame, ref endgame );
+            IsolatedPawnsPunishment( board, ref midgame, ref endgame );
+            KingEndgameBonus( board, ref endgame );
+            return (((midgame * (256 - phase)) + (endgame * phase)) / 256) * (board.IsWhiteToMove ? 1 : -1);
+        }
+
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+        private (int, int, int) PieceEvaluation( Board board )
+        {
+            int totalPhase = 16 * EvaluationConfig.PiecePhase[0] +
+                             4 * EvaluationConfig.PiecePhase[1] +
+                             4 * EvaluationConfig.PiecePhase[2] +
+                             4 * EvaluationConfig.PiecePhase[3] +
+                             2 * EvaluationConfig.PiecePhase[4] +
+                             2 * EvaluationConfig.PiecePhase[5];
             int midgame = 0;
             int endgame = 0;
-            int phase = 24;
+            int phase = totalPhase;
 
             for (int pieceIndex = 0; pieceIndex < 12; pieceIndex++)
             {
@@ -19,7 +37,7 @@ namespace Izumi
                 endgame -= pieceCount * EvaluationConfig.EndgamePieceValues[pieceIndex % 6];
                 phase -= pieceCount * EvaluationConfig.PiecePhase[pieceIndex % 6];
 
-                while(bitboard > 0)
+                while (bitboard > 0)
                 {
                     int squareIndex = bitboard.LsbIndex;
                     bitboard &= bitboard - 1;
@@ -27,7 +45,7 @@ namespace Izumi
                     if (pieceIndex > 5)
                         squareIndex ^= 56;
 
-                    switch((PieceType)(pieceIndex % 6))
+                    switch ((PieceType)(pieceIndex % 6))
                     {
                         case PieceType.Pawn:
                             midgame -= EvaluationConfig.MidgamePawnTable[squareIndex];
@@ -63,8 +81,39 @@ namespace Izumi
                 }
             }
 
-            phase = (phase * 256 + 12) / 24;
-            return (((midgame * (256 - phase)) + (endgame * phase)) / 256) * (board.IsWhiteToMove ? 1 : -1);
+            phase = (phase * 256 + (totalPhase / 2)) / totalPhase;
+
+            return (midgame, endgame, phase);
+        }
+
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+        private void PieceMobility( Board board, ref int midgame, ref int endgame )
+        {
+
+        }
+
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+        private void PassedPawnBonus( Board board, ref int midgame, ref int endgame )
+        {
+
+        }
+
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+        private void DoublePawnsPunishment( Board board, ref int midgame, ref int endgame)
+        {
+
+        }
+
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+        private void IsolatedPawnsPunishment( Board board, ref int midgame, ref int endgame )
+        {
+
+        }
+
+        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+        private void KingEndgameBonus( Board board, ref int endgame )
+        {
+
         }
 
         public void EvaluationTest()
