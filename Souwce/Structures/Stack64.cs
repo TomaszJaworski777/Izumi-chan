@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Izumi
+namespace Izumi.Structures
 {
     internal struct Stack64<T>
     {
@@ -21,7 +21,7 @@ namespace Izumi
 
         public T? Pop()
         {
-            if (Length <= 0) 
+            if (Length <= 0)
                 return default;
             Length--;
             return _data[Length];
@@ -38,7 +38,7 @@ namespace Izumi
         }
     }
 
-    [InlineArray( 64 )]
+    [InlineArray(64)]
     internal struct Array64<T>
     {
         private T _value;

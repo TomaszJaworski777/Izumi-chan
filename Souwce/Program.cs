@@ -1,4 +1,8 @@
-﻿namespace Izumi
+﻿using Izumi.Helpers;
+using Izumi.SearchScripts;
+using Izumi.UCI;
+
+namespace Izumi.Core
 {
     internal class Program
     {

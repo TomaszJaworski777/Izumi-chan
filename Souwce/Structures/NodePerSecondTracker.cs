@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Izumi
+namespace Izumi.Structures
 {
     internal struct NodePerSecondTracker
     {
@@ -13,7 +13,7 @@ namespace Izumi
         {
             get
             {
-                if(_latestNps == 0)
+                if (_latestNps == 0)
                 {
                     double timePassed = (DateTime.Now - _latestTimeStamp).TotalSeconds;
                     return (ulong)(_currentNps / timePassed);
@@ -30,7 +30,7 @@ namespace Izumi
             _latestTimeStamp = DateTime.Now;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             _currentNps = 0;
@@ -38,7 +38,7 @@ namespace Izumi
             _latestTimeStamp = DateTime.Now;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddNode() => _currentNps++;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -50,7 +50,7 @@ namespace Izumi
                 _latestNps = _currentNps;
                 _currentNps = 0;
                 if (logger)
-                    Console.WriteLine( $"info nps {_latestNps}" );
+                    Console.WriteLine($"info nps {_latestNps}");
             }
         }
     }

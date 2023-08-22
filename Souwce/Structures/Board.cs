@@ -1,6 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
+using Izumi.Helpers;
+using Izumi.Systems;
 
-namespace Izumi
+namespace Izumi.Structures
 {
     internal struct Board
     {
@@ -9,94 +11,94 @@ namespace Izumi
 
         public bool IsWhiteToMove
         {
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => Data[16].GetBitValue( GameBoard.SideIndex ) > 0;
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            set => Data[16].SetValueChunk( GameBoard.SideIndex, 1, value ? 1UL : 0UL );
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Data[16].GetBitValue(GameBoard.SideIndex) > 0;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set => Data[16].SetValueChunk(GameBoard.SideIndex, 1, value ? 1UL : 0UL);
         }
         public ulong HalfMoves
         {
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => Data[16].GetValueChunk( GameBoard.HalfMovesIndex, GameBoard.HalfMovesMask );
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            set => Data[16].SetValueChunk( GameBoard.HalfMovesIndex, GameBoard.HalfMovesMask, value );
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Data[16].GetValueChunk(GameBoard.HalfMovesIndex, GameBoard.HalfMovesMask);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set => Data[16].SetValueChunk(GameBoard.HalfMovesIndex, GameBoard.HalfMovesMask, value);
         }
         public ulong Moves
         {
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => Data[16].GetValueChunk( GameBoard.MovesIndex, GameBoard.MovesMask );
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            set => Data[16].SetValueChunk( GameBoard.MovesIndex, GameBoard.MovesMask, value );
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Data[16].GetValueChunk(GameBoard.MovesIndex, GameBoard.MovesMask);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set => Data[16].SetValueChunk(GameBoard.MovesIndex, GameBoard.MovesMask, value);
         }
         public ulong EnPassantSquareIndex
         {
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => Data[16].GetValueChunk( GameBoard.EnPassantIndex, GameBoard.EnPassantMask );
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            set => Data[16].SetValueChunk( GameBoard.EnPassantIndex, GameBoard.EnPassantMask, value );
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Data[16].GetValueChunk(GameBoard.EnPassantIndex, GameBoard.EnPassantMask);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set => Data[16].SetValueChunk(GameBoard.EnPassantIndex, GameBoard.EnPassantMask, value);
         }
         public ulong ZobristKey
         {
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => Data[15];
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set => Data[15] = value;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public Board( string fen )
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Board(string fen)
         {
             History = default;
-            FenSystem.CreateBoard( ref this, fen );
-            History.Add( ZobristKey );
+            FenSystem.CreateBoard(ref this, fen);
+            History.Add(ZobristKey);
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public unsafe Board( Board other )
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe Board(Board other)
         {
             Data = other.Data;
             History = other.History;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public Bitboard GetBitboardForPiece( PieceType type, bool isWhite ) => Data[(int)type + (isWhite ? 0 : 6)];
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Bitboard GetBitboardForPiece(PieceType type, bool isWhite) => Data[(int)type + (isWhite ? 0 : 6)];
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void SetPieceOnSquare( PieceType type, bool isWhite, int squareIndex ) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToOne( squareIndex );
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetPieceOnSquare(PieceType type, bool isWhite, int squareIndex) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToOne(squareIndex);
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void RemovePieceOnSquare( PieceType type, bool isWhite, int squareIndex ) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToZero( squareIndex );
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemovePieceOnSquare(PieceType type, bool isWhite, int squareIndex) => Data[(int)type + (isWhite ? 0 : 6)].SetBitToZero(squareIndex);
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool MakeMove( Move move )
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool MakeMove(Move move)
         {
-            if (!MoveController.MakeMove( ref this, move ))
+            if (!MoveController.MakeMove(ref this, move))
                 return false;
-            History.Add( ZobristKey );
+            History.Add(ZobristKey);
             return true;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public Span<Move> GeneratePseudoLegalMoves() => MoveController.GeneratePseudoLegalMoves( this );
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Span<Move> GeneratePseudoLegalMoves() => MoveController.GeneratePseudoLegalMoves(this);
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public Span<Move> GeneratePseudoLegalPriorityMoves() => MoveController.GeneratePseudoLegalPriorityMoves( this );
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Span<Move> GeneratePseudoLegalPriorityMoves() => MoveController.GeneratePseudoLegalPriorityMoves(this);
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool IsKingInCheck( bool isWhite ) => IsSquareAttacked( GetBitboardForPiece( PieceType.King, isWhite ).LsbIndex, isWhite );
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsKingInCheck(bool isWhite) => IsSquareAttacked(GetBitboardForPiece(PieceType.King, isWhite).LsbIndex, isWhite);
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool IsSquareAttacked( int squareIndex, bool isSquareWhite ) => PieceAttacks.IsSquareAttacked( squareIndex, isSquareWhite, this );
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsSquareAttacked(int squareIndex, bool isSquareWhite) => PieceAttacks.IsSquareAttacked(squareIndex, isSquareWhite, this);
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool IsRepetition() => History.IsRepetition( ZobristKey );
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsRepetition() => History.IsRepetition(ZobristKey);
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public PieceType FindPieceTypeOnSquare( int squareIndex, bool forWhite )
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public PieceType FindPieceTypeOnSquare(int squareIndex, bool forWhite)
         {
             for (int pieceIndex = 0; pieceIndex < 6; pieceIndex++)
             {
-                if (Data[pieceIndex + (forWhite ? 0 : 6)].GetBitValue( squareIndex ) > 0)
+                if (Data[pieceIndex + (forWhite ? 0 : 6)].GetBitValue(squareIndex) > 0)
                     return (PieceType)pieceIndex;
             }
             return PieceType.None;
@@ -162,7 +164,7 @@ namespace Izumi
         }
     }
 
-    [InlineArray( 17 )]
+    [InlineArray(17)]
     internal struct GameBoard
     {
         public const ulong HalfMovesMask = 127;

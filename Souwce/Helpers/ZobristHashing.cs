@@ -1,4 +1,6 @@
-﻿namespace Izumi
+﻿using Izumi.Structures;
+
+namespace Izumi.Helpers
 {
     internal static class ZobristHashing
     {
@@ -787,30 +789,30 @@
             4899758872716476522,
         };
 
-/*        static ZobristHashing()
-        {
-            Console.WriteLine( "Generate new seeds" );
-            for (int i = 0; i < Seeds.Length; i++)
-            {
-                Seeds[i] = Utils.Get64Random();
-            }
+        /*        static ZobristHashing()
+                {
+                    Console.WriteLine( "Generate new seeds" );
+                    for (int i = 0; i < Seeds.Length; i++)
+                    {
+                        Seeds[i] = Utils.Get64Random();
+                    }
 
-            Console.WriteLine( "done " + Seeds[0] );
-        }*/
+                    Console.WriteLine( "done " + Seeds[0] );
+                }*/
 
-        public static ulong GenerateKey( Board board )
+        public static ulong GenerateKey(Board board)
         {
             ulong result = 0;
 
             for (int pieceIndex = 0; pieceIndex < 12; pieceIndex++)
             {
                 Bitboard bitboard = board.Data[pieceIndex];
-                while(bitboard > 0)
+                while (bitboard > 0)
                 {
                     int squareIndex = bitboard.LsbIndex;
                     bitboard &= bitboard - 1;
 
-                    result ^= Seeds[(pieceIndex * 64) + squareIndex];
+                    result ^= Seeds[pieceIndex * 64 + squareIndex];
                 }
             }
 
@@ -819,32 +821,32 @@
 
             for (int castleIndex = 0; castleIndex < 4; castleIndex++)
             {
-                if (board.Data[16].GetBitValue( castleIndex ) > 0)
+                if (board.Data[16].GetBitValue(castleIndex) > 0)
                     result ^= Seeds[269 + castleIndex];
             }
 
-            if(board.EnPassantSquareIndex > 0)
-                result ^= Seeds[273 + (board.EnPassantSquareIndex % 8)];
+            if (board.EnPassantSquareIndex > 0)
+                result ^= Seeds[273 + board.EnPassantSquareIndex % 8];
 
             return result;
         }
 
-        public static ulong ModifyKey( Board currentBoard, Board previousBoard )
+        public static ulong ModifyKey(Board currentBoard, Board previousBoard)
         {
-            ulong result = currentBoard.ZobristKey;  
+            ulong result = currentBoard.ZobristKey;
 
-            if(currentBoard.IsWhiteToMove != previousBoard.IsWhiteToMove)
+            if (currentBoard.IsWhiteToMove != previousBoard.IsWhiteToMove)
                 result ^= Seeds[268];
 
             if (previousBoard.EnPassantSquareIndex > 0)
-                result ^= Seeds[273 + (previousBoard.EnPassantSquareIndex % 8)];
+                result ^= Seeds[273 + previousBoard.EnPassantSquareIndex % 8];
 
             if (currentBoard.EnPassantSquareIndex > 0)
-                result ^= Seeds[273 + (currentBoard.EnPassantSquareIndex % 8)];
+                result ^= Seeds[273 + currentBoard.EnPassantSquareIndex % 8];
 
             for (int castleIndex = 0; castleIndex < 4; castleIndex++)
             {
-                if (previousBoard.Data[16].GetBitValue( castleIndex ) != currentBoard.Data[16].GetBitValue( castleIndex ))
+                if (previousBoard.Data[16].GetBitValue(castleIndex) != currentBoard.Data[16].GetBitValue(castleIndex))
                     result ^= Seeds[269 + castleIndex];
             }
 

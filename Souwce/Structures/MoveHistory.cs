@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Izumi
+namespace Izumi.Structures
 {
     internal struct MoveHistory
     {
@@ -13,22 +13,22 @@ namespace Izumi
             _count = 0;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             _list = default;
             _count = 0;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void Add( ulong key )
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Add(ulong key)
         {
             _list[_count] = key;
             _count++;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool IsRepetition( ulong key )
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsRepetition(ulong key)
         {
             int count = 0;
 
@@ -42,7 +42,7 @@ namespace Izumi
         }
     }
 
-    [InlineArray( 128 )]
+    [InlineArray(128)]
     internal struct HistoryList
     {
         private ulong _value;

@@ -1,4 +1,4 @@
-﻿namespace Izumi
+﻿namespace Izumi.EvaluationScripts
 {
     internal static class EvaluationConfig
     {

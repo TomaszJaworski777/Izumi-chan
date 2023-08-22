@@ -1,4 +1,4 @@
-﻿namespace Izumi
+﻿namespace Izumi.UCI
 {
     internal static class UciConfig
     {
@@ -15,6 +15,6 @@
 
         private const int _majorPatchNumber = 0;
         private const int _featureCountSiceLastMajorPatch = 7;
-        private const int _commitsSinceLastFeature = 1;
+        private const int _commitsSinceLastFeature = 2;
     }
 }

@@ -1,30 +1,34 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
+using Izumi.Structures;
+using Izumi.EvaluationScripts;
 
-namespace Izumi
+namespace Izumi.SearchScripts
 {
     internal class Search
     {
-        private const int Infinity = 30000;
-
         public static bool CancelationToken = false;
+
+        private const int Infinity = 30000;
 
         private Move _latestBestMove;
         private Move _bestRootMove;
-        private DateTime _startTime;
-        private NodePerSecondTracker _nodePerSecondTracker = new(true);
-        private TranspositionTableEntry? _transpositionTableEntry = null;
-        private ulong _nodes = 0;
 
+        private TranspositionTableEntry? _transpositionTableEntry = null;
+
+        private ulong _nodes = 0;
+        private NodePerSecondTracker _nodePerSecondTracker = new(true);
+
+        private DateTime _startTime;
         private int _timeRemaning;
 
         private readonly Evaluation _evaluation = new();
 
-        public void Execute( Board board, int depth = int.MaxValue, int whiteTime = int.MaxValue, int blackTime = int.MaxValue, bool infinite = false )
+        public void Execute(Board board, int depth = int.MaxValue, int whiteTime = int.MaxValue, int blackTime = int.MaxValue, bool infinite = false)
         {
             CancelationToken = false;
 
-            _nodePerSecondTracker = new( true );
+            _nodePerSecondTracker = new(true);
             _bestRootMove = new();
             _latestBestMove = new();
             _startTime = DateTime.Now;
@@ -35,14 +39,14 @@ namespace Izumi
                 _nodes = 0;
 
                 int bestScore = NegaMax(board, currentDepth, -Infinity, Infinity, 0);
-                if (BreakCondition( _timeRemaning ))
+                if (BreakCondition(_timeRemaning))
                     break;
-                Console.WriteLine( $"info depth {currentDepth} score cp {bestScore} nodes {_nodes} nps {_nodePerSecondTracker.LatestResult} hashfull {TranspositionTable.HashFull} pv {PrintPV(board, currentDepth)}" );
+                Console.WriteLine($"info depth {currentDepth} score cp {bestScore} nodes {_nodes} nps {_nodePerSecondTracker.LatestResult} hashfull {TranspositionTable.HashFull} pv {PrintPV(board, currentDepth)}");
 
                 _latestBestMove = _bestRootMove;
             }
 
-            Console.WriteLine( $"bestmove {_latestBestMove}" );
+            Console.WriteLine($"bestmove {_latestBestMove}");
         }
 
         private string PrintPV(Board board, int depth)
@@ -56,30 +60,30 @@ namespace Izumi
                 if (entry is null)
                     break;
                 Move move = entry.Value.bestMove;
-                pvLine.Append( $"{move} " );
-                board.MakeMove( move );
+                pvLine.Append($"{move} ");
+                board.MakeMove(move);
             }
 
             return pvLine.ToString();
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        private bool BreakCondition( int timeRemaining ) => CancelationToken || (DateTime.Now - _startTime).TotalMilliseconds > (timeRemaining / 20);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool BreakCondition(int timeRemaining) => CancelationToken || (DateTime.Now - _startTime).TotalMilliseconds > timeRemaining / 20;
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        private int MoveSortRuleset( Move a, Move b )
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int MoveSortRuleset(Move a, Move b)
         {
             int score = GetMoveValue(b) - GetMoveValue(a);
 
             if (score is 0)
                 return 0;
-            return Math.Sign( score );
+            return Math.Sign(score);
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        private int GetMoveValue( Move move )
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int GetMoveValue(Move move)
         {
-            if (_transpositionTableEntry != null && move.Equals( _transpositionTableEntry.Value.bestMove ))
+            if (_transpositionTableEntry != null && move.Equals(_transpositionTableEntry.Value.bestMove))
                 return Infinity;
             if (move.IsCapture)
                 return ((int)move.TargetPiece + 1) * 100 - (int)move.MovingPiece;
@@ -89,21 +93,21 @@ namespace Izumi
         }
 
         #region Search
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        private int NegaMax( Board board, int depth, int alpha, int beta, int movesPlayed )
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private int NegaMax(Board board, int depth, int alpha, int beta, int movesPlayed)
         {
             if (movesPlayed > 0 && (board.IsRepetition() || board.HalfMoves >= 100))
                 return 0;
 
             _transpositionTableEntry = TranspositionTable.Probe(board.ZobristKey);
-            if(movesPlayed > 0 && _transpositionTableEntry != null && _transpositionTableEntry.Value.Depth >= depth)
+            if (movesPlayed > 0 && _transpositionTableEntry != null && _transpositionTableEntry.Value.Depth >= depth)
             {
                 if (_transpositionTableEntry.Value.Flag == TTeEntryFlag.Exact)
                     return _transpositionTableEntry.Value.Score;
                 else if (_transpositionTableEntry.Value.Flag == TTeEntryFlag.Lowerbound)
-                    alpha = Math.Max( alpha, _transpositionTableEntry.Value.Score );
+                    alpha = Math.Max(alpha, _transpositionTableEntry.Value.Score);
                 else if (_transpositionTableEntry.Value.Flag == TTeEntryFlag.Upperbound)
-                    beta = Math.Min( beta, _transpositionTableEntry.Value.Score );
+                    beta = Math.Min(beta, _transpositionTableEntry.Value.Score);
 
                 if (alpha >= beta)
                     return _transpositionTableEntry.Value.Score;
@@ -111,14 +115,14 @@ namespace Izumi
 
             if (depth <= 0)
             {
-                return QuiesenceSearch( board, alpha, beta );
+                return QuiesenceSearch(board, alpha, beta);
             }
 
-            if (BreakCondition( _timeRemaning ))
+            if (BreakCondition(_timeRemaning))
                 return Infinity;
 
             Span<Move> moves = board.GeneratePseudoLegalMoves();
-            moves.Sort( MoveSortRuleset );
+            moves.Sort(MoveSortRuleset);
             int value = -Infinity;
             int legalMoveCount = 0;
             int originalAlpha = alpha;
@@ -130,10 +134,10 @@ namespace Izumi
 
                 Board boardCopy = board;
                 Move move = moves[moveIndex];
-                if (!boardCopy.MakeMove( move ))
+                if (!boardCopy.MakeMove(move))
                     continue;
 
-                if(_bestRootMove.IsNull)
+                if (_bestRootMove.IsNull)
                     _bestRootMove = move;
 
                 legalMoveCount++;
@@ -158,9 +162,9 @@ namespace Izumi
             }
 
             if (legalMoveCount == 0)
-                return board.IsKingInCheck( board.IsWhiteToMove ) ? (movesPlayed - Infinity) : 0;
+                return board.IsKingInCheck(board.IsWhiteToMove) ? movesPlayed - Infinity : 0;
 
-            TranspositionTableEntry newEntry = new TranspositionTableEntry
+            TranspositionTableEntry newEntry = new()
             {
                 Depth = (byte)depth,
                 PositionKey = board.ZobristKey,
@@ -175,15 +179,15 @@ namespace Izumi
             else
                 newEntry.Flag = TTeEntryFlag.Exact;
 
-            TranspositionTable.Add( newEntry );
+            TranspositionTable.Add(newEntry);
 
             return value;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        private int QuiesenceSearch( Board board, int alpha, int beta )
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private int QuiesenceSearch(Board board, int alpha, int beta)
         {
-            int eval = _evaluation.EvaluatePosition( board );
+            int eval = _evaluation.EvaluatePosition(board);
 
             if (eval >= beta)
                 return beta;
@@ -193,11 +197,11 @@ namespace Izumi
             if (board.HalfMoves >= 100)
                 return 0;
 
-            if (BreakCondition( _timeRemaning ))
+            if (BreakCondition(_timeRemaning))
                 return Infinity;
 
             Span<Move> moves = board.GeneratePseudoLegalPriorityMoves();
-            moves.Sort( MoveSortRuleset );
+            moves.Sort(MoveSortRuleset);
 
             for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
             {
@@ -205,13 +209,13 @@ namespace Izumi
 
                 Move move = moves[moveIndex];
                 Board boardCopy = board;
-                if (!boardCopy.MakeMove( move ))
+                if (!boardCopy.MakeMove(move))
                     continue;
 
                 _nodes++;
                 _nodePerSecondTracker.AddNode();
 
-                int score = -QuiesenceSearch( boardCopy, -beta, -alpha );
+                int score = -QuiesenceSearch(boardCopy, -beta, -alpha);
 
                 if (score >= beta)
                     return beta;

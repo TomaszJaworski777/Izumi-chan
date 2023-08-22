@@ -1,6 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
+using Izumi.Misc;
+using Izumi.Structures;
+using Izumi.SearchScripts;
+using Izumi.EvaluationScripts;
 
-namespace Izumi
+namespace Izumi.Core
 {
     internal class ChessEngine
     {

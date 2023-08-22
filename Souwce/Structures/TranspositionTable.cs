@@ -1,4 +1,4 @@
-﻿namespace Izumi
+﻿namespace Izumi.Structures
 {
     internal static class TranspositionTable
     {
@@ -9,10 +9,10 @@
 
         static TranspositionTable()
         {
-            ResizeTable( 16 );
+            ResizeTable(16);
         }
 
-        public static void ResizeTable( int megabytes )
+        public static void ResizeTable(int megabytes)
         {
             int bitAmount = megabytes * 1024 * 1024;
             _table = new TranspositionTableEntry[bitAmount / 120];
@@ -24,7 +24,7 @@
             _hashfullCounter = 0;
         }
 
-        public static TranspositionTableEntry? Probe( ulong key )
+        public static TranspositionTableEntry? Probe(ulong key)
         {
             int index = GetIndexFromKey(key);
             TranspositionTableEntry entry = _table[index];
@@ -33,7 +33,7 @@
             return null;
         }
 
-        public static void Add(TranspositionTableEntry entry )
+        public static void Add(TranspositionTableEntry entry)
         {
             int index = GetIndexFromKey(entry.PositionKey);
             if (_table[index].PositionKey == 0)
@@ -41,7 +41,7 @@
             _table[index] = entry;
         }
 
-        private static int GetIndexFromKey( ulong key ) => (int)(key % (ulong)_table.Length);
+        private static int GetIndexFromKey(ulong key) => (int)(key % (ulong)_table.Length);
     }
 
     internal struct TranspositionTableEntry //120 bits = 15 bytes

@@ -1,23 +1,24 @@
 ﻿using System.Runtime.CompilerServices;
+using Izumi.Structures;
 
-namespace Izumi
+namespace Izumi.EvaluationScripts
 {
     internal class Evaluation
     {
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        public int EvaluatePosition( Board board )
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public int EvaluatePosition(Board board)
         {
-            (int midgame, int endgame, int phase) = PieceEvaluation( board );
-            PieceMobility( board, ref midgame, ref endgame );
-            PassedPawnBonus( board, ref midgame, ref endgame );
-            DoublePawnsPunishment( board, ref midgame, ref endgame );
-            IsolatedPawnsPunishment( board, ref midgame, ref endgame );
-            KingEndgameBonus( board, ref endgame );
-            return (((midgame * (256 - phase)) + (endgame * phase)) / 256) * (board.IsWhiteToMove ? 1 : -1);
+            (int midgame, int endgame, int phase) = PieceEvaluation(board);
+            PieceMobility(board, ref midgame, ref endgame);
+            PassedPawnBonus(board, ref midgame, ref endgame);
+            DoublePawnsPunishment(board, ref midgame, ref endgame);
+            IsolatedPawnsPunishment(board, ref midgame, ref endgame);
+            KingEndgameBonus(board, ref endgame);
+            return (midgame * (256 - phase) + endgame * phase) / 256 * (board.IsWhiteToMove ? 1 : -1);
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        private (int, int, int) PieceEvaluation( Board board )
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private (int, int, int) PieceEvaluation(Board board)
         {
             int totalPhase = 16 * EvaluationConfig.PiecePhase[0] +
                              4 * EvaluationConfig.PiecePhase[1] +
@@ -81,67 +82,67 @@ namespace Izumi
                 }
             }
 
-            phase = (phase * 256 + (totalPhase / 2)) / totalPhase;
+            phase = (phase * 256 + totalPhase / 2) / totalPhase;
 
             return (midgame, endgame, phase);
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        private void PieceMobility( Board board, ref int midgame, ref int endgame )
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private void PieceMobility(Board board, ref int midgame, ref int endgame)
         {
 
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        private void PassedPawnBonus( Board board, ref int midgame, ref int endgame )
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private void PassedPawnBonus(Board board, ref int midgame, ref int endgame)
         {
 
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        private void DoublePawnsPunishment( Board board, ref int midgame, ref int endgame)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private void DoublePawnsPunishment(Board board, ref int midgame, ref int endgame)
         {
 
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        private void IsolatedPawnsPunishment( Board board, ref int midgame, ref int endgame )
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private void IsolatedPawnsPunishment(Board board, ref int midgame, ref int endgame)
         {
 
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        private void KingEndgameBonus( Board board, ref int endgame )
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private void KingEndgameBonus(Board board, ref int endgame)
         {
 
         }
 
         public void EvaluationTest()
         {
-            Console.WriteLine( "Stawting (・`w´・) evawuation ^-^ t-t-test..." );
-            ReadOnlySpan<string> tests =  File.ReadLines( @"..\..\..\..\TestData\evaldata.txt" ).ToArray().AsSpan();
+            Console.WriteLine("Stawting (・`w´・) evawuation ^-^ t-t-test...");
+            ReadOnlySpan<string> tests = File.ReadLines(@"..\..\..\..\TestData\evaldata.txt").ToArray().AsSpan();
 
             int index = 0;
             foreach (var test in tests)
             {
                 index++;
-                Console.WriteLine( $"Test {index}/{tests.Length}" );
+                Console.WriteLine($"Test {index}/{tests.Length}");
                 Board board = new Board(test);
                 int result1 = EvaluatePosition(board);
                 int result2 = EvaluatePosition(FlipBoard(board));
                 if (result1 != result2)
                 {
                     Console.WriteLine();
-                    Console.WriteLine( $"F-F-FEN: {test}" );
-                    Console.WriteLine( $"EXPECTED: {result1}" );
-                    Console.WriteLine( $"WESUWT: {result2}" );
+                    Console.WriteLine($"F-F-FEN: {test}");
+                    Console.WriteLine($"EXPECTED: {result1}");
+                    Console.WriteLine($"WESUWT: {result2}");
                     Console.WriteLine();
                 }
             }
-            Console.WriteLine( $"Donye! ^-^" );
+            Console.WriteLine($"Donye! ^-^");
         }
 
-        private Board FlipBoard( Board board )
+        private Board FlipBoard(Board board)
         {
             Board result = new Board();
 
@@ -152,7 +153,7 @@ namespace Izumi
                     PieceType type = board.FindPieceTypeOnSquare(squareIndex, color);
                     if (type is PieceType.None)
                         continue;
-                    result.Data[(int)type + (color ? 6 : 0)].SetBitToOne( squareIndex ^ 56 );
+                    result.Data[(int)type + (color ? 6 : 0)].SetBitToOne(squareIndex ^ 56);
                 }
             }
 
