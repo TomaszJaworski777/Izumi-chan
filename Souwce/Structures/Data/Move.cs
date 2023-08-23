@@ -1,109 +1,87 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Izumi.Structures.Data
 {
     internal struct Move : IEquatable<Move>
     {
-        private BitboardInt _bitboard;
-        /* Reserved bits from LSB (Total 25/32 reserved):
- *      6 bits - from square index
- *      6 bits - to square index
- *      3 bits - moving piece type
- *      3 bits - target piece type
- *      3 bits - promotion piece type
- *      1 bit - capture
- *      1 bit - castles
- *      1 bit - en passant
- *      1 bit - promotion
- */
+        private int _fromSquareIndex;
+        private int _toSquareIndex;
+        private PieceType _movingPieceType;
+        private PieceType _targetPieceType;
+        private PieceType _promotionPieceType;
+        private bool _isCapture;
+        private bool _isCastles;
+        private bool _isEnPassant;
+        private bool _isPromotion;
+
         public int From
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => _bitboard.GetValueChunk( 0, 63 );
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 0, 63, value );
+            get => _fromSquareIndex;
         }
 
         public int To
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => _bitboard.GetValueChunk( 6, 4032 );
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 6, 4032, value );
+            get => _toSquareIndex;
         }
 
         public PieceType MovingPiece
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => (PieceType)_bitboard.GetValueChunk( 12, 28672 );
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 12, 28672, (int)value );
+            get => _movingPieceType;
         }
 
         public PieceType TargetPiece
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => (PieceType)_bitboard.GetValueChunk( 15, 229376 );
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 15, 229376, (int)value );
+            get => _targetPieceType;
         }
 
         public PieceType PromotionPiece
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => (PieceType)_bitboard.GetValueChunk( 18, 1835008 );
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 18, 1835008, (int)value );
+            get => _promotionPieceType;
         }
 
         public bool IsCapture
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => _bitboard.GetBitValue( 21 ) > 0;
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 21, 2097152, value ? 1 : 0 );
+            get => _isCapture;
         }
 
         public bool IsCastle
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => _bitboard.GetBitValue( 22 ) > 0;
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 22, 4194304, value ? 1 : 0 );
+            get => _isCastles;
         }
 
         public bool IsEnPassant
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => _bitboard.GetBitValue( 23 ) > 0;
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 23, 8388608, value ? 1 : 0 );
+            get => _isEnPassant;
         }
 
         public bool IsPromotion
         {
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            get => _bitboard.GetBitValue( 24 ) > 0;
-            [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            private set => _bitboard.SetValueChunk( 24, 16777216, value ? 1 : 0 );
+            get => _isPromotion;
         }
 
         public bool IsNull => (From | To) == 0;
 
         public Move( int from, int to, PieceType movingPiece, PieceType targetPiece, PieceType promotionPiece, bool isCastle, bool isCapture, bool isEnPassant, bool isPromotion )
         {
-            From = from;
-            To = to;
-            MovingPiece = movingPiece;
-            TargetPiece = targetPiece;
-            PromotionPiece = promotionPiece;
-            IsCapture = isCapture;
-            IsCastle = isCastle;
-            IsEnPassant = isEnPassant;
-            IsPromotion = isPromotion;
+            _fromSquareIndex = from;
+            _toSquareIndex = to;
+            _movingPieceType = movingPiece;
+            _targetPieceType = targetPiece;
+            _promotionPieceType = promotionPiece;
+            _isCapture = isCapture;
+            _isCastles = isCastle;
+            _isEnPassant = isEnPassant;
+            _isPromotion = isPromotion;
         }
 
         public Move( string signature, Board board )
@@ -113,8 +91,8 @@ namespace Izumi.Structures.Data
             Square fromSquare = new Square(signatureSpan.Slice(0, 2).ToString());
             Square toSquare = new Square(signatureSpan.Slice(2, 2).ToString());
 
-            From = fromSquare.SquareIndex;
-            To = toSquare.SquareIndex;
+            _fromSquareIndex = fromSquare.SquareIndex;
+            _toSquareIndex = toSquare.SquareIndex;
 
             bool fromSet = false, toSet = false;
             for (int i = 0; i < 12; i++)
@@ -124,25 +102,25 @@ namespace Izumi.Structures.Data
                 if (!fromSet && pieceBitboard.GetBitValue( From ) > 0)
                 {
                     fromSet = true;
-                    MovingPiece = (PieceType)(i % 6);
+                    _movingPieceType = (PieceType)(i % 6);
                 }
 
                 if (!toSet && pieceBitboard.GetBitValue( To ) > 0)
                 {
                     toSet = true;
-                    TargetPiece = (PieceType)(i % 6);
+                    _targetPieceType = (PieceType)(i % 6);
                 }
             }
 
-            IsCapture = fromSet && toSet;
-            IsCastle = MovingPiece is PieceType.King && Math.Abs( fromSquare.File - toSquare.File ) is 2;
-            IsEnPassant = MovingPiece is PieceType.Pawn && To == board.EnPassantSquareIndex && fromSquare.Rank == (board.IsWhiteToMove ? 4 : 3);
+            _isCapture = fromSet && toSet;
+            _isCastles = MovingPiece is PieceType.King && Math.Abs( fromSquare.File - toSquare.File ) is 2;
+            _isEnPassant = MovingPiece is PieceType.Pawn && To == board.EnPassantSquareIndex && fromSquare.Rank == (board.IsWhiteToMove ? 4 : 3);
             if (IsEnPassant)
             {
-                IsCapture = true;
-                TargetPiece = PieceType.Pawn;
+                _isCapture = true;
+                _targetPieceType = PieceType.Pawn;
             }
-            IsPromotion = signatureSpan.Length is 5;
+            _isPromotion = signatureSpan.Length is 5;
 
             if (IsPromotion)
             {
@@ -150,19 +128,19 @@ namespace Izumi.Structures.Data
                 {
                     case 'n':
                     case 'N':
-                        PromotionPiece = PieceType.Knight;
+                        _promotionPieceType = PieceType.Knight;
                         break;
                     case 'b':
                     case 'B':
-                        PromotionPiece = PieceType.Bishop;
+                        _promotionPieceType = PieceType.Bishop;
                         break;
                     case 'r':
                     case 'R':
-                        PromotionPiece = PieceType.Rook;
+                        _promotionPieceType = PieceType.Rook;
                         break;
                     case 'q':
                     case 'Q':
-                        PromotionPiece = PieceType.Queen;
+                        _promotionPieceType = PieceType.Queen;
                         break;
                 }
             }
@@ -191,6 +169,10 @@ namespace Izumi.Structures.Data
             return moveString.ToString();
         }
 
-        public bool Equals( Move other ) => _bitboard.Value == other._bitboard.Value;
+        public bool Equals( Move other ) =>
+            _fromSquareIndex == other._fromSquareIndex &&
+            _toSquareIndex == other._toSquareIndex &&
+            _movingPieceType == other._movingPieceType &&
+            _targetPieceType == other._targetPieceType;
     }
 }
