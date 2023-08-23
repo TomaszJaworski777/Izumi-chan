@@ -25,13 +25,13 @@ namespace Izumi.Misc
 
         private ulong PerftInternal(int depth, Board board, bool splitPerft = false)
         {
-            _nodePerSecondTracker.Update();
-
             if (depth == 0)
             {
                 _nodePerSecondTracker.AddNode();
                 return 1UL;
             }
+
+            _nodePerSecondTracker.Update();
 
             ulong count = 0;
             var moves = MoveController.GeneratePseudoLegalMoves(board);

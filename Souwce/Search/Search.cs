@@ -163,7 +163,7 @@ namespace Izumi.SearchScripts
             }
 
             if (legalMoveCount == 0)
-                return board.IsKingInCheck(board.IsWhiteToMove) ? movesPlayed - Infinity : 0;
+                return board.SideToMoveKingInCheck ? movesPlayed - Infinity : 0;
 
             TranspositionTableEntry newEntry = new()
             {

@@ -39,10 +39,10 @@ namespace Izumi.Structures.Data
         public void SetBitToZero(int index) => Value &= ~(1UL << index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ulong GetValueChunk(int index, ulong mask) => (Value & mask << index) >> index;
+        public ulong GetValueChunk(int index, ulong mask) => (Value & mask) >> index;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetValueChunk(int index, ulong mask, ulong newValue) => Value = Value & ~(mask << index) | newValue << index;
+        public void SetValueChunk(int index, ulong mask, ulong newValue) => Value = (Value & ~mask) | newValue << index;
 
         public void Draw()
         {
@@ -58,7 +58,9 @@ namespace Izumi.Structures.Data
             Console.WriteLine($"\nValue: {Value}");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator ulong(Bitboard bitboard) => bitboard.Value;
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static implicit operator Bitboard(ulong mask) => new Bitboard(mask);
     }
 }

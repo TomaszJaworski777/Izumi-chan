@@ -19,10 +19,11 @@ namespace Izumi.Structures.Data
         public void SetBitToZero(int index) => Value &= ~(1 << index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetValueChunk(int index, int mask) => (Value & mask << index) >> index;
+        public int GetValueChunk(int index, int mask) => (Value & mask) >> index;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetValueChunk(int index, int mask, int newValue) => Value = Value & ~(mask << index) | newValue << index;
+        public void SetValueChunk(int index, int mask, int newValue) => Value = (Value & ~mask) | newValue << index;
+
         public int BitCount()
         {
             int maskCopy = Value;
@@ -50,7 +51,9 @@ namespace Izumi.Structures.Data
             Console.WriteLine($"\nValue: {Value}");
         }
 
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static implicit operator int(BitboardInt bitboard) => bitboard.Value;
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static implicit operator BitboardInt(int mask) => new BitboardInt(mask);
     }
 }

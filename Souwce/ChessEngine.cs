@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Izumi.Misc;
 using Izumi.Structures;
+using Izumi.Structures.Data;
 using Izumi.SearchScripts;
 using Izumi.EvaluationScripts;
 

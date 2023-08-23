@@ -1,5 +1,6 @@
 ﻿using Izumi.Helpers;
 using Izumi.SearchScripts;
+using Izumi.Structures.Data;
 using Izumi.UCI;
 
 namespace Izumi.Core

@@ -1,6 +1,6 @@
 ﻿namespace Izumi.Structures.Data
 {
-    internal enum PieceType : int
+    internal enum PieceType : byte
     {
         Pawn,
         Knight,

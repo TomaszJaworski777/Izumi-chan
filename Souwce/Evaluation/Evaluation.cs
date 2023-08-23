@@ -33,7 +33,7 @@ namespace Izumi.EvaluationScripts
 
             for (int pieceIndex = 0; pieceIndex < 12; pieceIndex++)
             {
-                Bitboard bitboard = board.Data[pieceIndex];
+                Bitboard bitboard = board.GetPieceBitboard(pieceIndex % 6, pieceIndex < 6);
                 int pieceCount = bitboard.BitCount;
                 midgame -= pieceCount * EvaluationConfig.MidgamePieceValues[pieceIndex % 6];
                 endgame -= pieceCount * EvaluationConfig.EndgamePieceValues[pieceIndex % 6];
@@ -154,7 +154,7 @@ namespace Izumi.EvaluationScripts
                     PieceType type = board.FindPieceTypeOnSquare(squareIndex, color);
                     if (type is PieceType.None)
                         continue;
-                    result.Data[(int)type + (color ? 6 : 0)].SetBitToOne(squareIndex ^ 56);
+                    result.SetPieceOnSquare( type, color, squareIndex );
                 }
             }
 

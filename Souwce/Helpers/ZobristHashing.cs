@@ -801,13 +801,13 @@ namespace Izumi.Helpers
                     Console.WriteLine( "done " + Seeds[0] );
                 }*/
 
-        public static ulong GenerateKey(Board board)
+        public static ulong GenerateKey( Board board )
         {
             ulong result = 0;
 
             for (int pieceIndex = 0; pieceIndex < 12; pieceIndex++)
             {
-                Bitboard bitboard = board.Data[pieceIndex];
+                Bitboard bitboard = board.GetPieceBitboard(pieceIndex % 6, pieceIndex < 6);
                 while (bitboard > 0)
                 {
                     int squareIndex = bitboard.LsbIndex;
@@ -820,11 +820,14 @@ namespace Izumi.Helpers
             if (!board.IsWhiteToMove)
                 result ^= Seeds[268];
 
-            for (int castleIndex = 0; castleIndex < 4; castleIndex++)
-            {
-                if (board.Data[16].GetBitValue(castleIndex) > 0)
-                    result ^= Seeds[269 + castleIndex];
-            }
+            if (board.CanWhiteCastleQueenSide)
+                result ^= Seeds[269];
+            if (board.CanWhiteCastleKingSide)
+                result ^= Seeds[270];
+            if (board.CanBlackCastleQueenSide)
+                result ^= Seeds[271];
+            if (board.CanBlackCastleKingSide)
+                result ^= Seeds[272];
 
             if (board.EnPassantSquareIndex > 0)
                 result ^= Seeds[273 + board.EnPassantSquareIndex % 8];
@@ -832,7 +835,7 @@ namespace Izumi.Helpers
             return result;
         }
 
-        public static ulong ModifyKey(Board currentBoard, Board previousBoard)
+        public static ulong ModifyKey( Board currentBoard, Board previousBoard )
         {
             ulong result = currentBoard.ZobristKey;
 
@@ -845,11 +848,14 @@ namespace Izumi.Helpers
             if (currentBoard.EnPassantSquareIndex > 0)
                 result ^= Seeds[273 + currentBoard.EnPassantSquareIndex % 8];
 
-            for (int castleIndex = 0; castleIndex < 4; castleIndex++)
-            {
-                if (previousBoard.Data[16].GetBitValue(castleIndex) != currentBoard.Data[16].GetBitValue(castleIndex))
-                    result ^= Seeds[269 + castleIndex];
-            }
+            if (previousBoard.CanWhiteCastleQueenSide != currentBoard.CanWhiteCastleQueenSide)
+                result ^= Seeds[269];
+            if (previousBoard.CanWhiteCastleKingSide != currentBoard.CanWhiteCastleKingSide)
+                result ^= Seeds[270];
+            if (previousBoard.CanBlackCastleQueenSide != currentBoard.CanBlackCastleQueenSide)
+                result ^= Seeds[271];
+            if (previousBoard.CanBlackCastleKingSide != currentBoard.CanBlackCastleKingSide)
+                result ^= Seeds[272];
 
             return result;
         }

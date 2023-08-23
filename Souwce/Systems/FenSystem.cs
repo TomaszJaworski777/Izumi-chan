@@ -11,9 +11,6 @@ namespace Izumi.Systems
             string[] fenParts = fen.Split(' ');
             string[] positionSegments = fenParts[0].Split('/');
 
-            board.Data[12] = new();
-            board.Data[13] = new();
-
             for (int rank = 0; rank < positionSegments.Length; rank++)
             {
                 for (int file = 0, index = 0; file < 8; file++, index++)
@@ -28,8 +25,6 @@ namespace Izumi.Systems
                     }
 
                     bool isWhite = currentCharacter < 'a';
-
-                    board.Data[isWhite ? 12 : 13].SetBitToOne(squareIndex);
 
                     switch (currentCharacter)
                     {
@@ -63,36 +58,34 @@ namespace Izumi.Systems
 
             board.IsWhiteToMove = fenParts[1] == "w";
 
-            board.Data[16].SetBitToZero(0);
-            board.Data[16].SetBitToZero(1);
-            board.Data[16].SetBitToZero(2);
-            board.Data[16].SetBitToZero(3);
             for (int i = 0; i < fenParts[2].Length; i++)
             {
                 if (fenParts[2][i] == '-')
                     break;
                 else if (fenParts[2][i] == 'Q')
-                    board.Data[16].SetBitToOne(0);
+                    board.CanWhiteCastleQueenSide = true;
                 else if (fenParts[2][i] == 'K')
-                    board.Data[16].SetBitToOne(1);
+                    board.CanWhiteCastleKingSide = true;
                 else if (fenParts[2][i] == 'q')
-                    board.Data[16].SetBitToOne(2);
+                    board.CanBlackCastleQueenSide = true;
                 else if (fenParts[2][i] == 'k')
-                    board.Data[16].SetBitToOne(3);
+                    board.CanBlackCastleKingSide = true;
             }
+
+            board.WhiteKingInCheck = board.IsKingInCheck( true );
+            board.BlackKingInCheck = board.IsKingInCheck( false );
 
             if (fenParts[3] == "-")
                 board.EnPassantSquareIndex = 0;
             else
-                board.EnPassantSquareIndex = (ulong)new Square(fenParts[3]).SquareIndex;
+                board.EnPassantSquareIndex = new Square(fenParts[3]).SquareIndex;
 
-            if (ulong.TryParse(fenParts[4], out ulong moveCount))
+            if (int.TryParse(fenParts[4], out int moveCount ))
                 board.HalfMoves = moveCount;
 
-            if (ulong.TryParse(fenParts[5], out moveCount))
+            if (int.TryParse(fenParts[5], out moveCount))
                 board.Moves = moveCount;
 
-            board.Data[14] = board.Data[12] | board.Data[13];
             board.ZobristKey = ZobristHashing.GenerateKey(board);
         }
     }

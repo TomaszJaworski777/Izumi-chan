@@ -42,17 +42,17 @@ namespace Izumi.Structures.Data
         public int Rank
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _bitboard.GetValueChunk(6, 7);
+            get => _bitboard.GetValueChunk(6, 448 );
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private set => _bitboard.SetValueChunk(6, 7, value);
+            private set => _bitboard.SetValueChunk(6, 448, value);
         }
 
         public int File
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _bitboard.GetValueChunk(9, 7);
+            get => _bitboard.GetValueChunk(9, 3584 );
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private set => _bitboard.SetValueChunk(9, 7, value);
+            private set => _bitboard.SetValueChunk(9, 3584, value);
         }
 
         public override string ToString() => $"{(char)('a' + File)}{Rank + 1}";
