@@ -43,6 +43,7 @@ namespace Izumi.Misc
                 if (!copy.MakeMove(moves[i]))
                     continue;
                 ulong result = PerftInternal(depth - 1, copy);
+                MoveHistory.RemoveLast();
                 count += result;
                 if (splitPerft)
                     Console.WriteLine($"{moves[i]} - {result}");

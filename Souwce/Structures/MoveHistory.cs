@@ -2,33 +2,34 @@
 
 namespace Izumi.Structures
 {
-    internal struct MoveHistory
+    internal static class MoveHistory
     {
-        private HistoryList _list;
-        private int _count;
+        private static HistoryList _list;
+        private static int _count;
 
-        public MoveHistory()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Reset()
         {
-            _list = default;
             _count = 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Reset()
-        {
-            _list = default;
-            _count = 0;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add(ulong key)
+        public static void Add(ulong key)
         {
             _list[_count] = key;
             _count++;
         }
 
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public static void RemoveLast()
+        {
+            _count--;
+            if (_count == -1)
+                Console.WriteLine( "?" );
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsRepetition(ulong key)
+        public static bool IsRepetition(ulong key)
         {
             int count = 0;
 
@@ -42,7 +43,7 @@ namespace Izumi.Structures
         }
     }
 
-    [InlineArray(128)]
+    [InlineArray(1024)]
     internal struct HistoryList
     {
         private ulong _value;

@@ -11,7 +11,6 @@ namespace Izumi.Structures
         private GameBoard _pieces = default;
         private BitboardInt _miscData; // {moves - 10} {half moves - 7} {en passant - 6} {castle - 4} {side to move - 1} {white king in check - 1} {black king in check - 1} = 30 bit
         private ulong _zobristKey;
-        //public MoveHistory History;
 
         public bool BlackKingInCheck
         {
@@ -175,9 +174,9 @@ namespace Izumi.Structures
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Board(string fen)
         {
-            //History = default;
+            MoveHistory.Reset();
             FenSystem.CreateBoard(ref this, fen);
-            //History.Add(ZobristKey);
+            MoveHistory.Add( ZobristKey );
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -186,7 +185,6 @@ namespace Izumi.Structures
             _pieces = other._pieces;
             _miscData = other._miscData;
             _zobristKey = other._zobristKey;
-            //History = other.History;
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -220,7 +218,7 @@ namespace Izumi.Structures
         {
             if (!MoveController.MakeMove(ref this, move))
                 return false;
-            //History.Add(ZobristKey);
+            MoveHistory.Add(ZobristKey);
             return true;
         }
 
@@ -237,7 +235,7 @@ namespace Izumi.Structures
         public bool IsSquareAttacked(int squareIndex, bool isSquareWhite) => PieceAttacks.IsSquareAttacked(squareIndex, isSquareWhite, this);
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public bool IsRepetition() => false;//History.IsRepetition(ZobristKey);
+        public bool IsRepetition() => MoveHistory.IsRepetition(ZobristKey);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public PieceType FindPieceTypeOnSquare(int squareIndex, bool forWhite)
@@ -304,11 +302,8 @@ namespace Izumi.Structures
             Console.WriteLine( $"White king in check: {IsKingInCheck( true )}" );
             Console.WriteLine( $"Black king in check: {IsKingInCheck( false )}" );
             Console.WriteLine( $"Hash: {ZobristKey}" );
-            //Console.WriteLine( $"Is repeated: {History.IsRepetition( ZobristKey )}" );
+            Console.WriteLine( $"Is repeated: {IsRepetition()}" );
             Console.WriteLine();
-
-            WhitePieces.Draw();
-            BlackPieces.Draw();
 #endif
         }
     }

@@ -146,6 +146,8 @@ namespace Izumi.SearchScripts
                 _nodePerSecondTracker.AddNode();
 
                 var newValue = -NegaMax(boardCopy, depth - 1, -beta, -alpha, movesPlayed + 1);
+                MoveHistory.RemoveLast();
+
                 if (newValue > value)
                 {
                     value = newValue;
@@ -217,6 +219,7 @@ namespace Izumi.SearchScripts
                 _nodePerSecondTracker.AddNode();
 
                 int score = -QuiesenceSearch(boardCopy, -beta, -alpha);
+                MoveHistory.RemoveLast();
 
                 if (score >= beta)
                     return beta;
