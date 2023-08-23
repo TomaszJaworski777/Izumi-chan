@@ -379,7 +379,7 @@ namespace Izumi.Systems
         }
 
         [MethodImpl( MethodImplOptions.AggressiveOptimization )]
-        public static Span<Move> GeneratePseudoLegalPriorityMoves( Board board )
+        public static Span<Move> GeneratePseudoLegalTacticalMoves( Board board )
         {
             SpanMoveList moves = new();
 
@@ -443,21 +443,6 @@ namespace Izumi.Systems
 
                     if (pieceIndex == 5)
                     {
-                        if (!board.SideToMoveKingInCheck)
-                        {
-                            ulong mask = isWhiteToMove ? _queenSideCastleMask : _queenSideCastleMask ^ _queenSideCastleReverserMask;
-                            if (board.CanCurrentSideCastleQueenSide && (board.AllPieces & mask) == 0)
-                            {
-                                moves.Add( new Move( squareIndex, isWhiteToMove ? 2 : 58, PieceType.King, PieceType.None, PieceType.None, true, false, false, false ) );
-                            }
-
-                            mask = isWhiteToMove ? _kingSideCastleMask : _kingSideCastleMask ^ _kingSideCastleReverserMask;
-                            if (board.CanCurrentSideCastleKingSide && (board.AllPieces & mask) == 0)
-                            {
-                                moves.Add( new Move( squareIndex, isWhiteToMove ? 6 : 62, PieceType.King, PieceType.None, PieceType.None, true, false, false, false ) );
-                            }
-                        }
-
                         attack = PieceAttacks.KingAttacksTable[squareIndex] & ~board.SideToMovePieces;
 
                         while (attack > 0)

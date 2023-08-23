@@ -15,8 +15,6 @@ namespace Izumi.SearchScripts
         private Move _latestBestMove;
         private Move _bestRootMove;
 
-        private TranspositionTableEntry? _transpositionTableEntry = null;
-
         private ulong _nodes = 0;
         private NodePerSecondTracker _nodePerSecondTracker = new(true);
 
@@ -25,7 +23,7 @@ namespace Izumi.SearchScripts
 
         private readonly Evaluation _evaluation = new();
 
-        public void Execute(Board board, int depth = int.MaxValue, int whiteTime = int.MaxValue, int blackTime = int.MaxValue, bool infinite = false)
+        public void Execute(Board board, int depth = 64, int whiteTime = int.MaxValue, int blackTime = int.MaxValue, bool infinite = false)
         {
             CancelationToken = false;
 
@@ -71,28 +69,6 @@ namespace Izumi.SearchScripts
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool BreakCondition(int timeRemaining) => CancelationToken || (DateTime.Now - _startTime).TotalMilliseconds > timeRemaining / 20;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int MoveSortRuleset(Move a, Move b)
-        {
-            int score = GetMoveValue(b) - GetMoveValue(a);
-
-            if (score is 0)
-                return 0;
-            return Math.Sign(score);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetMoveValue(Move move)
-        {
-            if (_transpositionTableEntry != null && move.Equals(_transpositionTableEntry.Value.bestMove))
-                return Infinity;
-            if (move.IsCapture)
-                return ((int)move.TargetPiece + 1) * 100 - (int)move.MovingPiece;
-            else if (move.IsCastle || move.IsPromotion)
-                return 1;
-            return 0;
-        }
-
         #region Search
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private int NegaMax(Board board, int depth, int alpha, int beta, int movesPlayed)
@@ -100,19 +76,19 @@ namespace Izumi.SearchScripts
             if (movesPlayed > 0 && (board.IsRepetition() || board.HalfMoves >= 100))
                 return 0;
 
-            _transpositionTableEntry = TranspositionTable.Probe(board.ZobristKey);
-            if (movesPlayed > 0 && _transpositionTableEntry != null && _transpositionTableEntry.Value.Depth >= depth)
+/*            TranspositionTableEntry? transpositionTableEntry = TranspositionTable.Probe(board.ZobristKey);
+            if (movesPlayed > 0 && transpositionTableEntry != null && transpositionTableEntry.Value.Depth >= depth)
             {
-                if (_transpositionTableEntry.Value.Flag == TTeEntryFlag.Exact)
-                    return _transpositionTableEntry.Value.Score;
-                else if (_transpositionTableEntry.Value.Flag == TTeEntryFlag.Lowerbound)
-                    alpha = Math.Max(alpha, _transpositionTableEntry.Value.Score);
-                else if (_transpositionTableEntry.Value.Flag == TTeEntryFlag.Upperbound)
-                    beta = Math.Min(beta, _transpositionTableEntry.Value.Score);
+                if (transpositionTableEntry.Value.Flag == TTeEntryFlag.Exact)
+                    return transpositionTableEntry.Value.Score;
+                else if (transpositionTableEntry.Value.Flag == TTeEntryFlag.Lowerbound)
+                    alpha = Math.Max(alpha, transpositionTableEntry.Value.Score);
+                else if (transpositionTableEntry.Value.Flag == TTeEntryFlag.Upperbound)
+                    beta = Math.Min(beta, transpositionTableEntry.Value.Score);
 
                 if (alpha >= beta)
-                    return _transpositionTableEntry.Value.Score;
-            }
+                    return transpositionTableEntry.Value.Score;
+            }*/
 
             if (depth <= 0)
             {
@@ -122,19 +98,18 @@ namespace Izumi.SearchScripts
             if (BreakCondition(_timeRemaning))
                 return Infinity;
 
-            Span<Move> moves = board.GeneratePseudoLegalMoves();
-            moves.Sort(MoveSortRuleset);
+            MoveSelector selector = new(board.GeneratePseudoLegalMoves(), null);
             int value = -Infinity;
             int legalMoveCount = 0;
             int originalAlpha = alpha;
             Move bestMove = new();
 
-            for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
+            for (int moveIndex = 0; moveIndex < selector.Length; moveIndex++)
             {
                 _nodePerSecondTracker.Update();
 
                 Board boardCopy = board;
-                Move move = moves[moveIndex];
+                Move move = selector.GetMoveForIndex(moveIndex);
                 if (!boardCopy.MakeMove(move))
                     continue;
 
@@ -167,7 +142,7 @@ namespace Izumi.SearchScripts
             if (legalMoveCount == 0)
                 return board.SideToMoveKingInCheck ? movesPlayed - Infinity : 0;
 
-            TranspositionTableEntry newEntry = new()
+/*            TranspositionTableEntry newEntry = new()
             {
                 Depth = (byte)depth,
                 PositionKey = board.ZobristKey,
@@ -182,7 +157,7 @@ namespace Izumi.SearchScripts
             else
                 newEntry.Flag = TTeEntryFlag.Exact;
 
-            TranspositionTable.Add(newEntry);
+            TranspositionTable.Add(newEntry);*/
 
             return value;
         }
@@ -203,14 +178,13 @@ namespace Izumi.SearchScripts
             if (BreakCondition(_timeRemaning))
                 return Infinity;
 
-            Span<Move> moves = board.GeneratePseudoLegalPriorityMoves();
-            moves.Sort(MoveSortRuleset);
+            MoveSelector selector = new(board.GeneratePseudoLegalTacticalMoves(), null);
 
-            for (int moveIndex = 0; moveIndex < moves.Length; moveIndex++)
+            for (int moveIndex = 0; moveIndex < selector.Length; moveIndex++)
             {
                 _nodePerSecondTracker.Update();
 
-                Move move = moves[moveIndex];
+                Move move = selector.GetMoveForIndex(moveIndex);
                 Board boardCopy = board;
                 if (!boardCopy.MakeMove(move))
                     continue;

@@ -226,7 +226,7 @@ namespace Izumi.Structures
         public Span<Move> GeneratePseudoLegalMoves() => MoveController.GeneratePseudoLegalMoves(this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Span<Move> GeneratePseudoLegalPriorityMoves() => MoveController.GeneratePseudoLegalPriorityMoves(this);
+        public Span<Move> GeneratePseudoLegalTacticalMoves() => MoveController.GeneratePseudoLegalTacticalMoves(this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsKingInCheck(bool isWhite) => IsSquareAttacked(GetPieceBitboard(PieceType.King, isWhite).LsbIndex, isWhite);
