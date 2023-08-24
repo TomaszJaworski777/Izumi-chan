@@ -19,18 +19,21 @@ namespace Izumi.Structures
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public MoveSelector( Span<Move> moves, TranspositionTableEntry? entry )
         {
-            Length = moves.Length;
+            int length = moves.Length;
+            Length = length;
             _entry = entry;
-            _moves = new ScoredMove[Length];
-            fixed (ScoredMove* move = _moves)
+
+            _moves = new ScoredMove[length];
+            fixed (ScoredMove* scoredMovesPtr = _moves)
             {
+                ScoredMove* currentMove = scoredMovesPtr;
                 Move bufferMove;
-                for (int i = 0; i < _moves.Length; i++)
+                for (int i = 0; i < length; i++)
                 {
-                    ScoredMove* currentMove = move + i;
                     bufferMove = moves[i];
                     currentMove->Move = bufferMove;
                     currentMove->Score = GetMoveValue( bufferMove );
+                    currentMove++;
                 }
             }
         }
@@ -39,28 +42,31 @@ namespace Izumi.Structures
         public Move GetMoveForIndex( int index )
         {
             Move bestMove = _moves[index].Move;
-            int currentScore = _moves[index].Score;
+            int bestScore = _moves[index].Score;
             int bestIndex = index;
 
-            fixed (ScoredMove* move = _moves)
+            fixed (ScoredMove* move = &_moves[0])
             {
-                for (int i = index + 1; i < _moves.Length; i++)
+                ScoredMove* currentMove = move + index + 1;
+                ScoredMove* end = move + _moves.Length;
+
+                while (currentMove < end)
                 {
-                    ScoredMove* currentMove = move + i;
                     int score = currentMove->Score;
-                    if(score > currentScore)
+                    if (score > bestScore)
                     {
-                        currentScore = score;
-                        bestIndex = i;
+                        bestScore = score;
+                        bestIndex = (int)(currentMove - move);
                         bestMove = currentMove->Move;
                     }
+                    currentMove++;
                 }
 
-                if(bestIndex != index)
+                if (bestIndex != index)
                 {
-                    ScoredMove* buffer = move + index;
+                    ScoredMove buffer = *(move + index);
                     _moves[index] = _moves[bestIndex];
-                    _moves[bestIndex] = *buffer;
+                    _moves[bestIndex] = buffer;
                 }
             }
 

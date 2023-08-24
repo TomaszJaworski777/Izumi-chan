@@ -2,7 +2,7 @@
 
 namespace Izumi.Structures
 {
-    internal static class TranspositionTable
+    internal static class TranspositionTable //fix TTs
     {
         private static TranspositionTableEntry[] _table = new TranspositionTableEntry[0];
         private static int _hashfullCounter = 0;

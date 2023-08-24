@@ -40,7 +40,7 @@ namespace Izumi.SearchScripts
                 int bestScore = NegaMax(board, currentDepth, -Infinity, Infinity, 0);
                 if (BreakCondition(_timeRemaning))
                     break;
-                Console.WriteLine($"info depth {currentDepth} score cp {bestScore} nodes {_nodes} nps {_nodePerSecondTracker.LatestResult} hashfull {TranspositionTable.HashFull} pv {PrintPV(board, currentDepth)}");
+                Console.WriteLine($"info depth {currentDepth} score cp {bestScore} nodes {_nodes} nps {_nodePerSecondTracker.LatestResult} hashfull {TranspositionTable.HashFull} best {_bestRootMove}");
 
                 _latestBestMove = _bestRootMove;
             }
@@ -74,7 +74,9 @@ namespace Izumi.SearchScripts
         private int NegaMax(Board board, int depth, int alpha, int beta, int movesPlayed)
         {
             if (movesPlayed > 0 && (board.IsRepetition() || board.HalfMoves >= 100))
+            {
                 return 0;
+            }
 
 /*            TranspositionTableEntry? transpositionTableEntry = TranspositionTable.Probe(board.ZobristKey);
             if (movesPlayed > 0 && transpositionTableEntry != null && transpositionTableEntry.Value.Depth >= depth)
@@ -82,9 +84,9 @@ namespace Izumi.SearchScripts
                 if (transpositionTableEntry.Value.Flag == TTeEntryFlag.Exact)
                     return transpositionTableEntry.Value.Score;
                 else if (transpositionTableEntry.Value.Flag == TTeEntryFlag.Lowerbound)
-                    alpha = Math.Max(alpha, transpositionTableEntry.Value.Score);
+                    alpha = Math.Max( alpha, transpositionTableEntry.Value.Score );
                 else if (transpositionTableEntry.Value.Flag == TTeEntryFlag.Upperbound)
-                    beta = Math.Min(beta, transpositionTableEntry.Value.Score);
+                    beta = Math.Min( beta, transpositionTableEntry.Value.Score );
 
                 if (alpha >= beta)
                     return transpositionTableEntry.Value.Score;
@@ -113,9 +115,6 @@ namespace Izumi.SearchScripts
                 if (!boardCopy.MakeMove(move))
                     continue;
 
-                if (_bestRootMove.IsNull)
-                    _bestRootMove = move;
-
                 legalMoveCount++;
                 _nodes++;
                 _nodePerSecondTracker.AddNode();
@@ -140,7 +139,12 @@ namespace Izumi.SearchScripts
             }
 
             if (legalMoveCount == 0)
-                return board.SideToMoveKingInCheck ? movesPlayed - Infinity : 0;
+            {
+                if (board.SideToMoveKingInCheck)
+                    return movesPlayed - Infinity;
+                else
+                    return 0;
+            }
 
 /*            TranspositionTableEntry newEntry = new()
             {
@@ -157,7 +161,7 @@ namespace Izumi.SearchScripts
             else
                 newEntry.Flag = TTeEntryFlag.Exact;
 
-            TranspositionTable.Add(newEntry);*/
+            TranspositionTable.Add( newEntry );*/
 
             return value;
         }

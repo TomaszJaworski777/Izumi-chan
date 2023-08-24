@@ -39,7 +39,7 @@ namespace Izumi.Structures
                     count++;
             }
 
-            return count > 2;
+            return count > 1;
         }
     }
 
