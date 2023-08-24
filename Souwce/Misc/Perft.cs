@@ -6,10 +6,12 @@ namespace Izumi.Misc
     internal class Perft
     {
         private NodePerSecondTracker _nodePerSecondTracker = new(false);
+        private Dictionary<(ulong, int), TranspositionTableEntry> _perftTT = new();
 
         public void Execute(int depth, Board board, bool splitPerft, bool logger = false)
         {
             _nodePerSecondTracker = new(logger);
+            _perftTT.Clear();
 
             if (splitPerft)
             {
@@ -33,6 +35,17 @@ namespace Izumi.Misc
 
             _nodePerSecondTracker.Update();
 
+            if(_perftTT.TryGetValue((board.ZobristKey, depth), out TranspositionTableEntry entry ))
+            {
+                for (ulong i = 0; i < entry.PositionKey; i++)
+                {
+                    _nodePerSecondTracker.AddNode();
+                }
+
+                _nodePerSecondTracker.Update();
+                return entry.PositionKey;
+            }
+
             ulong count = 0;
             var moves = MoveController.GeneratePseudoLegalMoves(board);
 
@@ -48,6 +61,11 @@ namespace Izumi.Misc
                 if (splitPerft)
                     Console.WriteLine($"{moves[i]} - {result}");
             }
+
+            _perftTT.Add( (board.ZobristKey, depth), new TranspositionTableEntry()
+            {
+                PositionKey = count
+            } );
 
             return count;
         }
