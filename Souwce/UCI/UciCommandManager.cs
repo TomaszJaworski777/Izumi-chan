@@ -152,9 +152,9 @@ namespace Izumi.UCI
             {
                 Infinite = infinite,
                 Depth = depth,
-                WhiteTime = wTime,
-                BlackTime = bTime
-            });
+                WhiteTime = Math.Clamp( wTime, 50, int.MaxValue),
+                BlackTime = Math.Clamp( bTime, 50, int.MaxValue )
+            } );
         }
 
         private void Search(object? state)
