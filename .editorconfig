@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS9080: Use of variable in this context may expose referenced variables outside of their declaration scope
+dotnet_diagnostic.CS9080.severity = silent

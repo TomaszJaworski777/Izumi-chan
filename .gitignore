@@ -396,4 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-TestData/output.txt
+
+#Local project files
+CutechessFiles
