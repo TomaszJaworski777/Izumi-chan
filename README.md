@@ -3,7 +3,7 @@
 <img
   width="200"
   alt="Izumi-chan Logo"
-  src=".readme/logo-min.png">
+  src=".readme/logo_300x300.png">
 
 <h3>Izumi-chan</h3>
 <b>0pen souwce chesies enginye wwitten in C#</b> (◕‿◕✿)
