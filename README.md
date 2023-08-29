@@ -3,7 +3,7 @@
 <img
   width="200"
   alt="Izumi-chan Logo"
-  src=".readme/logo.png">
+  src=".readme/logo-min.png">
 
 <h3>Izumi-chan</h3>
 <b>0pen souwce chesies enginye wwitten in C#</b> (◕‿◕✿)
@@ -73,11 +73,11 @@ Aww >w< impwemented UwU enginye f-f-featuwes, togethew *sees bulge* with winkies
   * [QuiesenceSearch](https://www.chessprogramming.org/Quiescence_Search)
 
 ## Credits
-### Special thanks:
+### Speciaw thanks:
   * [PGG106](https://github.com/PGG106) devewopew *blushes* of [Alexandria](https://github.com/PGG106/Alexandria) ow b-being my mentow *starts twerking* in this jouwnyey
   * [Bluefever Software](https://www.youtube.com/@BlueFeverSoft) fow c-cweating youtube sewies about his enginye [Vice](https://github.com/bluefeversoft/vice)
 
-### Mandatory adnatioations:
+### Mandatowy adnatioations:
   * To genyewate weeb *huggles tightly* text I used [Weaboo~ twanswatow](https://lingojam.com/Weaboo~Translator) and [Uwuifiew](https://uwuifier.com)
   * Wogo designyed by [Freepik](www.fweepik.com)
 
