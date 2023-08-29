@@ -76,6 +76,7 @@ Aww >w< impwemented UwU enginye f-f-featuwes, togethew *sees bulge* with winkies
 ### Speciaw thanks:
   * [PGG106](https://github.com/PGG106) devewopew *blushes* of [Alexandria](https://github.com/PGG106/Alexandria) ow b-being my mentow *starts twerking* in this jouwnyey
   * [Bluefever Software](https://www.youtube.com/@BlueFeverSoft) fow c-cweating youtube sewies about his enginye [Vice](https://github.com/bluefeversoft/vice)
+  * [Chess Programming Wiki](https://www.chessprogramming.org/Main_Page) fow hewping me t-to aquiwe tons of chess ^w^ enginye knyowwage
 
 ### Mandatowy adnatioations:
   * To genyewate weeb *huggles tightly* text I used [Weaboo~ twanswatow](https://lingojam.com/Weaboo~Translator) and [Uwuifiew](https://uwuifier.com)
