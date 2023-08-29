@@ -1,6 +1,7 @@
 ﻿using Engine.Board;
 using Engine.Evaluation;
 using Engine.Move;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -28,22 +29,23 @@ internal class SearchSystem
         CancellationToken = false;
 
         _timeManager = new( searchParameters.Board.SideToMove == 0 ? searchParameters.WhiteTime : searchParameters.BlackTime );
+        Stopwatch stopwatch = new();
 
         //implementation of iterative deepening (https://www.chessprogramming.org/Iterative_Deepening)
         for (int currentDepth = 1; currentDepth <= searchParameters.Depth; currentDepth++)
         {
             _nodes = 0;
-            DateTime startTime = DateTime.Now;
+            stopwatch.Restart();
 
             int bestScore = NegaMax(searchParameters.Board, currentDepth, -Infinity, Infinity, 0);
 
-            ulong totalMicroseconds = (ulong)(DateTime.Now - startTime).TotalMicroseconds;
-            ulong nps = (_nodes * 1_000_000) / Math.Clamp(totalMicroseconds, 1, ulong.MaxValue);
+            ulong totalMiliseconds = (ulong)stopwatch.ElapsedMilliseconds;
+            ulong nps = (_nodes * 1_000) / Math.Clamp(totalMiliseconds, 1, ulong.MaxValue);
 
             if (CancellationToken)
                 break;
 
-            Console.WriteLine( $"info depth {currentDepth} score {DisplayScore(bestScore)} nodes {_nodes} time {totalMicroseconds/1000} nps {nps}" );
+            Console.WriteLine( $"info depth {currentDepth} score {DisplayScore(bestScore)} nodes {_nodes} time {totalMiliseconds} nps {nps}" );
 
             _bestRootMove = _bestRootMoveCandidate;
         }
