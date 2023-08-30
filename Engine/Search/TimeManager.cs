@@ -22,7 +22,7 @@ namespace Engine.Search
             }
 
             time += EngineOptions.GetOption( EngineOptions.MoveOverheadKey );
-            _timeForMove = Math.Clamp( (time + increment) / movesToGo, 35, Math.Clamp( time * 8 / 10, 35, int.MaxValue ) );
+            _timeForMove = Math.Min( Math.Max( (time + increment) / movesToGo, 35 ), time * 8 / 10 );
             _stopwatch.Start();
         }
 
