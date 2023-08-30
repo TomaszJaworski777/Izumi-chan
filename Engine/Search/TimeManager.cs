@@ -15,7 +15,7 @@ namespace Engine.Search
         public TimeManager( int time, int increment, int movesToGo = TimeDivider )
         {
             _timeRemaning = (time / movesToGo) - 25;
-            _timeRemaning = Math.Clamp( _timeRemaning, 1000 / movesToGo, int.MaxValue );
+            _timeRemaning = Math.Clamp( _timeRemaning, Math.Clamp( 500 / movesToGo, 15, int.MaxValue ), int.MaxValue );
             _stopwatch.Start();
         }
 
