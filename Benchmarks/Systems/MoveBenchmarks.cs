@@ -9,7 +9,6 @@ namespace Benchmarks.Systems;
 [DisassemblyDiagnoser(maxDepth: 6)]
 [MemoryDiagnoser]
 [SimpleJob(RuntimeMoniker.Net80)]
-[SimpleJob(RuntimeMoniker.NativeAot80)]
 public class MoveBenchmarks
 {
     [Benchmark]

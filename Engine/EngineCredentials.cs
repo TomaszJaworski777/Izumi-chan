@@ -16,7 +16,7 @@
         public static string Version => $"{MajorPatchNumber}.{FeatureCountSiceLastMajorPatch}.{CommitsSinceLastFeature}";
 
         private const int MajorPatchNumber = 0;
-        private const int FeatureCountSiceLastMajorPatch = 3;
-        private const int CommitsSinceLastFeature = 2;
+        private const int FeatureCountSiceLastMajorPatch = 4;
+        private const int CommitsSinceLastFeature = 0;
     }
 }

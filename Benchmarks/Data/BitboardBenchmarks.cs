@@ -7,7 +7,6 @@ namespace Benchmarks.Data;
 [DisassemblyDiagnoser(maxDepth: 6)]
 [MemoryDiagnoser]
 [SimpleJob(RuntimeMoniker.Net80)]
-[SimpleJob(RuntimeMoniker.NativeAot80)]
 public class BitboardBenchmarks
 {
     [Benchmark]
@@ -22,12 +21,23 @@ public class BitboardBenchmarks
     }
 
     [Benchmark]
-    public Bitboard SetBitValue()
+    public Bitboard SetBitValueToOne()
     {
         Bitboard bitboard = 666;
         for (int i = 0; i < 100000000; i++)
         {
             bitboard.SetBitToOne( 63 );
+        }
+        return bitboard;
+    }
+
+    [Benchmark]
+    public Bitboard SetBitValueToZero()
+    {
+        Bitboard bitboard = 666;
+        for (int i = 0; i < 100000000; i++)
+        {
+            bitboard.SetBitToZero( 63 );
         }
         return bitboard;
     }

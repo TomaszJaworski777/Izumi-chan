@@ -8,7 +8,6 @@ namespace Benchmarks.Structures;
 [DisassemblyDiagnoser(maxDepth: 6)]
 [MemoryDiagnoser]
 [SimpleJob(RuntimeMoniker.Net80)]
-[SimpleJob(RuntimeMoniker.NativeAot80)]
 public class BoardBenchmarks
 {
     [Benchmark]

@@ -2,7 +2,7 @@
 
 public static class EngineOptions
 {
-    public const string MoveOverheadKey = "MOVEOVERHEAD";
+    public const string MoveOverheadKey = "MoveOverhead";
 
     private static readonly Dictionary<string, OptionStruct> Options = new(StringComparer.OrdinalIgnoreCase);
 

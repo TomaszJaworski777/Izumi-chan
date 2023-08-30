@@ -53,9 +53,9 @@ internal readonly ref struct MoveSelector
             }
         }
 
-        if (bestIndex != index)
+        if (bestIndex != 0)
         {
-            (moves[index], moves[bestIndex]) = (moves[bestIndex], moves[index]);
+            (moves[0], moves[bestIndex]) = (moves[bestIndex], moves[0]);
         }
 
         return bestMove;
