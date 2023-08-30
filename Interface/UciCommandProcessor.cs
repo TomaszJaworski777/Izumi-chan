@@ -79,8 +79,11 @@ internal class UciCommandProcessor : CommandProcessor
     private void HandleGoCommand( string[] args )
     {
         int depth = 100;
-        int wTime = int.MaxValue;
-        int bTime = int.MaxValue;
+        int wTime = 0;
+        int bTime = 0;
+        int wInc = 0;
+        int bInc = 0;
+        int movesToGo = TimeManager.TimeDivider;
 
         for (int i = 0; i < args.Length; i++)
         {
@@ -99,19 +102,34 @@ internal class UciCommandProcessor : CommandProcessor
                     wTime = int.Parse( args[i + 1] ) * TimeManager.TimeDivider;
                     bTime = int.Parse( args[i + 1] ) * TimeManager.TimeDivider;
                     break;
+                case "winc":
+                    wInc = int.Parse( args[i + 1] );
+                    break;
+                case "binc":
+                    bInc = int.Parse( args[i + 1] );
+                    break;
+                case "movestogo":
+                    movesToGo = int.Parse( args[i + 1] );
+                    break;
             }
         }
 
+        if(depth != 100)
+        {
+            wTime = int.MaxValue;
+            bTime = int.MaxValue;
+        }
+
         Thread searchThread = new (SearchThread);
-        searchThread.Start( new SearchData( depth, wTime, bTime ) );
+        searchThread.Start( new SearchData( depth, wTime, bTime, wInc, bInc, movesToGo ) );
     }
 
     private void SearchThread( object? data )
     {
         SearchData searchData = (SearchData)data!;
-        MoveData bestMove = _chessEngine.FindBestMove(searchData.Depth, searchData.WhiteTime, searchData.BlackTime);
+        MoveData bestMove = _chessEngine.FindBestMove(searchData.Depth, searchData.WhiteTime, searchData.BlackTime, searchData.WhiteIncrement, searchData.BlackIncrement, searchData.MovesToGo);
         Console.WriteLine( $"bestmove {bestMove}" );
     }
 
-    private record struct SearchData(int Depth, int WhiteTime, int BlackTime );
+    private record struct SearchData(int Depth, int WhiteTime, int BlackTime, int WhiteIncrement, int BlackIncrement, int MovesToGo );
 }

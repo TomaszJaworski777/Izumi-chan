@@ -42,12 +42,12 @@ public class ChessEngine
     }
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
-    public MoveData FindBestMove( int depth, int whiteTime, int blackTime )
+    public MoveData FindBestMove( int depth, int whiteTime, int blackTime, int whiteIncrement, int blackIncrement, int movesToGo )
     {
         BoardData board = CreateCurrentBoard();
 
         SearchSystem search = new();
-        return search.FindBestMove( new SearchParameters( board, depth, whiteTime, blackTime ) );
+        return search.FindBestMove( new SearchParameters( board, depth, whiteTime, blackTime, whiteIncrement, blackIncrement, movesToGo ) );
     }
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]

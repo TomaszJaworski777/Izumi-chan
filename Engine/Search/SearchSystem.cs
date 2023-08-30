@@ -20,6 +20,7 @@ internal class SearchSystem
     private MoveData _bestRootMoveCandidate;
     private MoveData _bestRootMove;
     private ulong _nodes = 0;
+    private int _lastBestScore = 0;
 
     private TimeManager _timeManager;
 
@@ -28,7 +29,9 @@ internal class SearchSystem
     {
         CancellationToken = false;
 
-        _timeManager = new( searchParameters.Board.SideToMove == 0 ? searchParameters.WhiteTime : searchParameters.BlackTime );
+        int time = searchParameters.Board.SideToMove == 0 ? searchParameters.WhiteTime : searchParameters.BlackTime;
+        int increment = searchParameters.Board.SideToMove == 0 ? searchParameters.WhiteIncrement : searchParameters.BlackIncrement;
+        _timeManager = new( time, increment, searchParameters.MovesToGo );
         Stopwatch stopwatch = new();
 
         //implementation of iterative deepening (https://www.chessprogramming.org/Iterative_Deepening)
@@ -43,11 +46,15 @@ internal class SearchSystem
             ulong nps = (_nodes * 1_000) / Math.Clamp(totalMiliseconds, 1, ulong.MaxValue);
 
             if (CancellationToken)
+            {
+                Console.WriteLine( $"info depth {currentDepth-1} score {DisplayScore( _lastBestScore )} nodes {_nodes} time {totalMiliseconds} nps {nps}" );
                 break;
+            }
 
             Console.WriteLine( $"info depth {currentDepth} score {DisplayScore(bestScore)} nodes {_nodes} time {totalMiliseconds} nps {nps}" );
 
             _bestRootMove = _bestRootMoveCandidate;
+            _lastBestScore = bestScore;
         }
 
         return _bestRootMove;
