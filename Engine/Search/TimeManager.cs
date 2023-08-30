@@ -1,11 +1,11 @@
-﻿using Engine.Options;
-using Engine.Perft;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Engine.Options;
+using Engine.Perft;
 
 namespace Engine.Search
 {
-    public struct TimeManager
+    public readonly struct TimeManager
     {
         public const int TimeDivider = 20;
 
@@ -21,8 +21,9 @@ namespace Engine.Search
                 return;
             }
 
-            time += EngineOptions.GetOption( EngineOptions.MoveOverheadKey );
+            time += (int)EngineOptions.GetOption( EngineOptions.MoveOverheadKey );
             _timeForMove = Math.Min( Math.Max( (time + increment) / movesToGo, 35 ), time * 8 / 10 );
+
             _stopwatch.Start();
         }
 

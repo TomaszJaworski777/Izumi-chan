@@ -3,27 +3,11 @@ using System.Runtime.CompilerServices;
 
 namespace Engine.Data.Bitboards;
 
-public partial struct Bitboard
+public struct Bitboard
 {
     private ulong _value;
 
-    public int BitCount
-    {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get
-        {
-            ulong maskCopy = _value;
-            int result = 0;
-            while (maskCopy > 0)
-            {
-                maskCopy &= maskCopy - 1;
-                result++;
-            }
-
-            return result;
-        }
-    }
-
+    public int BitCount => BitOperations.PopCount( _value );
     public int LsbIndex => BitOperations.TrailingZeroCount( _value );
     public int MsbIndex => BitOperations.LeadingZeroCount( _value );
 
@@ -56,7 +40,7 @@ public partial struct Bitboard
                 Console.WriteLine();
 
             Console.ForegroundColor = GetBitValue( i ^ 56 ) > 0 ? ConsoleColor.Green : ConsoleColor.Gray;
-            Console.Write( string.Format( "{0, 2}", GetBitValue( i ^ 56 ) > 0 ? 'X' : '*' ) );
+            Console.Write("{0, 2}", GetBitValue( i ^ 56 ) > 0 ? 'X' : '*');
         }
         Console.ForegroundColor = ConsoleColor.Gray;
         Console.WriteLine( $"\nValue: {_value}" );

@@ -1,10 +1,10 @@
-﻿using Engine.Board;
-using Engine.Data.Enums;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Engine.Board;
 using Engine.Evaluation;
 using Engine.Move;
 using Engine.Perft;
 using Engine.Search;
-using System.Runtime.CompilerServices;
 
 namespace Engine;
 
@@ -30,7 +30,7 @@ public class ChessEngine
     public ulong Perft( string fen, int depth, bool divide )
     {
         BoardData board = BoardProvider.Create(fen);
-        PerftTest test = new PerftTest(board);
+        PerftTest test = new(board);
         return test.TestPosition( depth, divide );
     }
 
@@ -38,7 +38,7 @@ public class ChessEngine
     public ulong Perft( int depth, bool divide )
     {
         BoardData board = CreateCurrentBoard();
-        PerftTest test = new PerftTest(board);
+        PerftTest test = new(board);
         return test.TestPosition( depth, divide );
     }
 
@@ -72,10 +72,8 @@ public class ChessEngine
     private BoardData CreateCurrentBoard()
     {
         BoardData board = BoardProvider.Create(_currentPositionRootFEN);
-        foreach (MoveData move in _movesFromRoot)
+        foreach (ref MoveData move in CollectionsMarshal.AsSpan(_movesFromRoot))
             board.MakeMove( move );
         return board;
     }
-
-    private static void Main( string[] args ) { }
 }

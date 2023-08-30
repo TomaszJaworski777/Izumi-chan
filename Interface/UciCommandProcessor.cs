@@ -13,9 +13,9 @@ internal class UciCommandProcessor : CommandProcessor
         Console.WriteLine( $"id name {EngineCredentials.FullName}" );
         Console.WriteLine( $"id author {EngineCredentials.Author}" );
 
-        foreach (var option in EngineOptions.Options)
+        foreach (var option in EngineOptions.AllValues)
         {
-            Console.Write( $"option name {option.Key} type {option.Value.Type.ToString().ToLower()} default {option.Value.Value}" );
+            Console.Write( $"option name {option.Key} type {option.Value.Type.ToString().ToLowerInvariant()} default {option.Value.Value}" );
 
             if (option.Value.Type is OptionValueType.Spin)
                 Console.Write( $" min {option.Value.MinValue} max {option.Value.MaxValue}" );
@@ -23,7 +23,7 @@ internal class UciCommandProcessor : CommandProcessor
             Console.WriteLine();
         }
 
-        Console.WriteLine( $"uciok" );
+        Console.WriteLine( "uciok" );
     }
 
     public override void ProcessCommand( string[] commandSplit )

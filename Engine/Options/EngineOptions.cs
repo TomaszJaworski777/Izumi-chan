@@ -4,9 +4,9 @@ public static class EngineOptions
 {
     public const string MoveOverheadKey = "MOVEOVERHEAD";
 
-    private static readonly Dictionary<string, OptionStruct> _options = new();
+    private static readonly Dictionary<string, OptionStruct> Options = new(StringComparer.OrdinalIgnoreCase);
 
-    public static Dictionary<string, OptionStruct> Options => _options;
+    public static IEnumerable<KeyValuePair<string, OptionStruct>> AllValues => Options;
 
     static EngineOptions()
     {
@@ -15,17 +15,16 @@ public static class EngineOptions
 
     public static void AddOption(string name, OptionStruct option )
     {
-        _options.TryAdd( name.ToUpper(), option );
+        Options.Add( name, option );
     }
 
-    public static OptionStruct GetOption( string name ) => _options[name.ToUpper()];
+    public static OptionStruct GetOption( string name ) => Options[name];
 
     public static void ChangeOption( string name, string newValue )
     {
-        if (!_options.TryGetValue( name.ToUpper(), out OptionStruct value ))
+        if (!Options.TryGetValue( name, out OptionStruct value ))
         {
-            Console.WriteLine( $"Option `{name.ToUpper()}` doesn't exist!" );
-            return;
+            throw new InvalidOperationException( $"Option `{name.ToUpperInvariant()}` doesn't exist!" );
         }
 
         switch (value.Type)
@@ -34,23 +33,26 @@ public static class EngineOptions
                 ChangeOption( name, int.Parse(newValue) );
                 break;
             case OptionValueType.Check:
-                ChangeOption( name, newValue == "true" );
+                ChangeOption( name, bool.Parse(newValue) );
                 break;
             case OptionValueType.String:
-                ChangeOption( name, newValue );
+                ChangeOption( name, (object)newValue );
                 break;
         }
     }
 
     public static void ChangeOption( string name, object newValue )
     {
-        if (!_options.TryGetValue( name.ToUpper(), out OptionStruct value ))
+        if (!Options.TryGetValue( name, out OptionStruct value ))
         {
-            Console.WriteLine( $"Option `{name.ToUpper()}` doesn't exist!" );
-            return;
+            throw new InvalidOperationException( $"Option `{name.ToUpperInvariant()}` doesn't exist!" );
         }
 
-        value.ChangeOption( newValue );
-        _options[name.ToUpper()] = value;
+        if (value.Value.GetType() != newValue.GetType())
+        {
+            throw new ArgumentException("Invalid type", nameof(newValue));
+        }
+
+        Options[name] = value with { Value = newValue };
     }
 }

@@ -1,13 +1,13 @@
-﻿using Engine.Data.Bitboards;
+﻿using System.Runtime.CompilerServices;
+using Engine.Data.Bitboards;
 using Engine.Utils;
-using System.Runtime.CompilerServices;
 
 namespace Engine.PieceAttacks
 {
     public class PawnAttacks
     {
-        private Array64<Bitboard> _whiteAttackTable = default;
-        private Array64<Bitboard> _blackAttackTable = default;
+        private Array64<Bitboard> _whiteAttackTable;
+        private Array64<Bitboard> _blackAttackTable;
 
         public PawnAttacks()
         {

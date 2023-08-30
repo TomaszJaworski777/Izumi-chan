@@ -1,8 +1,8 @@
-﻿using Engine.Data.Bitboards;
+﻿using System.Runtime.CompilerServices;
+using Engine.Data.Bitboards;
 using Engine.Data.Enums;
 using Engine.PieceAttacks;
 using Engine.PieceAttacks.SlidingPieces;
-using System.Runtime.CompilerServices;
 
 namespace Engine.Board
 {
@@ -43,9 +43,7 @@ namespace Engine.Board
 
             //king attacks
             attackerPieces = GetPieceBitboard( PieceType.King, squareColor ^ 1 );
-            if ((PieceAttackProvider.GetKingAttacks( squareIndex ) & attackerPieces) > 0)
-                return true;
-            return false;
+            return (PieceAttackProvider.GetKingAttacks( squareIndex ) & attackerPieces) > 0;
         }
     }
 }
@@ -57,9 +55,8 @@ namespace Engine.PieceAttacks
         private static readonly PawnAttacks _pawnAttacks = new();
         private static readonly KnightAttacks _knightAttacks = new();
         private static readonly KingAttacks _kingAttacks = new();
-        private static readonly MagicNumbers _magicNumbers = new();
-        private static readonly BishopAttacks _bishopAttacks = new(_magicNumbers);
-        private static readonly RookAttacks _rookAttacks = new(_magicNumbers);
+        private static readonly BishopAttacks _bishopAttacks = new();
+        private static readonly RookAttacks _rookAttacks = new();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Bitboard GetPawnAttacks( int squareIndex, int color ) => _pawnAttacks.GetAttacksForSquare( squareIndex, color );

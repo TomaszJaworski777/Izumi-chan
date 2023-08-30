@@ -5,7 +5,7 @@ namespace Engine.Utils;
 public static class SquareHelpers
 {
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
-    public static int StringToSquareIndex( ReadOnlySpan<char> square ) => CoordsToSqaureIndex( int.Parse( square[1].ToString() ) - 1, square[0] - 'a' );
+    public static int StringToSquareIndex( ReadOnlySpan<char> square ) => CoordsToSqaureIndex( int.Parse( new ReadOnlySpan<char>(in square[1]) ) - 1, square[0] - 'a' );
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
     public static int SquareIndexToRank( int index ) => index / 8;

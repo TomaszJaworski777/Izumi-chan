@@ -6,34 +6,12 @@ using System.Runtime.CompilerServices;
 namespace Engine.Evaluation;
 public class EvaluationSystem
 {
-    private const ulong _fileMask = 0x0101010101010101;
-
-    private readonly EvaluationSheet _sheet;
-    private readonly int _totalPhase;
-
-    public EvaluationSystem()
-    {
-        _sheet = new();
-
-        _totalPhase = 16 * _sheet.PiecePhase[0] +
-                      4 * _sheet.PiecePhase[1] +
-                      4 * _sheet.PiecePhase[2] +
-                      4 * _sheet.PiecePhase[3] +
-                      2 * _sheet.PiecePhase[4] +
-                      2 * _sheet.PiecePhase[5];
-    }
-
-    public EvaluationSystem( EvaluationSheet injectedSheet )
-    {
-        _sheet = injectedSheet;
-
-        _totalPhase = 16 * _sheet.PiecePhase[0] +
-              4 * _sheet.PiecePhase[1] +
-              4 * _sheet.PiecePhase[2] +
-              4 * _sheet.PiecePhase[3] +
-              2 * _sheet.PiecePhase[4] +
-              2 * _sheet.PiecePhase[5];
-    }
+    private readonly int _totalPhase = 16 * EvaluationSheet.PiecePhase[0] +
+                                       4 * EvaluationSheet.PiecePhase[1] +
+                                       4 * EvaluationSheet.PiecePhase[2] +
+                                       4 * EvaluationSheet.PiecePhase[3] +
+                                       2 * EvaluationSheet.PiecePhase[4] +
+                                       2 * EvaluationSheet.PiecePhase[5];
 
     [MethodImpl( MethodImplOptions.AggressiveOptimization )]
     public int EvaluatePosition( BoardData board, bool debug = false )
@@ -51,7 +29,7 @@ public class EvaluationSystem
             for (int pieceIndex = 0; pieceIndex < 6; pieceIndex++)
             {
                 Bitboard buffer = board.GetPieceBitboard( pieceIndex ) & board.GetPiecesBitboardForSide(color);
-                phase -= buffer.BitCount * _sheet.PiecePhase[pieceIndex];
+                phase -= buffer.BitCount * EvaluationSheet.PiecePhase[pieceIndex];
                 bool isWhitePiece = color == 0;
 
                 while (buffer > 0)
@@ -63,8 +41,8 @@ public class EvaluationSystem
                         squareIndex ^= 56;
 
                     //material eval
-                    materialMidEval += _sheet.MidgamePieceValues[pieceIndex];
-                    materialEndEval += _sheet.EndgamePieceValues[pieceIndex];
+                    materialMidEval += EvaluationSheet.MidgamePieceValues[pieceIndex];
+                    materialEndEval += EvaluationSheet.EndgamePieceValues[pieceIndex];
 
                     //PSTS eval
                     (int pstsMid, int pstsEnd) = GetPstsValue( (PieceType)pieceIndex, squareIndex );
@@ -81,24 +59,24 @@ public class EvaluationSystem
         }
 
         //pawn bonuses/punishments
-        Bitboard fileBuffer;
         for (int fileIndex = 0; fileIndex < 8; fileIndex++)
         {
-            fileBuffer = _fileMask << fileIndex;
+            const ulong fileMask = 0x0101010101010101;
+            Bitboard fileBuffer = fileMask << fileIndex;
 
             //penalty for double pawns
             int whiteDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 0) & fileBuffer)).BitCount;
             if (whiteDoublePawns > 1)
             {
-                doublePawnsMidEval += whiteDoublePawns * _sheet.DoublePawnMidgamePunishment;
-                doubledPawnsEndEval += whiteDoublePawns * _sheet.DoublePawnEndgamePunishment;
+                doublePawnsMidEval += whiteDoublePawns * EvaluationSheet.DoublePawnMidgamePunishment;
+                doubledPawnsEndEval += whiteDoublePawns * EvaluationSheet.DoublePawnEndgamePunishment;
             }
 
             int blackDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 1) & fileBuffer)).BitCount;
             if (blackDoublePawns > 1)
             {
-                doublePawnsMidEval -= blackDoublePawns * _sheet.DoublePawnMidgamePunishment;
-                doubledPawnsEndEval -= blackDoublePawns * _sheet.DoublePawnEndgamePunishment;
+                doublePawnsMidEval -= blackDoublePawns * EvaluationSheet.DoublePawnMidgamePunishment;
+                doubledPawnsEndEval -= blackDoublePawns * EvaluationSheet.DoublePawnEndgamePunishment;
             }
         }
 
@@ -119,14 +97,14 @@ public class EvaluationSystem
         return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1);
     }
 
-    private (int, int) GetPstsValue( PieceType pieceType, int squareIndex ) => pieceType switch
+    private static (int, int) GetPstsValue( PieceType pieceType, int squareIndex ) => pieceType switch
     {
-        PieceType.Pawn => (_sheet.MidgamePawnTable[squareIndex], _sheet.EndgamePawnTable[squareIndex]),
-        PieceType.Knight => (_sheet.MidgameKnightTable[squareIndex], _sheet.EndgameKnightTable[squareIndex]),
-        PieceType.Bishop => (_sheet.MidgameBishopTable[squareIndex], _sheet.EndgameBishopTable[squareIndex]),
-        PieceType.Rook => (_sheet.MidgameRookTable[squareIndex], _sheet.EndgameRookTable[squareIndex]),
-        PieceType.Queen => (_sheet.MidgameQueenTable[squareIndex], _sheet.EndgameQueenTable[squareIndex]),
-        PieceType.King => (_sheet.MidgameKingTable[squareIndex], _sheet.EndgameKingTable[squareIndex]),
+        PieceType.Pawn => (EvaluationSheet.MidgamePawnTable[squareIndex], EvaluationSheet.EndgamePawnTable[squareIndex]),
+        PieceType.Knight => (EvaluationSheet.MidgameKnightTable[squareIndex], EvaluationSheet.EndgameKnightTable[squareIndex]),
+        PieceType.Bishop => (EvaluationSheet.MidgameBishopTable[squareIndex], EvaluationSheet.EndgameBishopTable[squareIndex]),
+        PieceType.Rook => (EvaluationSheet.MidgameRookTable[squareIndex], EvaluationSheet.EndgameRookTable[squareIndex]),
+        PieceType.Queen => (EvaluationSheet.MidgameQueenTable[squareIndex], EvaluationSheet.EndgameQueenTable[squareIndex]),
+        PieceType.King => (EvaluationSheet.MidgameKingTable[squareIndex], EvaluationSheet.EndgameKingTable[squareIndex]),
         _ => (0, 0)
     };
 }

@@ -2,14 +2,9 @@
 
 namespace Interface;
 
-internal abstract class CommandProcessor
+internal abstract class CommandProcessor(ChessEngine chessEngine)
 {
-    protected ChessEngine _chessEngine;
-
-    public CommandProcessor( ChessEngine chessEngine )
-    {
-        _chessEngine = chessEngine;
-    }
+    protected ChessEngine _chessEngine = chessEngine;
 
     public abstract void ProcessCommand( string[] commandSplit );
 }

@@ -1,16 +1,15 @@
-﻿using Engine.Board;
+﻿using System.Runtime.CompilerServices;
+using Engine.Board;
 using Engine.Move;
-using Engine.Utils;
-using System.Runtime.CompilerServices;
 
 namespace Engine.Perft
 {
     [method: MethodImpl( MethodImplOptions.AggressiveInlining )]
     public ref struct PerftTest( BoardData testBoard )
     {
-        public static bool CancellationToken = false;
+        public static bool CancellationToken;
 
-        private BoardData _board = testBoard;
+        private readonly BoardData _board = testBoard;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public ulong TestPosition( int depth, bool divide )
@@ -19,7 +18,6 @@ namespace Engine.Perft
             return InternalTestPosition( _board, depth, divide );
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         //executes perft test based on the given position (https://www.chessprogramming.org/Perft)
         private unsafe ulong InternalTestPosition(BoardData board, int depth, bool divide)
         {
@@ -37,10 +35,9 @@ namespace Engine.Perft
             board.GenerateAllPseudoLegalMoves( ref moveList );
 
             //iterates through moves
-            for (int moveIndex = 0; moveIndex < moveList.Length; moveIndex++)
+            foreach (ref MoveData move in (Span<MoveData>)moveList)
             {
                 //makes move and if its illegal then skips the iteration
-                MoveData move = moveList[moveIndex];
                 BoardData boardCopy = board;
                 if (!boardCopy.MakeMove( move ))
                     continue;

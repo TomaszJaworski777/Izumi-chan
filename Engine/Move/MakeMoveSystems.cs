@@ -1,8 +1,8 @@
-﻿using Engine.Board;
+﻿using System.Runtime.CompilerServices;
+using Engine.Board;
 using Engine.Data.Enums;
 using Engine.Move;
 using Engine.Zobrist;
-using System.Runtime.CompilerServices;
 
 namespace Engine.Board
 {
@@ -13,7 +13,7 @@ namespace Engine.Board
         {
             if (!MakeMoveSystems.MakeMove( ref this, move ))
                 return false;
-            MoveHistory.Add( _zobristKey );
+            MoveHistory.Add( ZobristKey );
             return true;
         }
 
@@ -29,7 +29,6 @@ namespace Engine.Move
 {
     internal static class MakeMoveSystems
     {
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         //makes pseudolegal move. (https://www.chessprogramming.org/Pseudo-Legal_Move) If move is not legal returns false and does not apply any changes to ref board.
         public static bool MakeMove(ref BoardData originalBoard, MoveData move )
         {
@@ -54,7 +53,8 @@ namespace Engine.Move
                 bool kingSide = toIndex - fromIndex == 2;
                 if (!kingSide && board.IsSquareAttacked( isWhiteToMove ? 3 : 59, sideToMove ))
                     return false;
-                else if (kingSide && board.IsSquareAttacked( isWhiteToMove ? 5 : 61, sideToMove ))
+
+                if (kingSide && board.IsSquareAttacked( isWhiteToMove ? 5 : 61, sideToMove ))
                     return false;
             }
 
@@ -74,13 +74,7 @@ namespace Engine.Move
             }
 
             //handles promotion
-            if (!isPromotion)
-            {
-                board.SetPieceOnSquare( movingPiece, sideToMove, toIndex );
-            } else
-            {
-                board.SetPieceOnSquare( promotionPiece, sideToMove, toIndex );
-            }
+            board.SetPieceOnSquare(!isPromotion ? movingPiece : promotionPiece, sideToMove, toIndex);
 
             //if castle then moves rook as aditional rook to finish castle
             if (isCastle)
@@ -118,35 +112,37 @@ namespace Engine.Move
             //swaps side to move
             board.SideToMove ^= 1;
 
-            //updates castle rights if king moved
-            if (movingPiece == PieceType.King)
+            switch (movingPiece)
             {
-                if (isWhiteToMove)
-                {
+                //updates castle rights if king moved
+                case PieceType.King when isWhiteToMove:
                     board.CanWhiteCastleKingSide = 0;
                     board.CanWhiteCastleQueenSide = 0;
-                } else
-                {
+                    break;
+                case PieceType.King:
                     board.CanBlackCastleKingSide = 0;
                     board.CanBlackCastleQueenSide = 0;
-                }
-            }
-
-            //updates castle rights if rook moved
-            if (movingPiece == PieceType.Rook)
-            {
-                if (fromIndex == (isWhiteToMove ? 0 : 56))
+                    break;
+                //updates castle rights if rook moved
+                case PieceType.Rook when fromIndex == (isWhiteToMove ? 0 : 56):
                 {
                     if (isWhiteToMove)
                         board.CanWhiteCastleQueenSide = 0;
                     else
                         board.CanBlackCastleQueenSide = 0;
-                } else if (fromIndex == (isWhiteToMove ? 7 : 63))
+                    break;
+                }
+                case PieceType.Rook:
                 {
-                    if (isWhiteToMove)
-                        board.CanWhiteCastleKingSide = 0;
-                    else
-                        board.CanBlackCastleKingSide = 0;
+                    if (fromIndex == (isWhiteToMove ? 7 : 63))
+                    {
+                        if (isWhiteToMove)
+                            board.CanWhiteCastleKingSide = 0;
+                        else
+                            board.CanBlackCastleKingSide = 0;
+                    }
+
+                    break;
                 }
             }
 
