@@ -35,10 +35,10 @@ internal readonly ref struct MoveSelector
     //sort one move of the move list and returns it
     public MoveData GetMoveForIndex( int index )
     {
-        Span<ScoredMove> moves = _moves;
-        MoveData bestMove = moves[index].Move;
-        int bestScore = moves[index].Score;
-        int bestIndex = index;
+        Span<ScoredMove> moves = _moves[index..];
+        MoveData bestMove = moves[0].Move;
+        int bestScore = moves[0].Score;
+        int bestIndex = 0;
 
         for (int i = 0; i < moves.Length; i++)
         {
