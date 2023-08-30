@@ -8,21 +8,20 @@ namespace Engine.Search
     {
         public const int TimeDivider = 20;
 
-        private readonly int _timeRemaning;
+        private readonly int _timeForMove;
         private readonly Stopwatch _stopwatch = new();
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public TimeManager( int time, int increment, int movesToGo = TimeDivider )
         {
-            _timeRemaning = (time / movesToGo) - 25;
-            _timeRemaning = Math.Clamp( _timeRemaning, Math.Clamp( 500 / movesToGo, 15, int.MaxValue ), int.MaxValue );
+            _timeForMove = Math.Clamp( (time + increment) / movesToGo, 35, time * 8 / 10);
             _stopwatch.Start();
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public void Update()
         {
-            if (_stopwatch.ElapsedMilliseconds >= _timeRemaning)
+            if (_stopwatch.ElapsedMilliseconds >= _timeForMove)
             {
                 PerftTest.CancellationToken = true;
                 SearchSystem.CancellationToken = true;
