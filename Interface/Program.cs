@@ -9,7 +9,9 @@ namespace Interface
             ChessEngine engine = new();
             CommandProcessor generalProcessor = new GeneralCommandProcessor(engine);
             CommandProcessor? interfaceProcessor = null;
-
+#if DEBUG
+            Console.WriteLine("DEBUG MODE");
+#endif
             while (true)
             {
                 string? command = Console.ReadLine();
