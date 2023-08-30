@@ -1,4 +1,5 @@
-﻿using Engine;
+﻿using System.Diagnostics;
+using Engine;
 using Engine.Perft;
 
 namespace Interface;
@@ -33,7 +34,7 @@ internal class GeneralCommandProcessor : CommandProcessor
     {
         Thread perftThread = new ( PerfThread );
 
-        PerftData perftData = new PerftData
+        PerftData perftData = new()
         {
             Fen = "",
             Depth = int.Parse(args[0]),
@@ -70,32 +71,33 @@ internal class GeneralCommandProcessor : CommandProcessor
 
     private void PerfThread( object? data )
     {
+        Stopwatch stopwatch = new();
         PerftData perftData = (PerftData)data!;
         if( !perftData.Divide )
         {
             for (int currentDepth = 1; currentDepth <= perftData.Depth; currentDepth++)
             {
-                DateTime startTime = DateTime.Now;
+                stopwatch.Restart();
                 ulong perftResult = perftData.Fen == "" ? _chessEngine.Perft( currentDepth, perftData.Divide ) : _chessEngine.Perft( perftData.Fen, currentDepth, perftData.Divide );
-                int totalMicroseconds = (int)(DateTime.Now - startTime).TotalMicroseconds;
-                ulong nps = (perftResult * 1_000_000) / (ulong)totalMicroseconds;
+                double totalMicroseconds = stopwatch.Elapsed.TotalMicroseconds;
+                ulong nps = (ulong)(perftResult * 1_000_000 / totalMicroseconds);
 
                 if (PerftTest.CancellationToken)
                     return;
 
-                Console.WriteLine( $"Depth: {currentDepth}, Nodes: {perftResult}, Time: {totalMicroseconds / 1000f}ms, Nps {nps}" );
+                Console.WriteLine( $"Depth: {currentDepth}, Nodes: {perftResult}, Time: {totalMicroseconds / 1000}ms, Nps {nps}" );
             }
         } else
         {
-            DateTime startTime = DateTime.Now;
+            stopwatch.Restart();
             ulong perftResult = perftData.Fen == "" ? _chessEngine.Perft( perftData.Depth, perftData.Divide ) : _chessEngine.Perft( perftData.Fen, perftData.Depth, perftData.Divide );
-            int totalMicroseconds = (int)(DateTime.Now - startTime).TotalMicroseconds;
-            ulong nps = (perftResult * 1_000_000) / (ulong)totalMicroseconds;
+            double totalMicroseconds = stopwatch.Elapsed.TotalMicroseconds;
+            ulong nps = (ulong)(perftResult * 1_000_000 / totalMicroseconds);
 
             if (PerftTest.CancellationToken)
                 return;
 
-            Console.WriteLine( $"Depth: {perftData.Depth}, Nodes: {perftResult}, Time: {totalMicroseconds / 1000f}ms, Nps {nps}" );
+            Console.WriteLine( $"Depth: {perftData.Depth}, Nodes: {perftResult}, Time: {totalMicroseconds / 1000}ms, Nps {nps}" );
         }
     }
 

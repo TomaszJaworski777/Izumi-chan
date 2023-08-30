@@ -56,8 +56,7 @@ public class PieceAttacksTests
     [TestMethod]
     public void BishopAttacks_Test()
     {
-        MagicNumbers magicNumbers = new();
-        BishopAttacks bishopAttacks = new(magicNumbers);
+        BishopAttacks bishopAttacks = new();
         ulong blocker = BoardProvider.Create(BoardProvider.KiwipetePosition).GetPiecesBitboardForSide(0);
 
         Assert.IsTrue( bishopAttacks.GetAttacksForSquare( SquareHelpers.StringToSquareIndex( "e4" ), blocker ) == 36099337564455936 );
@@ -70,8 +69,7 @@ public class PieceAttacksTests
     [TestMethod]
     public void RookAttacks_Test()
     {
-        MagicNumbers magicNumbers = new();
-        RookAttacks rookAttacks = new(magicNumbers);
+        RookAttacks rookAttacks = new();
         ulong blocker = BoardProvider.Create(BoardProvider.KiwipetePosition).GetPiecesBitboardForSide(0);
 
         Assert.IsTrue( rookAttacks.GetAttacksForSquare( SquareHelpers.StringToSquareIndex( "e4" ), blocker ) == 72730284032 );

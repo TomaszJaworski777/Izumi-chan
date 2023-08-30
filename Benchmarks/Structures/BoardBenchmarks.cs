@@ -1,79 +1,96 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using Engine.Board;
 using Engine.Zobrist;
 
 namespace Benchmarks.Structures;
 
-[DisassemblyDiagnoser]
+[DisassemblyDiagnoser(maxDepth: 6)]
+[MemoryDiagnoser]
+[SimpleJob(RuntimeMoniker.Net80)]
+[SimpleJob(RuntimeMoniker.NativeAot80)]
 public class BoardBenchmarks
 {
     [Benchmark]
-    public void CreateBoard()
+    public unsafe void CreateBoard()
     {
         for (int i = 0; i < 1000000; i++)
         {
-            BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
+            BoardData data = BoardProvider.Create(BoardProvider.StartPosition);
+            Helpers.Use(&data);
         }
     }
 
     [Benchmark]
-    public void IsKingInCheck()
+    public BoardData IsKingInCheck()
     {
         BoardData board = new();
         for (int i = 0; i < 100000000; i++)
         {
-            var x =  board.IsBlackKingInCheck;
+            Helpers.Use(board.IsBlackKingInCheck);
         }
+
+        return board;
     }
 
     [Benchmark]
-    public void SetIsKingInCheck()
+    public BoardData SetIsKingInCheck()
     {
         BoardData board = new();
         for (int i = 0; i < 100000000; i++)
         {
             board.IsBlackKingInCheck = 0;
         }
+
+        return board;
     }
 
     [Benchmark]
-    public void SetCanWhiteCastleQueenSide()
+    public BoardData SetCanWhiteCastleQueenSide()
     {
         BoardData board = new();
         for (int i = 0; i < 100000000; i++)
         {
             board.CanWhiteCastleQueenSide = 0;
         }
+
+        return board;
     }
 
     [Benchmark]
-    public void IsSquareAttacked()
+    public BoardData IsSquareAttacked()
     {
         BoardData board = new();
         for (int i = 0; i < 100000000; i++)
         {
-            board.IsSquareAttacked( 44, 0 );
+            Helpers.Use(board.IsSquareAttacked( 44, 0 ));
         }
+
+        return board;
     }
 
     [Benchmark]
-    public void GenerateZobristKey()
+    public BoardData GenerateZobristKey()
     {
         BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
         for (int i = 0; i < 100000000; i++)
         {
-            ZobristHashing.GenerateKey( board );
+            Helpers.Use(ZobristHashing.GenerateKey( board ));
         }
+
+        return board;
     }
 
     [Benchmark]
-    public void ModifyZobristKey()
+    public BoardData ModifyZobristKey()
     {
         BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
         BoardData prevBoard = BoardProvider.Create(BoardProvider.KiwipetePosition);
         for (int i = 0; i < 100000000; i++)
         {
-            ZobristHashing.ModifyKey( board, prevBoard );
+            Helpers.Use(ZobristHashing.ModifyKey( board, prevBoard ));
         }
+
+        return board;
     }
 }

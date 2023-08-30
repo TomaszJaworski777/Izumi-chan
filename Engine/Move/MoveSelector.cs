@@ -1,11 +1,12 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Engine.Move;
 
 //move ordering, in order to increase beta cutoffs in Negamax. (https://www.chessprogramming.org/Move_Ordering) Here i'm using iterative sorting method, to save performance
 internal unsafe ref struct MoveSelector
 {
-    private Span<ScoredMove> _moves;
+    private readonly Span<ScoredMove> _moves;
 
     public int Length { get; private set; }
 
@@ -22,17 +23,16 @@ internal unsafe ref struct MoveSelector
         Length = moves.Length;
         _moves = alloc;
 
-        fixed (ScoredMove* scoredMovesPtr = _moves)
+        if (Length > alloc.Length)
+            throw new ArgumentException("Alloc too small", nameof(alloc));
+
+        ref ScoredMove currentMove = ref MemoryMarshal.GetReference(alloc);
+
+        foreach (ref MoveData bufferMove in (Span<MoveData>)moves)
         {
-            ScoredMove* currentMove = scoredMovesPtr;
-            MoveData bufferMove;
-            for (int i = 0; i < Length; i++)
-            {
-                bufferMove = moves[i];
-                currentMove->Move = bufferMove;
-                currentMove->Score = GetMoveValue( bufferMove/*, entry*/ );
-                currentMove++;
-            }
+            currentMove.Move = bufferMove;
+            currentMove.Score = GetMoveValue( bufferMove/*, entry*/ );
+            currentMove = Unsafe.Add(ref currentMove, 1);
         }
     }
 
@@ -40,33 +40,27 @@ internal unsafe ref struct MoveSelector
     //sort one move of the move list and returns it
     public MoveData GetMoveForIndex( int index )
     {
-        MoveData bestMove = _moves[index].Move;
-        int bestScore = _moves[index].Score;
+        Span<ScoredMove> moves = _moves;
+        MoveData bestMove = moves[index].Move;
+        int bestScore = moves[index].Score;
         int bestIndex = index;
 
-        fixed (ScoredMove* move = &_moves[0])
+        for (int i = 0; i < moves.Length; i++)
         {
-            ScoredMove* currentMove = move + index + 1;
-            ScoredMove* end = move + _moves.Length;
+            ref ScoredMove move = ref moves[i];
+            int score = move.Score;
 
-            while (currentMove < end)
+            if (score > bestScore)
             {
-                int score = currentMove->Score;
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                    bestIndex = (int)(currentMove - move);
-                    bestMove = currentMove->Move;
-                }
-                currentMove++;
+                bestScore = score;
+                bestIndex = i;
+                bestMove = move.Move;
             }
+        }
 
-            if (bestIndex != index)
-            {
-                ScoredMove buffer = *(move + index);
-                _moves[index] = _moves[bestIndex];
-                _moves[bestIndex] = buffer;
-            }
+        if (bestIndex != index)
+        {
+            (moves[index], moves[bestIndex]) = (moves[bestIndex], moves[index]);
         }
 
         return bestMove;

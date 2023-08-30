@@ -1,48 +1,57 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using Engine.Data.Bitboards;
 
 namespace Benchmarks.Data;
 
-[DisassemblyDiagnoser]
+[DisassemblyDiagnoser(maxDepth: 6)]
+[MemoryDiagnoser]
+[SimpleJob(RuntimeMoniker.Net80)]
+[SimpleJob(RuntimeMoniker.NativeAot80)]
 public class BitboardBenchmarks
 {
     [Benchmark]
-    public void GetBitValue()
+    public Bitboard GetBitValue()
     {
         Bitboard bitboard = 666;
         for (int i = 0; i < 100000000; i++)
         {
-            bitboard.GetBitValue( 63 );
+            Helpers.Use(bitboard.GetBitValue( 63 ));
         }
+        return bitboard;
     }
 
     [Benchmark]
-    public void SetBitValue()
+    public Bitboard SetBitValue()
     {
         Bitboard bitboard = 666;
         for (int i = 0; i < 100000000; i++)
         {
             bitboard.SetBitToOne( 63 );
         }
+        return bitboard;
     }
 
     [Benchmark]
-    public void GetValueChunk()
+    public Bitboard GetValueChunk()
     {
         Bitboard bitboard = 666;
         for (int i = 0; i < 100000000; i++)
         {
-            bitboard.GetValueChunk( 30, 127 );
+            Helpers.Use(bitboard.GetValueChunk( 30, 127 ));
         }
+        return bitboard;
     }
 
     [Benchmark]
-    public void SetValueChunk()
+    public Bitboard SetValueChunk()
     {
         Bitboard bitboard = 666;
         for (int i = 0; i < 100000000; i++)
         {
             bitboard.SetValueChunk( 30, 127,  69 );
         }
+
+        return bitboard;
     }
 }

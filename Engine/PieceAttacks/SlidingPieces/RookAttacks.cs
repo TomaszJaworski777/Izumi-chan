@@ -6,16 +6,12 @@ namespace Engine.PieceAttacks.SlidingPieces;
 
 public class RookAttacks
 {
-    private Array64<int> _rookRelevantBitCountForSquare = default;
-    private Array64<Bitboard> _rookAttackMasks = default;
-    private Array64<RookAttacksData> _rookAttacks = default;
-    private MagicNumbers _magicNumbers;
+    private Array64<int> _rookRelevantBitCountForSquare;
+    private Array64<Bitboard> _rookAttackMasks;
+    private Array64<RookAttacksData> _rookAttacks;
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    public RookAttacks( MagicNumbers magicNumbers )
+    public RookAttacks()
     {
-        _magicNumbers = magicNumbers;
-
         for (int squareIndex = 0; squareIndex < 64; squareIndex++)
         {
             _rookRelevantBitCountForSquare[squareIndex] = GetRookRelevantBits( squareIndex ).BitCount;
@@ -27,7 +23,7 @@ public class RookAttacks
             for (int index = 0; index < occupancyIndexCount; index++)
             {
                 Bitboard occupancy = SetOccupancy(index, _rookAttackMasks[squareIndex]);
-                int magicIndex = (int)(occupancy * _magicNumbers.RookMagicNumbers[squareIndex] >> 64 - _rookRelevantBitCountForSquare[squareIndex]);
+                int magicIndex = (int)(occupancy * MagicNumbers.RookMagicNumbers[squareIndex] >> 64 - _rookRelevantBitCountForSquare[squareIndex]);
                 _rookAttacks[squareIndex][magicIndex] = GetFullRookAttackPattern( squareIndex, occupancy );
             }
         }
@@ -123,7 +119,7 @@ public class RookAttacks
     public Bitboard GetAttacksForSquare( int squareIndex, ulong blocker )
     {
         blocker &= _rookAttackMasks[squareIndex];
-        blocker *= _magicNumbers.RookMagicNumbers[squareIndex];
+        blocker *= MagicNumbers.RookMagicNumbers[squareIndex];
         blocker >>= 64 - _rookRelevantBitCountForSquare[squareIndex];
         return _rookAttacks[squareIndex][(int)blocker];
     }

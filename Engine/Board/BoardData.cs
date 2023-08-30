@@ -1,7 +1,7 @@
-﻿using Engine.Data.Bitboards;
+﻿using System.Runtime.CompilerServices;
+using Engine.Data.Bitboards;
 using Engine.Data.Enums;
 using Engine.Zobrist;
-using System.Runtime.CompilerServices;
 
 namespace Engine.Board;
 
@@ -10,7 +10,6 @@ public ref partial struct BoardData
     private PieceBoard _pieces; //piece bitboards ot represent board state (https://www.chessprogramming.org/Bitboards). I used denser board solution to reduce size and sped up copy process (https://www.chessprogramming.org/Bitboard_Board-Definition#Denser_Board)
     private PieceLookup _pieceLookup; //mailbox tyle 8x8 array of pieces for easy lookup (https://www.chessprogramming.org/Mailbox)
     private BitboardInt _miscData; // {castle - 4} {side to move - 1} {white king in check - 1} {black king in check - 1} {moves - 10} {half moves - 7} {en passant - 6} = 30 bit
-    private ulong _zobristKey; //almost unique position key (https://www.chessprogramming.org/Zobrist_Hashing)
 
     #region Proporties
     public int EnPassantSquareIndex
@@ -86,10 +85,11 @@ public ref partial struct BoardData
     public ulong ZobristKey
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _zobristKey;
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set => _zobristKey = value;
+        get;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set;
     }
+
     #endregion
 
     public BoardData()
@@ -97,10 +97,10 @@ public ref partial struct BoardData
         _pieces = default;
         _pieceLookup = default;
         _miscData = default;
-        _zobristKey = 0;
+        ZobristKey = 0;
 
-        for (int squareIndex = 0; squareIndex < 64; squareIndex++)
-            _pieceLookup[squareIndex] = PieceType.None;
+        foreach (ref PieceType piece in _pieceLookup)
+            piece = PieceType.None;
     }
 
     #region Basic Methods
@@ -136,7 +136,7 @@ public ref partial struct BoardData
         _pieces[pieceIndex].SetBitToOne( sqaureIndex );
         _pieces[6 + side].SetBitToOne( sqaureIndex );
         _pieceLookup[sqaureIndex] = (PieceType)pieceIndex;
-        _zobristKey ^= ZobristHashing.GetSeed( pieceIndex, side, sqaureIndex );
+        ZobristKey ^= ZobristHashing.GetSeed( pieceIndex, side, sqaureIndex );
     }
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -148,7 +148,7 @@ public ref partial struct BoardData
         _pieces[pieceIndex].SetBitToZero( sqaureIndex );
         _pieces[6 + side].SetBitToZero( sqaureIndex );
         _pieceLookup[sqaureIndex] = PieceType.None;
-        _zobristKey ^= ZobristHashing.GetSeed( pieceIndex, side, sqaureIndex );
+        ZobristKey ^= ZobristHashing.GetSeed( pieceIndex, side, sqaureIndex );
     }
     #endregion
 }

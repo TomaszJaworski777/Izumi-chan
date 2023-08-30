@@ -1,13 +1,10 @@
-﻿using Engine.Data.Bitboards;
-using Engine.Utils;
-
-namespace Engine.PieceAttacks.SlidingPieces;
+﻿namespace Engine.PieceAttacks.SlidingPieces;
 
 //magic numbers used to generate sliding pieces attacks (https://www.chessprogramming.org/Magic_Bitboards)
-public class MagicNumbers
+public static class MagicNumbers
 {
-    public ulong[] BishopMagicNumbers =
-        {
+    public static ReadOnlySpan<ulong> BishopMagicNumbers =>
+        [
             18298089890717764,
             620197606720032,
             4592136120991812,
@@ -72,9 +69,9 @@ public class MagicNumbers
             19141965134842368,
             2311824361629305360,
             4504776583286944
-        };
-    public ulong[] RookMagicNumbers =
-        {
+        ];
+    public static ReadOnlySpan<ulong> RookMagicNumbers =>
+        [
             9259401108760043536,
             18014535952633856,
             2341880671047254144,
@@ -139,70 +136,5 @@ public class MagicNumbers
             4900479625920516098,
             88134910476548,
             4039729175542664194
-        };
-
-    public void GenerateNewMagicValues( Array64<int> bishopRelevantBitCount, Array64<int> rookRelevantBitCount )
-    {
-        BishopAttacks bishopAttacks = new(this);
-        RookAttacks rookAttacks = new(this);
-
-        for (int i = 0; i < 64; i++)
-        {
-            BishopMagicNumbers[i] = FindMagicNumber( i, bishopRelevantBitCount[i], true, bishopAttacks, rookAttacks );
-            RookMagicNumbers[i] = FindMagicNumber( i, rookRelevantBitCount[i], false, bishopAttacks, rookAttacks );
-        }
-    }
-
-    private Bitboard FindMagicNumber( int squareIndex, int relevantBitsCount, bool forBishop, BishopAttacks bishopAttacks, RookAttacks rookAttacks )
-    {
-        Span<Bitboard> occupancyPatterns = stackalloc Bitboard[4096];
-        Span<Bitboard> attacks = stackalloc Bitboard[4096];
-        Span<Bitboard> checkedAttacks = stackalloc Bitboard[4096];
-
-        Bitboard attackMask = forBishop ? bishopAttacks.GetBishopRelevantBits(squareIndex) : rookAttacks.GetRookRelevantBits(squareIndex);
-
-        int occupancyIndexCount = 1 << relevantBitsCount;
-
-        for (int index = 0; index < occupancyIndexCount; index++)
-        {
-            occupancyPatterns[index] = bishopAttacks.SetOccupancy( index, attackMask );
-            attacks[index] = forBishop ? bishopAttacks.GetFullBishopAttackPattern( squareIndex, occupancyPatterns[index] ) : rookAttacks.GetFullRookAttackPattern( squareIndex, occupancyPatterns[index] );
-        }
-
-        for (int iterationCount = 0; iterationCount < 1000000000; iterationCount++)
-        {
-            ulong magicNumber = GetRandom64() & GetRandom64() & GetRandom64();
-
-            if (((Bitboard)(attackMask * magicNumber & 0xFF00000000000000)).BitCount < 6)
-                continue;
-
-            checkedAttacks.Clear();
-
-            bool incorrectNumber = false;
-            for (int index = 0; !incorrectNumber && index < occupancyIndexCount; index++)
-            {
-                int magicIndex = (int)(occupancyPatterns[index] * magicNumber >> 64 - relevantBitsCount);
-
-                if (checkedAttacks[magicIndex] == 0)
-                    checkedAttacks[magicIndex] = attacks[index];
-                else if (checkedAttacks[magicIndex] != attacks[index])
-                    incorrectNumber = true;
-            }
-
-            if (!incorrectNumber)
-                return magicNumber;
-        }
-
-        return new();
-    }
-
-    private ulong GetRandom64()
-    {
-        Random random = new();
-
-        ulong u1, u2, u3, u4;
-        u1 = (ulong)random.Next() & 0xFFFF; u2 = (ulong)random.Next() & 0xFFFF;
-        u3 = (ulong)random.Next() & 0xFFFF; u4 = (ulong)random.Next() & 0xFFFF;
-        return u1 | u2 << 16 | u3 << 32 | u4 << 48;
-    }
+        ];
 }

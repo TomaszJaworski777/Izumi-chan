@@ -6,16 +6,12 @@ namespace Engine.PieceAttacks.SlidingPieces;
 
 public class BishopAttacks
 {
-    private Array64<int> _bishopRelevantBitCountForSquare = default;
-    private Array64<Bitboard> _bishopAttackMasks = default;
-    private Array64<BishopAttacksData> _bishopAttacks = default;
-    private MagicNumbers _magicNumbers;
+    private Array64<int> _bishopRelevantBitCountForSquare;
+    private Array64<Bitboard> _bishopAttackMasks;
+    private Array64<BishopAttacksData> _bishopAttacks;
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    public BishopAttacks( MagicNumbers magicNumbers )
+    public BishopAttacks()
     {
-        _magicNumbers = magicNumbers;
-
         for (int squareIndex = 0; squareIndex < 64; squareIndex++)
         {
             _bishopRelevantBitCountForSquare[squareIndex] = GetBishopRelevantBits( squareIndex ).BitCount;
@@ -27,7 +23,7 @@ public class BishopAttacks
             for (int index = 0; index < occupancyIndexCount; index++)
             {
                 Bitboard occupancy = SetOccupancy(index, _bishopAttackMasks[squareIndex]);
-                int magicIndex = (int)(occupancy * _magicNumbers.BishopMagicNumbers[squareIndex] >> 64 - _bishopRelevantBitCountForSquare[squareIndex]);
+                int magicIndex = (int)(occupancy * MagicNumbers.BishopMagicNumbers[squareIndex] >> 64 - _bishopRelevantBitCountForSquare[squareIndex]);
                 _bishopAttacks[squareIndex][magicIndex] = GetFullBishopAttackPattern( squareIndex, occupancy );
             }
         }
@@ -123,7 +119,7 @@ public class BishopAttacks
     public Bitboard GetAttacksForSquare( int squareIndex, ulong blocker )
     {
         blocker &= _bishopAttackMasks[squareIndex];
-        blocker *= _magicNumbers.BishopMagicNumbers[squareIndex];
+        blocker *= MagicNumbers.BishopMagicNumbers[squareIndex];
         blocker >>= 64 - _bishopRelevantBitCountForSquare[squareIndex];
         return _bishopAttacks[squareIndex][(int)blocker];
     }

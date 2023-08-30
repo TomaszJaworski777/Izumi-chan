@@ -1,9 +1,9 @@
 ﻿namespace Engine.Zobrist;
 
-internal class ZobristSeeds
+internal static class ZobristSeeds
 {
-    public ulong[] Seeds = new ulong[781]
-    {
+    public static ReadOnlySpan<ulong> Seeds =>
+    [
         6010607256382380006,
         386869187810051925,
         6942428122597393202,
@@ -785,14 +785,5 @@ internal class ZobristSeeds
         7622299853667291963,
         4242718976879199086,
         4899758872716476522,
-    };
-
-    public void RegenerateKeys()
-    {
-        Random random = new();
-        for (int i = 0; i < Seeds.Length; i++)
-        {
-            Seeds[i] = (ulong)random.Next() << 32 | (uint)random.Next();
-        }
-    }
+    ];
 }

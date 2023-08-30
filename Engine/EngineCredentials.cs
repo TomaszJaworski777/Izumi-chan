@@ -13,10 +13,10 @@
         public const string Name = "Izumi-chan";
         public const string Author = "Tomasz Jaworski";
 
-        public static string Version => $"{_majorPatchNumber}.{_featureCountSiceLastMajorPatch}.{_commitsSinceLastFeature}";
+        public static string Version => $"{MajorPatchNumber}.{FeatureCountSiceLastMajorPatch}.{CommitsSinceLastFeature}";
 
-        private const int _majorPatchNumber = 0;
-        private const int _featureCountSiceLastMajorPatch = 3;
-        private const int _commitsSinceLastFeature = 2;
+        private const int MajorPatchNumber = 0;
+        private const int FeatureCountSiceLastMajorPatch = 3;
+        private const int CommitsSinceLastFeature = 2;
     }
 }

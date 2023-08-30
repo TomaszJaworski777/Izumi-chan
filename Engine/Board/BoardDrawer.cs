@@ -46,7 +46,7 @@ namespace Engine.Board
                 Console.ForegroundColor = value < 'a' ? ConsoleColor.Yellow : ConsoleColor.Blue;
                 if (value is 42)
                     Console.ForegroundColor = ConsoleColor.Gray;
-                Console.Write( string.Format( "{0, 2}", (char)value ) );
+                Console.Write("{0, 2}", (char)value);
             }
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Gray;

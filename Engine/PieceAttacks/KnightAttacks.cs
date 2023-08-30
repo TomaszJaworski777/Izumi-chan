@@ -1,12 +1,12 @@
-﻿using Engine.Data.Bitboards;
+﻿using System.Runtime.CompilerServices;
+using Engine.Data.Bitboards;
 using Engine.Utils;
-using System.Runtime.CompilerServices;
 
 namespace Engine.PieceAttacks;
 
 public class KnightAttacks
 {
-    private Array64<Bitboard> _attackTable = default;
+    private Array64<Bitboard> _attackTable;
 
     public KnightAttacks()
     {

@@ -1,17 +1,17 @@
 ﻿namespace Engine.Evaluation
 {
-    public class EvaluationSheet
+    public static class EvaluationSheet
     {
         //per pawn
-        public int DoublePawnMidgamePunishment = -10;
-        public int DoublePawnEndgamePunishment = -20;
+        public const int DoublePawnMidgamePunishment = -10;
+        public const int DoublePawnEndgamePunishment = -20;
 
-        public int[] PiecePhase = { 0, 1, 1, 2, 4, 0 };
+        public static ReadOnlySpan<int> PiecePhase => [ 0, 1, 1, 2, 4, 0 ];
 
-        public int[] MidgamePieceValues = { 100, 300, 310, 500, 910, 10000 };
-        public int[] EndgamePieceValues = { 140, 285, 320, 500, 930, 10000 };
+        public static ReadOnlySpan<int>  MidgamePieceValues => [ 100, 300, 310, 500, 910, 10000 ];
+        public static ReadOnlySpan<int>  EndgamePieceValues => [ 140, 285, 320, 500, 930, 10000 ];
 
-        public int[] MidgamePawnTable = {
+        public static ReadOnlySpan<int>  MidgamePawnTable => [
               0,   0,   0,   0,   0,   0,   0,   0,
              15,  25,  45,   0,   0,  20,  45,  20,
              10,  20,  25,  10,  10,  15,  25,  15,
@@ -20,9 +20,9 @@
              50,  30,  25,  10,  10,  25,  30,  50,
             100,  60,  50,  45,  45,  50,  60, 100,
               0,   0,   0,   0,   0,   0,   0,   0,
-        };
+        ];
 
-        public int[] EndgamePawnTable = {
+        public static ReadOnlySpan<int>  EndgamePawnTable => [
               0,   0,   0,   0,   0,   0,   0,   0,
             -20, -15, -10,  -5,  -5, -10, -15, -20,
             -15, -10,  -5,   0,   0,  -5, -10, -15,
@@ -31,9 +31,9 @@
              50,  30,  25,  20,  20,  25,  30,  50,
             100,  80,  60,  55,  55,  60,  80, 100,
               0,   0,   0,   0,   0,   0,   0,   0,
-        };
+        ];
 
-        public int[] MidgameKnightTable = {
+        public static ReadOnlySpan<int>  MidgameKnightTable => [
             -40,   0,   0,  -5,  -5,   0,   0, -40,
             -10,   0,   5,   5,   5,   5,   0, -10,
             -10,   0,  30,  15,  15,  30,   0, -10,
@@ -42,9 +42,9 @@
             -10,   0,  10,  10,  10,  10,   0, -10,
             -10,   0,   5,   5,   5,   5,   0, -10,
             -15,   0,   0,   0,   0,   0,   0, -15,
-        };
+        ];
 
-        public int[] EndgameKnightTable = {
+        public static ReadOnlySpan<int>  EndgameKnightTable => [
             -60,   0,   0,  -5,  -5,   0,   0, -60,
             -30,   0,   5,   5,   5,   5,   0, -30,
             -30,   0,  20,  30,  30,  20,   0, -30,
@@ -53,9 +53,9 @@
             -30,   0,  20,  30,  30,  20,   0, -30,
             -30,   0,   5,   5,   5,   5,   0, -30,
             -60,   0,   0,   0,   0,   0,   0, -60,
-        };
+        ];
 
-        public int[] MidgameBishopTable = {
+        public static ReadOnlySpan<int>  MidgameBishopTable => [
             -15, -10,  -5,  -5,  -5,  -5, -10, -15,
              -5,  20,   0,   0,   0,   0,  20,  -5,
              -5,   0,  10,  15,  15,  10,   0,  -5,
@@ -64,9 +64,9 @@
              -5,   0,  20,  20,  20,  20,   0,  -5,
              -5,   0,   0,   5,   5,   0,   0,  -5,
             -15,   0,   0,   0,   0,   0,   0, -15,
-        };
+        ];
 
-        public int[] EndgameBishopTable = {
+        public static ReadOnlySpan<int>  EndgameBishopTable => [
             -15, -10,  -5,  -5,  -5,  -5, -10, -15,
              -5,   0,   5,   5,   5,   5,   0,  -5,
              -5,  10,  10,  15,  15,  10,  10,  -5,
@@ -75,9 +75,9 @@
              -5,  10,  20,  20,  20,  20,  10,  -5,
              -5,   0,   5,   5,   5,   5,   0,  -5,
             -15, -10,  -5,  -5,  -5,  -5, -10, -15,
-        };
+        ];
 
-        public int[] MidgameRookTable = {
+        public static ReadOnlySpan<int>  MidgameRookTable => [
              10,  15,  15,  25,  25,  15,   5,  20,
               0,   0,   5,  15,  15,   5,   0,   0,
               0,   5,   5,   5,   5,   5,   5,   0,
@@ -86,9 +86,9 @@
               0,   0,   0,   0,   0,   0,   0,   0,
              25,  25,  30,  40,  40,  30,  25,  25,
              10,  10,  10,  10,  10,  10,  10,  10,
-        };
+        ];
 
-        public int[] EndgameRookTable = {
+        public static ReadOnlySpan<int>  EndgameRookTable => [
               0,  20,  20,  25,  25,  20,  20,   0,
              20,   0,   5,  15,  15,   5,   0,  20,
              20,   0,   5,   5,   5,   5,   0,  20,
@@ -97,9 +97,9 @@
              20,   0,   5,   5,   5,   5,   0,  20,
              25,  25,  30,  40,  40,  30,  25,  25,
               0,  20,  20,  25,  25,  20,  20,   0,
-        };
+        ];
 
-        public int[] MidgameQueenTable = {
+        public static ReadOnlySpan<int>  MidgameQueenTable => [
              20,  15,  15,  30,  25,  15,   5,  20,
               0,   0,   5,  10,  10,   5,   0,   0,
               0,   5,   5,   5,   5,   5,   5,   0,
@@ -108,9 +108,9 @@
               0,   0,   0,   0,   0,   0,   0,   0,
              25,  25,  30,  30,  30,  30,  25,  25,
              10,  10,  10,  10,  10,  10,  10,  10,
-        };
+        ];
 
-        public int[] EndgameQueenTable = {
+        public static ReadOnlySpan<int>  EndgameQueenTable => [
               0,  20,  20,  25,  25,  20,  20,   0,
              20,   0,   5,  15,  15,   5,   0,  20,
              20,   0,  10,   5,   5,  10,   0,  20,
@@ -119,9 +119,9 @@
              20,   0,  10,   5,   5,  10,   0,  20,
              25,  25,  30,  40,  40,  30,  25,  25,
               0,  20,  20,  25,  25,  20,  20,   0,
-        };
+        ];
 
-        public int[] MidgameKingTable = {
+        public static ReadOnlySpan<int>  MidgameKingTable => [
               5,  35,  30, -10,  10,  -5,  45,  15,
               1,  10,   1,  -5,  -3,  -1,  10,   5,
             -15, -15, -15, -15, -15, -15, -15, -15,
@@ -130,9 +130,9 @@
             -15, -15, -15, -15, -15, -15, -15, -15,
               1,  10,   1,  -5,  -3,  -1,  10,   5,
               5,  25,  20, -10,  10,  -5,  25,  15,
-        };
+        ];
 
-        public int[] EndgameKingTable = {
+        public static ReadOnlySpan<int>  EndgameKingTable => [
             -15, -10,  -5,  -5,  -5,  -5, -10, -15,
              -5,   0,   5,   5,   5,   5,   0,  -5,
              -5,  10,  10,  15,  15,  10,  10,  -5,
@@ -141,6 +141,6 @@
              -5,  10,  20,  20,  20,  20,  10,  -5,
              -5,   0,   5,   5,   5,   5,   0,  -5,
             -15, -10,  -5,  -5,  -5,  -5, -10, -15,
-        };
+        ];
     }
 }

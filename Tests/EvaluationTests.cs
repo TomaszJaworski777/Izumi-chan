@@ -36,7 +36,7 @@ public class EvaluationTests
     {
         BoardData result = new();
 
-        foreach (int color in new int[] { 0, 1 })
+        foreach (int color in new[] { 0, 1 })
         {
             for (int squareIndex = 0; squareIndex < 64; squareIndex++)
             {

@@ -2,29 +2,20 @@
 
 namespace Engine.Move
 {
-    public unsafe ref struct MoveList
+    [method: MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ref struct MoveList(Span<MoveData> moves)
     {
-        private Span<MoveData> _moves;
-        private int _moveCount;
+        private Span<MoveData> _moves = moves;
+        public int Length { get; private set; } = 0;
 
-        public int Length => _moveCount;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         //moves will be declared in main scope an passed here as stackalloced empty span
-        public MoveList( Span<MoveData> moves )
-        {
-            _moves = moves;
-            _moveCount = 0;
-        }
-        
+
         public void Add(MoveData move )
         {
-            _moves[_moveCount] = move;
-            _moveCount++;
+            _moves[Length] = move;
+            Length++;
         }
 
-        public readonly MoveData this[int index] => _moves[index];
-
-        public static implicit operator Span<MoveData>( MoveList list ) => list._moves[..list._moveCount];
+        public static implicit operator Span<MoveData>( MoveList list ) => list._moves[..list.Length];
     }
 }

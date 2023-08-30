@@ -14,7 +14,7 @@ public class MoveTests
     public void CreateMove_Test()
     {
         BoardData board = BoardProvider.Create(BoardProvider.KiwipetePosition);
-        MoveData move = new MoveData("d5e6", board);
+        MoveData move = new("d5e6", board);
         Assert.IsTrue( move.IsCapture );
         Assert.IsTrue( move.MovingPieceType == PieceType.Pawn );
         Assert.IsTrue( move.TargetPieceType == PieceType.Pawn );
@@ -61,7 +61,7 @@ public class MoveTests
     public void MakeMove_Test()
     {
         BoardData board = BoardProvider.Create( BoardProvider.KiwipetePosition );
-        MoveData move = new MoveData( "f3h3", board );
+        MoveData move = new( "f3h3", board );
         board.MakeMove( move );
         Assert.IsTrue( board.SideToMove > 0 );
         Assert.IsTrue( board.GetPieceOnSquare(SquareHelpers.StringToSquareIndex("h3")) == PieceType.Queen );

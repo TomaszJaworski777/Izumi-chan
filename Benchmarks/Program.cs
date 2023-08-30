@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Running;
 using Benchmarks.Data;
 using Benchmarks.Structures;
+using Benchmarks.Systems;
 
 namespace Benchmarks
 {
@@ -10,6 +11,7 @@ namespace Benchmarks
         {
             BenchmarkRunner.Run<BoardBenchmarks>();
             BenchmarkRunner.Run<BitboardBenchmarks>();
+            BenchmarkRunner.Run<MoveBenchmarks>();
         }
     }
 }

@@ -1,15 +1,14 @@
-﻿using Engine.Board;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using Engine.Board;
 using Engine.Evaluation;
 using Engine.Move;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Engine.Search;
 
 internal class SearchSystem
 {
-    public static bool CancellationToken = false;
+    public static bool CancellationToken;
 
     //definition of intinity used in the scope of search
     private const int Infinity = 777_777;
@@ -19,8 +18,8 @@ internal class SearchSystem
 
     private MoveData _bestRootMoveCandidate;
     private MoveData _bestRootMove;
-    private ulong _nodes = 0;
-    private int _lastBestScore = 0;
+    private ulong _nodes;
+    private int _lastBestScore;
 
     private TimeManager _timeManager;
 
@@ -31,7 +30,7 @@ internal class SearchSystem
 
         int time = searchParameters.Board.SideToMove == 0 ? searchParameters.WhiteTime : searchParameters.BlackTime;
         int increment = searchParameters.Board.SideToMove == 0 ? searchParameters.WhiteIncrement : searchParameters.BlackIncrement;
-        _timeManager = new( time, increment, searchParameters.MovesToGo );
+        _timeManager = new TimeManager( time, increment, searchParameters.MovesToGo );
         Stopwatch stopwatch = new();
 
         //implementation of iterative deepening (https://www.chessprogramming.org/Iterative_Deepening)
@@ -43,7 +42,7 @@ internal class SearchSystem
             int bestScore = NegaMax(searchParameters.Board, currentDepth, -Infinity, Infinity, 0);
 
             ulong totalMiliseconds = (ulong)stopwatch.ElapsedMilliseconds;
-            ulong nps = (_nodes * 1_000) / Math.Clamp(totalMiliseconds, 1, ulong.MaxValue);
+            ulong nps = _nodes * 1_000 / Math.Clamp(totalMiliseconds, 1, ulong.MaxValue);
 
             if (CancellationToken)
             {
@@ -60,7 +59,6 @@ internal class SearchSystem
         return _bestRootMove;
     }
 
-    [MethodImpl( MethodImplOptions.AggressiveOptimization )]
     //implementation of NegaMax algorithm (https://www.chessprogramming.org/Negamax)
     public unsafe int NegaMax( BoardData board, int depth, int alpha, int beta, int movesPlayed )
     {
@@ -143,8 +141,7 @@ internal class SearchSystem
             if ((board.SideToMove == 0 ? board.IsWhiteKingInCheck : board.IsBlackKingInCheck) == 1)
                 //we pass moves played here to make sure engine will always follow the quickest way to mate
                 return movesPlayed - MateScore;
-            else
-                return 0;
+            return 0;
         }
 
         return value;
