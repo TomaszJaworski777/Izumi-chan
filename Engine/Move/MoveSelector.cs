@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 namespace Engine.Move;
 
 //move ordering, in order to increase beta cutoffs in Negamax. (https://www.chessprogramming.org/Move_Ordering) Here i'm using iterative sorting method, to save performance
-internal unsafe ref struct MoveSelector
+internal readonly ref struct MoveSelector
 {
     private readonly Span<ScoredMove> _moves;
 
-    public int Length { get; private set; }
+    public int Length => _moves.Length;
 
     public struct ScoredMove
     {
@@ -20,19 +20,14 @@ internal unsafe ref struct MoveSelector
     //score the list of moves for future sort
     public MoveSelector( MoveList moves, Span<ScoredMove> alloc/*, TranspositionTableEntry? entry*/ )
     {
-        Length = moves.Length;
-        _moves = alloc;
-
-        if (Length > alloc.Length)
-            throw new ArgumentException("Alloc too small", nameof(alloc));
-
-        ref ScoredMove currentMove = ref MemoryMarshal.GetReference(alloc);
+        _moves = alloc[..moves.Length];
+        ref ScoredMove currentMove = ref MemoryMarshal.GetReference(_moves);
 
         foreach (ref MoveData bufferMove in (Span<MoveData>)moves)
         {
             currentMove.Move = bufferMove;
             currentMove.Score = GetMoveValue( bufferMove/*, entry*/ );
-            currentMove = Unsafe.Add(ref currentMove, 1);
+            currentMove = ref Unsafe.Add(ref currentMove, 1);
         }
     }
 
