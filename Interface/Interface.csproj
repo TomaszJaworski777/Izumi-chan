@@ -6,9 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
-  </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'!='DEBUG'">
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
     <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
