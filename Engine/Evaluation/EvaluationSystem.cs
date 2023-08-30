@@ -81,26 +81,26 @@ public class EvaluationSystem
         }
 
         //pawn bonuses/punishments
-/*        Bitboard fileBuffer;
+        Bitboard fileBuffer;
         for (int fileIndex = 0; fileIndex < 8; fileIndex++)
         {
             fileBuffer = _fileMask << fileIndex;
 
             //penalty for double pawns
             int whiteDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 0) & fileBuffer)).BitCount;
-            if(whiteDoublePawns > 1)
+            if (whiteDoublePawns > 1)
             {
                 doublePawnsMidEval += whiteDoublePawns * _sheet.DoublePawnMidgamePunishment;
                 doubledPawnsEndEval += whiteDoublePawns * _sheet.DoublePawnEndgamePunishment;
             }
 
             int blackDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 1) & fileBuffer)).BitCount;
-            if(blackDoublePawns > 1)
+            if (blackDoublePawns > 1)
             {
                 doublePawnsMidEval -= blackDoublePawns * _sheet.DoublePawnMidgamePunishment;
                 doubledPawnsEndEval -= blackDoublePawns * _sheet.DoublePawnEndgamePunishment;
             }
-        }*/
+        }
 
         if (debug)
         {
