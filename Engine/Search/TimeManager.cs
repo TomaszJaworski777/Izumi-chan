@@ -14,7 +14,7 @@ namespace Engine.Search
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public TimeManager( int time, int increment, int movesToGo = TimeDivider )
         {
-            _timeRemaning = (time / movesToGo) + (increment * 3 / 4) - 50;
+            _timeRemaning = (time / movesToGo) - 25;
             _timeRemaning = Math.Clamp( _timeRemaning, 1000 / movesToGo, int.MaxValue );
             _stopwatch.Start();
         }
