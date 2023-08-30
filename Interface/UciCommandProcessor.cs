@@ -1,6 +1,7 @@
 ﻿using Engine;
 using Engine.Board;
 using Engine.Move;
+using Engine.Options;
 using Engine.Search;
 
 namespace Interface;
@@ -11,6 +12,17 @@ internal class UciCommandProcessor : CommandProcessor
     {
         Console.WriteLine( $"id name {EngineCredentials.FullName}" );
         Console.WriteLine( $"id author {EngineCredentials.Author}" );
+
+        foreach (var option in EngineOptions.Options)
+        {
+            Console.Write( $"option name {option.Key} type {option.Value.Type.ToString().ToLower()} default {option.Value.Value}" );
+
+            if (option.Value.Type is OptionValueType.Spin)
+                Console.Write( $" min {option.Value.MinValue} max {option.Value.MaxValue}" );
+
+            Console.WriteLine();
+        }
+
         Console.WriteLine( $"uciok" );
     }
 
@@ -18,6 +30,9 @@ internal class UciCommandProcessor : CommandProcessor
     {
         switch (commandSplit[0])
         {
+            case "setoption":
+                HandleSetOptionCommand( commandSplit[1..] );
+                break;
             case "ucinewgame":
                 HandleNewGameCommand();
                 break;
@@ -31,6 +46,22 @@ internal class UciCommandProcessor : CommandProcessor
                 HandleGoCommand( commandSplit[1..] );
                 break;
         }
+    }
+
+    public void HandleSetOptionCommand( string[] args )
+    {
+        string name = "";
+        string value = "";
+
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "name")
+                name = args[i + 1];
+            else if (args[i] == "value")
+                value = args[i + 1];
+        }
+
+        EngineOptions.ChangeOption( name, value );
     }
 
     private void HandleNewGameCommand()
@@ -119,6 +150,9 @@ internal class UciCommandProcessor : CommandProcessor
             wTime = int.MaxValue;
             bTime = int.MaxValue;
         }
+
+        if (movesToGo == 0)
+            movesToGo = TimeManager.TimeDivider;
 
         Thread searchThread = new (SearchThread);
         searchThread.Start( new SearchData( depth, wTime, bTime, wInc, bInc, movesToGo ) );

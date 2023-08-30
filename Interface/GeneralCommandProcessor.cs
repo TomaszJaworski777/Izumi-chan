@@ -62,7 +62,7 @@ internal class GeneralCommandProcessor : CommandProcessor
 
     private void PerfThread( object? data )
     {
-        PerftData perftData = (PerftData)data;
+        PerftData perftData = (PerftData)data!;
         if( !perftData.Divide )
         {
             for (int currentDepth = 1; currentDepth <= perftData.Depth; currentDepth++)

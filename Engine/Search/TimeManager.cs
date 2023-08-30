@@ -1,4 +1,5 @@
-﻿using Engine.Perft;
+﻿using Engine.Options;
+using Engine.Perft;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -14,9 +15,7 @@ namespace Engine.Search
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public TimeManager( int time, int increment, int movesToGo = TimeDivider )
         {
-            if (movesToGo == 0)
-                movesToGo = TimeDivider;
-
+            time += EngineOptions.GetOption( "MoveOverhead" );
             _timeForMove = Math.Clamp( (time + increment) / movesToGo, 35, time * 8 / 10);
             _stopwatch.Start();
         }
