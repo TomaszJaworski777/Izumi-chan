@@ -17,6 +17,9 @@ internal class GeneralCommandProcessor : CommandProcessor
             case "splitperft":
                 HandleSplitPerftCommand( commandSplit[1..] );
                 break;
+            case "eval":
+                HandleEvalCommand();
+                break;
             case "stop":
                 HandleInterruptCommand( commandSplit[1..] );
                 break;
@@ -58,6 +61,11 @@ internal class GeneralCommandProcessor : CommandProcessor
             perftData.Fen = args[1] + ' ' + args[2] + ' ' + args[3] + ' ' + args[4] + ' ' + args[5] + ' ' + args[6];
 
         perftThread.Start( perftData );
+    }
+
+    private void HandleEvalCommand()
+    {
+        _chessEngine.DebugEval();
     }
 
     private void PerfThread( object? data )

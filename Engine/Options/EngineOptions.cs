@@ -2,13 +2,15 @@
 
 public static class EngineOptions
 {
+    public const string MoveOverheadKey = "MOVEOVERHEAD";
+
     private static readonly Dictionary<string, OptionStruct> _options = new();
 
     public static Dictionary<string, OptionStruct> Options => _options;
 
     static EngineOptions()
     {
-        AddOption( "MoveOverhead", new OptionStruct( OptionValueType.Spin, 10, 0, 5000 ) );
+        AddOption( MoveOverheadKey, new OptionStruct( OptionValueType.Spin, 0, 0, 5000 ) );
     }
 
     public static void AddOption(string name, OptionStruct option )

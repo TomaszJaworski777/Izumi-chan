@@ -1,4 +1,5 @@
 ﻿using Engine.Board;
+using Engine.Data.Enums;
 using Engine.Evaluation;
 using Engine.Move;
 using Engine.Perft;
@@ -57,6 +58,13 @@ public class ChessEngine
         PerftTest.CancellationToken = true;
     }
 
+    public void DebugEval()
+    {
+        EvaluationSystem evaluation = new ();
+        BoardData board = CreateCurrentBoard();
+        Console.WriteLine( $"Total evaluation: {evaluation.EvaluatePosition( board, true )}" );
+    }
+
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
     public void DrawBoard() => CreateCurrentBoard().Draw();
 
@@ -69,5 +77,5 @@ public class ChessEngine
         return board;
     }
 
-    private static void Main( string[] args ) {}
+    private static void Main( string[] args ) { }
 }

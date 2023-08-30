@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 namespace Engine.Evaluation;
 public class EvaluationSystem
 {
+    private const ulong _fileMask = 0x0101010101010101;
+
     private readonly EvaluationSheet _sheet;
     private readonly int _totalPhase;
 
@@ -21,7 +23,7 @@ public class EvaluationSystem
                       2 * _sheet.PiecePhase[5];
     }
 
-    public EvaluationSystem(EvaluationSheet injectedSheet)
+    public EvaluationSystem( EvaluationSheet injectedSheet )
     {
         _sheet = injectedSheet;
 
@@ -33,62 +35,98 @@ public class EvaluationSystem
               2 * _sheet.PiecePhase[5];
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    public int EvaluatePosition( BoardData board )
+    [MethodImpl( MethodImplOptions.AggressiveOptimization )]
+    public int EvaluatePosition( BoardData board, bool debug = false )
     {
+        int materialMidEval = 0;
+        int materialEndEval = 0;
+        int pstsMidEval = 0;
+        int pstsEndEval = 0;
+        int doublePawnsMidEval = 0;
+        int doubledPawnsEndEval = 0;
+
         int phase = _totalPhase;
-        int midgame = 0;
-        int endgame = 0;
-
-        Bitboard whitePieces = board.GetPiecesBitboardForSide(0);
-        for (int pieceIndex = 0; pieceIndex < 6; pieceIndex++)
+        for (int color = 0; color <= 1; color++)
         {
-            Bitboard buffer = board.GetPieceBitboard( pieceIndex );
-            phase -= buffer.BitCount * _sheet.PiecePhase[pieceIndex];
-
-            while (buffer > 0)
+            for (int pieceIndex = 0; pieceIndex < 6; pieceIndex++)
             {
-                int squareIndex = buffer.LsbIndex;
-                buffer &= buffer - 1;
+                Bitboard buffer = board.GetPieceBitboard( pieceIndex ) & board.GetPiecesBitboardForSide(color);
+                phase -= buffer.BitCount * _sheet.PiecePhase[pieceIndex];
+                bool isWhitePiece = color == 0;
 
-                int sign = whitePieces.GetBitValue(squareIndex) > 0 ? 1 : -1;
-                midgame += sign * _sheet.MidgamePieceValues[pieceIndex];
-                endgame += sign * _sheet.MidgamePieceValues[pieceIndex];
-
-                if (sign < 0)
-                    squareIndex ^= 56;
-
-                switch ((PieceType)pieceIndex)
+                while (buffer > 0)
                 {
-                    case PieceType.Pawn:
-                        midgame += sign * _sheet.MidgamePawnTable[squareIndex];
-                        endgame += sign * _sheet.EndgamePawnTable[squareIndex];
-                        break;
-                    case PieceType.Knight:
-                        midgame += sign * _sheet.MidgameKnightTable[squareIndex];
-                        endgame += sign * _sheet.EndgameKnightTable[squareIndex];
-                        break;
-                    case PieceType.Bishop:
-                        midgame += sign * _sheet.MidgameBishopTable[squareIndex];
-                        endgame += sign * _sheet.EndgameBishopTable[squareIndex];
-                        break;
-                    case PieceType.Rook:
-                        midgame += sign * _sheet.MidgameRookTable[squareIndex];
-                        endgame += sign * _sheet.EndgameRookTable[squareIndex];
-                        break;
-                    case PieceType.Queen:
-                        midgame += sign * _sheet.MidgameQueenTable[squareIndex];
-                        endgame += sign * _sheet.EndgameQueenTable[squareIndex];
-                        break;
-                    case PieceType.King:
-                        midgame += sign * _sheet.MidgameKingTable[squareIndex];
-                        endgame += sign * _sheet.EndgameKingTable[squareIndex];
-                        break;
+                    int squareIndex = buffer.LsbIndex;
+                    buffer &= buffer - 1;
+
+                    if (!isWhitePiece)
+                        squareIndex ^= 56;
+
+                    //material eval
+                    materialMidEval += _sheet.MidgamePieceValues[pieceIndex];
+                    materialEndEval += _sheet.EndgamePieceValues[pieceIndex];
+
+                    //PSTS eval
+                    (int pstsMid, int pstsEnd) = GetPstsValue( (PieceType)pieceIndex, squareIndex );
+                    pstsMidEval += pstsMid;
+                    pstsEndEval += pstsEnd;
                 }
             }
+
+            materialMidEval = -materialMidEval;
+            materialEndEval = -materialEndEval;
+
+            pstsMidEval = -pstsMidEval;
+            pstsEndEval = -pstsEndEval;
         }
+
+        //pawn bonuses/punishments
+/*        Bitboard fileBuffer;
+        for (int fileIndex = 0; fileIndex < 8; fileIndex++)
+        {
+            fileBuffer = _fileMask << fileIndex;
+
+            //penalty for double pawns
+            int whiteDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 0) & fileBuffer)).BitCount;
+            if(whiteDoublePawns > 1)
+            {
+                doublePawnsMidEval += whiteDoublePawns * _sheet.DoublePawnMidgamePunishment;
+                doubledPawnsEndEval += whiteDoublePawns * _sheet.DoublePawnEndgamePunishment;
+            }
+
+            int blackDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 1) & fileBuffer)).BitCount;
+            if(blackDoublePawns > 1)
+            {
+                doublePawnsMidEval -= blackDoublePawns * _sheet.DoublePawnMidgamePunishment;
+                doubledPawnsEndEval -= blackDoublePawns * _sheet.DoublePawnEndgamePunishment;
+            }
+        }*/
+
+        if (debug)
+        {
+            Console.WriteLine( $"Material Midgame Evaluation: {materialMidEval}" );
+            Console.WriteLine( $"Material Endgame Evaluation: {materialEndEval}" );
+            Console.WriteLine( $"PSTS Midgame Evaluation: {pstsMidEval}" );
+            Console.WriteLine( $"PSTS Endgame Evaluation: {pstsEndEval}" );
+            Console.WriteLine( $"Double pawns Midgame Evaluation: {doublePawnsMidEval}" );
+            Console.WriteLine( $"Double pawns Endgame Evaluation: {doubledPawnsEndEval}" );
+        }
+
+        int midgame = materialMidEval + pstsMidEval + doublePawnsMidEval;
+        int endgame = materialEndEval + pstsEndEval + doubledPawnsEndEval;
 
         phase = (phase * 256 + _totalPhase / 2) / _totalPhase;
         return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1);
     }
+
+    private (int, int) GetPstsValue( PieceType pieceType, int squareIndex ) => pieceType switch
+    {
+        PieceType.Pawn => (_sheet.MidgamePawnTable[squareIndex], _sheet.EndgamePawnTable[squareIndex]),
+        PieceType.Knight => (_sheet.MidgameKnightTable[squareIndex], _sheet.EndgameKnightTable[squareIndex]),
+        PieceType.Bishop => (_sheet.MidgameBishopTable[squareIndex], _sheet.EndgameBishopTable[squareIndex]),
+        PieceType.Rook => (_sheet.MidgameRookTable[squareIndex], _sheet.EndgameRookTable[squareIndex]),
+        PieceType.Queen => (_sheet.MidgameQueenTable[squareIndex], _sheet.EndgameQueenTable[squareIndex]),
+        PieceType.King => (_sheet.MidgameKingTable[squareIndex], _sheet.EndgameKingTable[squareIndex]),
+        _ => (0, 0)
+    };
 }

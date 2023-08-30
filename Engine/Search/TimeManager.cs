@@ -15,8 +15,14 @@ namespace Engine.Search
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public TimeManager( int time, int increment, int movesToGo = TimeDivider )
         {
-            time += EngineOptions.GetOption( "MoveOverhead" );
-            _timeForMove = Math.Clamp( (time + increment) / movesToGo, 35, time * 8 / 10);
+            if (time == int.MaxValue)
+            {
+                _timeForMove = int.MaxValue;
+                return;
+            }
+
+            time += EngineOptions.GetOption( EngineOptions.MoveOverheadKey );
+            _timeForMove = Math.Clamp( (time + increment) / movesToGo, 35, Math.Clamp( time * 8 / 10, 35, int.MaxValue ) );
             _stopwatch.Start();
         }
 

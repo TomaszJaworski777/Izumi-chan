@@ -2,6 +2,10 @@
 {
     public class EvaluationSheet
     {
+        //per pawn
+        public int DoublePawnMidgamePunishment = -10;
+        public int DoublePawnEndgamePunishment = -20;
+
         public int[] PiecePhase = { 0, 1, 1, 2, 4, 0 };
 
         public int[] MidgamePieceValues = { 100, 300, 310, 500, 910, 10000 };
