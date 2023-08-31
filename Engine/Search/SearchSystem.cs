@@ -37,12 +37,19 @@ public class SearchSystem
         for (int currentDepth = 1; currentDepth <= searchParameters.Depth; currentDepth++)
         {
             _nodes = 0;
+            long before = GC.GetAllocatedBytesForCurrentThread();
             stopwatch.Restart();
 
             int bestScore = NegaMax(searchParameters.Board, currentDepth, -Infinity, Infinity, 0);
 
             ulong totalMiliseconds = (ulong)stopwatch.ElapsedMilliseconds;
             ulong nps = _nodes * 1_000 / Math.Clamp(totalMiliseconds, 1, ulong.MaxValue);
+
+            long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - before;
+            if (allocatedBytes != 0)
+            {
+                Console.WriteLine($"WARNING: allocated {allocatedBytes}B when running!");
+            }
 
             if (CancellationToken)
             {
