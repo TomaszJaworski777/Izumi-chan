@@ -99,12 +99,12 @@ public class EvaluationSystem
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static (int, int) GetPstsValue( PieceType pieceType, int squareIndex ) => pieceType switch
     {
-        PieceType.Pawn => (EvaluationSheet.MidgamePawnTable[squareIndex], EvaluationSheet.EndgamePawnTable[squareIndex]),
-        PieceType.Knight => (EvaluationSheet.MidgameKnightTable[squareIndex], EvaluationSheet.EndgameKnightTable[squareIndex]),
-        PieceType.Bishop => (EvaluationSheet.MidgameBishopTable[squareIndex], EvaluationSheet.EndgameBishopTable[squareIndex]),
-        PieceType.Rook => (EvaluationSheet.MidgameRookTable[squareIndex], EvaluationSheet.EndgameRookTable[squareIndex]),
-        PieceType.Queen => (EvaluationSheet.MidgameQueenTable[squareIndex], EvaluationSheet.EndgameQueenTable[squareIndex]),
-        PieceType.King => (EvaluationSheet.MidgameKingTable[squareIndex], EvaluationSheet.EndgameKingTable[squareIndex]),
+        PieceType.Pawn => (EvaluationSheet.PstsTable[squareIndex * 2], EvaluationSheet.PstsTable[squareIndex * 2 + 1]),
+        PieceType.Knight => (EvaluationSheet.PstsTable[128 + squareIndex * 2], EvaluationSheet.PstsTable[128 + squareIndex * 2 + 1]),
+        PieceType.Bishop => (EvaluationSheet.PstsTable[256 + squareIndex * 2], EvaluationSheet.PstsTable[256 + squareIndex * 2 + 1]),
+        PieceType.Rook => (EvaluationSheet.PstsTable[384 + squareIndex * 2], EvaluationSheet.PstsTable[384 + squareIndex * 2 + 1]),
+        PieceType.Queen => (EvaluationSheet.PstsTable[512 + squareIndex * 2], EvaluationSheet.PstsTable[512 + squareIndex * 2 + 1]),
+        PieceType.King => (EvaluationSheet.PstsTable[640 + squareIndex * 2], EvaluationSheet.PstsTable[640 + squareIndex * 2 + 1]),
         _ => (0, 0)
     };
 }
