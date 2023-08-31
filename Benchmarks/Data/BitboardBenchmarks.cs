@@ -13,7 +13,7 @@ public class BitboardBenchmarks
     public Bitboard GetBitValue()
     {
         Bitboard bitboard = 666;
-        for (int i = 0; i < 100000000; i++)
+        for (int i = 0; i < 100; i++)
         {
             Helpers.Use(bitboard.GetBitValue( 63 ));
         }
@@ -24,7 +24,7 @@ public class BitboardBenchmarks
     public Bitboard SetBitValueToOne()
     {
         Bitboard bitboard = 666;
-        for (int i = 0; i < 100000000; i++)
+        for (int i = 0; i < 100; i++)
         {
             bitboard.SetBitToOne( 63 );
         }
@@ -35,7 +35,7 @@ public class BitboardBenchmarks
     public Bitboard SetBitValueToZero()
     {
         Bitboard bitboard = 666;
-        for (int i = 0; i < 100000000; i++)
+        for (int i = 0; i < 100; i++)
         {
             bitboard.SetBitToZero( 63 );
         }
@@ -46,7 +46,7 @@ public class BitboardBenchmarks
     public Bitboard GetValueChunk()
     {
         Bitboard bitboard = 666;
-        for (int i = 0; i < 100000000; i++)
+        for (int i = 0; i < 100; i++)
         {
             Helpers.Use(bitboard.GetValueChunk( 30, 127 ));
         }
@@ -57,7 +57,7 @@ public class BitboardBenchmarks
     public Bitboard SetValueChunk()
     {
         Bitboard bitboard = 666;
-        for (int i = 0; i < 100000000; i++)
+        for (int i = 0; i < 100; i++)
         {
             bitboard.SetValueChunk( 30, 127,  69 );
         }
