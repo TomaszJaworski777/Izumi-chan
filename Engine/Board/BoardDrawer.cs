@@ -1,8 +1,4 @@
-﻿using Engine.Data.Enums;
-using Engine.Move;
-using Engine.Utils;
-
-namespace Engine.Board
+﻿namespace Engine.Board
 {
     public ref partial struct BoardData
     {

@@ -4,7 +4,6 @@ using Engine.Move;
 using Engine.Perft;
 using Engine.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Tests;
 

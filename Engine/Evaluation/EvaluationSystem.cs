@@ -1,7 +1,7 @@
-﻿using Engine.Board;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Engine.Board;
 using Engine.Data.Bitboards;
-using Engine.Data.Enums;
-using System.Runtime.CompilerServices;
 
 namespace Engine.Evaluation;
 public class EvaluationSystem
@@ -21,32 +21,35 @@ public class EvaluationSystem
         int pstsEndEval = 0;
         int doublePawnsMidEval = 0;
         int doubledPawnsEndEval = 0;
-
         int phase = _totalPhase;
+
         for (int color = 0; color <= 1; color++)
         {
-            for (int pieceIndex = 0; pieceIndex < 6; pieceIndex++)
+            uint xorOffset = color == 0 ? 0u : 56u;
+            Bitboard piecesBitboardForSide = board.GetPiecesBitboardForSide(color);
+            for (uint pieceIndex = 0; pieceIndex < 6; pieceIndex++)
             {
-                Bitboard buffer = board.GetPieceBitboard( pieceIndex ) & board.GetPiecesBitboardForSide(color);
-                phase -= buffer.BitCount * EvaluationSheet.PiecePhase[pieceIndex];
-                bool isWhitePiece = color == 0;
+                Bitboard buffer = board.GetPieceBitboard( (int)pieceIndex ) & piecesBitboardForSide;
+                phase -= buffer.BitCount * Unsafe.Add(ref MemoryMarshal.GetReference(EvaluationSheet.PiecePhase), pieceIndex);
 
-                while (buffer > 0)
+                Values values = Unsafe.ReadUnaligned<Values>(ref Unsafe.Add(
+                    ref Unsafe.As<ushort, byte>(ref MemoryMarshal.GetReference(EvaluationSheet.PieceValues)),
+                    pieceIndex * sizeof(ushort) * 2));
+
+                //material eval
+                materialMidEval += values.Midgame * buffer.BitCount;
+                materialEndEval += values.Endgame * buffer.BitCount;
+
+                uint pieceIndexOffset = 64u * pieceIndex;
+
+                while (buffer != 0)
                 {
-                    int squareIndex = buffer.LsbIndex;
+                    Psts psts = Unsafe.ReadUnaligned<Psts>(ref Unsafe.Add(
+                        ref Unsafe.As<sbyte, byte>(ref MemoryMarshal.GetReference(EvaluationSheet.PstsTable)),
+                        pieceIndexOffset + ((uint)buffer.LsbIndex ^ xorOffset) * 2u));
+                    pstsMidEval += psts.Midgame;
+                    pstsEndEval += psts.Endgame;
                     buffer &= buffer - 1;
-
-                    if (!isWhitePiece)
-                        squareIndex ^= 56;
-
-                    //material eval
-                    materialMidEval += EvaluationSheet.MidgamePieceValues[pieceIndex];
-                    materialEndEval += EvaluationSheet.EndgamePieceValues[pieceIndex];
-
-                    //PSTS eval
-                    (int pstsMid, int pstsEnd) = GetPstsValue( (PieceType)pieceIndex, squareIndex );
-                    pstsMidEval += pstsMid;
-                    pstsEndEval += pstsEnd;
                 }
             }
 
@@ -96,15 +99,17 @@ public class EvaluationSystem
         return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static (int, int) GetPstsValue( PieceType pieceType, int squareIndex ) => pieceType switch
+    [StructLayout(LayoutKind.Sequential)]
+    private readonly struct Psts
     {
-        PieceType.Pawn => (EvaluationSheet.PstsTable[squareIndex * 2], EvaluationSheet.PstsTable[squareIndex * 2 + 1]),
-        PieceType.Knight => (EvaluationSheet.PstsTable[128 + squareIndex * 2], EvaluationSheet.PstsTable[128 + squareIndex * 2 + 1]),
-        PieceType.Bishop => (EvaluationSheet.PstsTable[256 + squareIndex * 2], EvaluationSheet.PstsTable[256 + squareIndex * 2 + 1]),
-        PieceType.Rook => (EvaluationSheet.PstsTable[384 + squareIndex * 2], EvaluationSheet.PstsTable[384 + squareIndex * 2 + 1]),
-        PieceType.Queen => (EvaluationSheet.PstsTable[512 + squareIndex * 2], EvaluationSheet.PstsTable[512 + squareIndex * 2 + 1]),
-        PieceType.King => (EvaluationSheet.PstsTable[640 + squareIndex * 2], EvaluationSheet.PstsTable[640 + squareIndex * 2 + 1]),
-        _ => (0, 0)
-    };
+        public readonly sbyte Midgame;
+        public readonly sbyte Endgame;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private readonly struct Values
+    {
+        public readonly ushort Midgame;
+        public readonly ushort Endgame;
+    }
 }

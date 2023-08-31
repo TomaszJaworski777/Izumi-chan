@@ -1,6 +1,4 @@
 ﻿using Engine.Board;
-using Engine.Data.Enums;
-using Engine.Evaluation;
 using Engine.Move;
 using Engine.Search;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

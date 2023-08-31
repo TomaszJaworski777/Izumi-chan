@@ -6,10 +6,16 @@
         public const int DoublePawnMidgamePunishment = -10;
         public const int DoublePawnEndgamePunishment = -20;
 
-        public static ReadOnlySpan<int> PiecePhase => [ 0, 1, 1, 2, 4, 0 ];
+        public static ReadOnlySpan<byte> PiecePhase => [ 0, 1, 1, 2, 4, 0 ];
 
-        public static ReadOnlySpan<int>  MidgamePieceValues => [ 100, 300, 310, 500, 910, 10000 ];
-        public static ReadOnlySpan<int>  EndgamePieceValues => [ 140, 285, 320, 500, 930, 10000 ];
+        public static ReadOnlySpan<ushort> PieceValues => [ 
+            100, 140,
+            300, 285,
+            310, 320,
+            500, 500,
+            910, 930,
+            10000, 10000
+        ];
 
         public static ReadOnlySpan<sbyte> PstsTable => [
             0, 0, 0, 0, 0, 0, 0, 0,
@@ -108,6 +114,6 @@
             -3, 5, -1, 5, 10, 0, 5, -5,
             5, -15, 25, -10, 20, -5, -10, -5,
             10, -5, -5, -5, 25, -10, 15, -15 
-            ];
+        ];
     }
 }
