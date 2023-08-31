@@ -1,6 +1,9 @@
-﻿using Engine.Data.Enums;
+﻿#if DEBUG
+using System;
+using Engine.Data.Enums;
 using Engine.Move;
 using Engine.Utils;
+#endif
 
 namespace Engine.Board
 {

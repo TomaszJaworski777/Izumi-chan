@@ -1,4 +1,6 @@
-﻿namespace Engine.Zobrist;
+﻿using System;
+
+namespace Engine.Zobrist;
 
 internal static class ZobristSeeds
 {

@@ -1,4 +1,7 @@
-﻿namespace Engine.Options;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Engine.Options;
 
 public static class EngineOptions
 {

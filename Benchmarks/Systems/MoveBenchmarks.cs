@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using Engine.Board;
 using Engine.Data.Enums;
