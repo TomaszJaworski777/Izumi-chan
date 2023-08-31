@@ -11,7 +11,7 @@ namespace Engine.Board
         {
 #if DEBUG
             //gathers board data
-            Span<byte> pieces = stackalloc byte[64];
+            Span<byte> pieces = new byte[64];
             for (int pieceIndex = 0; pieceIndex < 12; pieceIndex++)
             {
                 PieceType pieceType = (PieceType)(pieceIndex % 6);
