@@ -11,59 +11,11 @@ namespace Benchmarks.Search;
 public class SearchBenchmarks
 {
     [Benchmark]
-    public SearchSystem DepthOneSearch()
-    {
-        BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
-        SearchSystem search = new();
-        for (int i = 0; i < 100; i++)
-        {
-            search.FindBestMove( new SearchParameters( board, 1 ) );
-        }
-        return search;
-    }
-
-    [Benchmark]
-    public SearchSystem DepthTwoSearch()
-    {
-        BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
-        SearchSystem search = new();
-        for (int i = 0; i < 100; i++)
-        {
-            search.FindBestMove( new SearchParameters( board, 2 ) );
-        }
-        return search;
-    }
-
-    [Benchmark]
-    public SearchSystem DepthThreeSearch()
-    {
-        BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
-        SearchSystem search = new();
-        for (int i = 0; i < 100; i++)
-        {
-            search.FindBestMove(new SearchParameters(board, 3));
-        }
-        return search;
-    }
-
-    [Benchmark]
-    public SearchSystem DepthFourSearch()
-    {
-        BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
-        SearchSystem search = new();
-        for (int i = 0; i < 100; i++)
-        {
-            search.FindBestMove( new SearchParameters( board, 4 ) );
-        }
-        return search;
-    }
-
-    [Benchmark]
     public SearchSystem DepthFiveSearch()
     {
         BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
         SearchSystem search = new();
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 10; i++)
         {
             search.FindBestMove( new SearchParameters( board, 5 ) );
         }
