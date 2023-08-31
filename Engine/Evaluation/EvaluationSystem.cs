@@ -13,7 +13,6 @@ public class EvaluationSystem
                                        2 * EvaluationSheet.PiecePhase[4] +
                                        2 * EvaluationSheet.PiecePhase[5];
 
-    [MethodImpl( MethodImplOptions.AggressiveOptimization )]
     public int EvaluatePosition( BoardData board, bool debug = false )
     {
         int materialMidEval = 0;
