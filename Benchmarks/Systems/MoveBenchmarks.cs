@@ -87,4 +87,45 @@ public class MoveBenchmarks
 
         return board;
     }
+
+    [Benchmark]
+    public unsafe MoveSelector CreateOrderedMoves()
+    {
+        BoardData board = BoardProvider.Create(BoardProvider.KiwipetePosition);
+        Span< MoveSelector.ScoredMove > orderedBuffer = stackalloc MoveSelector.ScoredMove[300];
+        MoveSelector selector = new();
+        for (int i = 0; i < 100; i++)
+        {
+            MoveList moves = new( MoveBuffer );
+            moves.ForceSetLength( 50 );
+            selector = new MoveSelector(moves, orderedBuffer);
+        }
+
+        return selector;
+    }
+
+    [Benchmark]
+    public unsafe MoveSelector GetOrderedMoves()
+    {
+        BoardData board = BoardProvider.Create(BoardProvider.KiwipetePosition);
+        Span< MoveSelector.ScoredMove > orderedBuffer = stackalloc MoveSelector.ScoredMove[300];
+        MoveList moves = new( MoveBuffer );
+        moves.ForceSetLength( 50 );
+        MoveSelector selector = new MoveSelector(moves, orderedBuffer);
+        for (int i = 0; i < 100; i++)
+        {
+            MoveData move = selector.GetMoveForIndex(0);
+            Helpers.Use( move.FromSquareIndex );
+            Helpers.Use( move.ToSquareIndex );
+            Helpers.Use( move.MovingPieceType );
+            Helpers.Use( move.TargetPieceType );
+            Helpers.Use( move.PromotionPieceType );
+            Helpers.Use( move.IsCapture );
+            Helpers.Use( move.IsCastle );
+            Helpers.Use( move.IsEnPassant );
+            Helpers.Use( move.IsPromotion );
+        }
+
+        return selector;
+    }
 }

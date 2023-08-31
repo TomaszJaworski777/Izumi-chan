@@ -1,0 +1,39 @@
+|                     Method |          Mean |        Error |       StdDev | Code Size | Allocated |
+|--------------------------- |--------------:|-------------:|-------------:|----------:|----------:|
+|                CreateBoard | 214,667.49 ns | 4,077.873 ns | 3,183.735 ns |   8,340 B |         - |
+|              IsKingInCheck |     129.94 ns |     2.512 ns |     3.085 ns |     176 B |         - |
+|           SetIsKingInCheck |      43.17 ns |     0.692 ns |     0.614 ns |     154 B |         - |
+| SetCanWhiteCastleQueenSide |      43.29 ns |     0.864 ns |     0.808 ns |     154 B |         - |
+|           IsSquareAttacked |     494.07 ns |     1.141 ns |     1.012 ns |     592 B |         - |
+|         GenerateZobristKey |   6,879.57 ns |    99.120 ns |    82.770 ns |   8,457 B |         - |
+|           ModifyZobristKey |   5,250.51 ns |   104.837 ns |   128.749 ns |   8,810 B |         - |
+
+|            Method |      Mean |    Error |   StdDev | Code Size | Allocated |
+|------------------ |----------:|---------:|---------:|----------:|----------:|
+|       GetBitValue | 115.31 ns | 0.052 ns | 0.043 ns |      37 B |         - |
+|  SetBitValueToOne |  26.44 ns | 0.028 ns | 0.025 ns |      28 B |         - |
+| SetBitValueToZero |  26.36 ns | 0.018 ns | 0.016 ns |      28 B |         - |
+|     GetValueChunk | 115.29 ns | 0.026 ns | 0.022 ns |      37 B |         - |
+|     SetValueChunk |  48.59 ns | 0.028 ns | 0.025 ns |      41 B |         - |
+
+|                Method |      Mean |     Error |    StdDev | Code Size | Allocated |
+|---------------------- |----------:|----------:|----------:|----------:|----------:|
+|            CreateMove |  3.123 us | 0.0031 us | 0.0028 us |   8,496 B |         - |
+|              ReadMove |  3.042 us | 0.0031 us | 0.0027 us |   8,458 B |         - |
+|              MakeMove |  8.214 us | 0.0658 us | 0.0616 us |  14,773 B |         - |
+|         GenerateMoves | 37.794 us | 0.7355 us | 0.8175 us |  14,759 B |         - |
+| GenerateTacticalMoves | 13.382 us | 0.0217 us | 0.0203 us |  12,929 B |         - |
+|    CreateOrderedMoves | 10.168 us | 0.1980 us | 0.2357 us |   8,605 B |         - |
+|       GetOrderedMoves |  6.260 us | 0.1249 us | 0.1337 us |   9,089 B |         - |
+
+|           Method |         Mean |     Error |    StdDev | Code Size | Allocated |
+|----------------- |-------------:|----------:|----------:|----------:|----------:|
+|   DepthOneSearch |     6.598 ms | 0.0912 ms | 0.0853 ms |  39,432 B |  23.55 KB |
+|   DepthTwoSearch |    13.371 ms | 0.0798 ms | 0.0707 ms |  39,144 B |  39.18 KB |
+| DepthThreeSearch |    92.994 ms | 1.6119 ms | 1.3460 ms |  37,929 B |  55.64 KB |
+|  DepthFourSearch |   893.547 ms | 1.2055 ms | 0.9412 ms |      49 B |  72.38 KB |
+|  DepthFiveSearch | 6,729.124 ms | 3.7516 ms | 3.3257 ms |      49 B |  88.78 KB |
+
+|           Method |     Mean |    Error |   StdDev | Code Size | Allocated |
+|----------------- |---------:|---------:|---------:|----------:|----------:|
+| EvaluatePosition | 26.72 us | 0.078 us | 0.073 us |   9,421 B |      24 B |

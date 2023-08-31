@@ -4,6 +4,7 @@ using Engine.Move;
 using Engine.Perft;
 using Engine.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Tests;
 
@@ -64,8 +65,8 @@ public class MoveTests
         MoveData move = new( "f3h3", board );
         board.MakeMove( move );
         Assert.IsTrue( board.SideToMove > 0 );
-        Assert.IsTrue( board.GetPieceOnSquare(SquareHelpers.StringToSquareIndex("h3")) == PieceType.Queen );
-        Assert.IsTrue( board.GetPieceOnSquare(SquareHelpers.StringToSquareIndex("f3")) == PieceType.None );
+        Assert.IsTrue( board.GetPieceOnSquare( SquareHelpers.StringToSquareIndex( "h3" ) ) == PieceType.Queen );
+        Assert.IsTrue( board.GetPieceOnSquare( SquareHelpers.StringToSquareIndex( "f3" ) ) == PieceType.None );
 
         board = BoardProvider.Create( BoardProvider.KiwipetePosition );
         move = new MoveData( "g2g4", board );
@@ -93,7 +94,7 @@ public class MoveTests
         Assert.IsTrue( test.TestPosition( 4, false ) == 197_281 );
 
         board = BoardProvider.Create( BoardProvider.KiwipetePosition );
-        test = new ( board );
+        test = new( board );
         Assert.IsTrue( test.TestPosition( 3, false ) == 97_862 );
 
         board = BoardProvider.Create( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1" );
@@ -111,5 +112,36 @@ public class MoveTests
         board = BoardProvider.Create( "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10" );
         test = new( board );
         Assert.IsTrue( test.TestPosition( 3, false ) == 89_890 );
+    }
+
+    [TestMethod]
+    public unsafe void MoveSelector_Test()
+    {
+        BoardData board = BoardProvider.Create( BoardProvider.StartPosition );
+        MoveList list = new(stackalloc MoveData[300]);
+        board.GenerateAllPseudoLegalMoves( ref list );
+        MoveSelector selector = new(list, stackalloc MoveSelector.ScoredMove[300]);
+
+        Assert.IsTrue( selector.Length == list.Length );
+
+        MoveData move = selector.GetMoveForIndex(0);
+        Assert.IsTrue( move.FromSquareIndex != move.ToSquareIndex );
+        Assert.IsTrue( move.FromSquareIndex < 64 );
+        Assert.IsTrue( move.ToSquareIndex < 64 );
+
+        MoveData moveTwo = selector.GetMoveForIndex(1);
+        Assert.IsTrue( moveTwo.FromSquareIndex != move.ToSquareIndex );
+        Assert.IsTrue( moveTwo.FromSquareIndex < 64 );
+        Assert.IsTrue( moveTwo.ToSquareIndex < 64 );
+
+        Assert.IsTrue( move.FromSquareIndex != moveTwo.FromSquareIndex ||
+                        move.ToSquareIndex != moveTwo.ToSquareIndex ||
+                        move.MovingPieceType != move.MovingPieceType ||
+                        move.TargetPieceType != move.TargetPieceType ||
+                        move.PromotionPieceType != move.PromotionPieceType ||
+                        move.IsCapture != move.IsCapture ||
+                        move.IsCastle != move.IsCastle ||
+                        move.IsEnPassant != move.IsEnPassant ||
+                        move.IsPromotion != move.IsPromotion );
     }
 }

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Engine.Move;
 
 //move ordering, in order to increase beta cutoffs in Negamax. (https://www.chessprogramming.org/Move_Ordering) Here i'm using iterative sorting method, to save performance
-internal readonly ref struct MoveSelector
+public readonly ref struct MoveSelector
 {
     private readonly Span<ScoredMove> _moves;
 

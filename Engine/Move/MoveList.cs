@@ -16,6 +16,8 @@ namespace Engine.Move
             Length++;
         }
 
+        public void ForceSetLength( int length ) => Length = length;
+
         public static implicit operator Span<MoveData>( MoveList list ) => list._moves[..list.Length];
     }
 }

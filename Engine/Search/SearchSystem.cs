@@ -6,7 +6,7 @@ using Engine.Move;
 
 namespace Engine.Search;
 
-internal class SearchSystem
+public class SearchSystem
 {
     public static bool CancellationToken;
 
@@ -60,7 +60,7 @@ internal class SearchSystem
     }
 
     //implementation of NegaMax algorithm (https://www.chessprogramming.org/Negamax)
-    public unsafe int NegaMax( BoardData board, int depth, int alpha, int beta, int movesPlayed )
+    private unsafe int NegaMax( BoardData board, int depth, int alpha, int beta, int movesPlayed )
     {
         //returns 0 if position is drawn through repetition or 50-move. Here it returns 0 even when position is repeated just once, to make sure it won't miss a draw just because of a depth.
         if (movesPlayed > 0 && (MoveHistory.IsRepetition( board.ZobristKey ) || board.HalfMoves >= 100))
