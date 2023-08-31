@@ -41,7 +41,7 @@ public class EvaluationSystem
                 materialMidEval += values.Midgame * buffer.BitCount;
                 materialEndEval += values.Endgame * buffer.BitCount;
 
-                uint pieceIndexOffset = 64u * pieceIndex;
+                uint pieceIndexOffset = 128u * pieceIndex;
 
                 while (buffer != 0)
                 {
