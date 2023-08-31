@@ -83,6 +83,7 @@ Aww >w< impwemented UwU enginye f-f-featuwes, togethew *sees bulge* with winkies
   * [Material](https://www.chessprogramming.org/Material)
   * [Piece-Square Tables](https://www.chessprogramming.org/Piece-Square_Tables)
   * [Tapered Evaluation](https://www.chessprogramming.org/Tapered_Eval)
+  * [Doubled Pawns](https://www.chessprogramming.org/Doubled_Pawn)
 * **Search**
   * [Iterative Deepening](https://www.chessprogramming.org/Iterative_Deepening)
   * [Time management](https://www.chessprogramming.org/Time_Management)
