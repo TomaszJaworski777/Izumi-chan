@@ -97,6 +97,7 @@ public class EvaluationSystem
         return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static (int, int) GetPstsValue( PieceType pieceType, int squareIndex ) => pieceType switch
     {
         PieceType.Pawn => (EvaluationSheet.MidgamePawnTable[squareIndex], EvaluationSheet.EndgamePawnTable[squareIndex]),
