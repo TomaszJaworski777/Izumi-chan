@@ -11,11 +11,13 @@ namespace Benchmarks.Systems;
 [SimpleJob(RuntimeMoniker.Net80)]
 public class MoveBenchmarks
 {
+    private static readonly MoveData[] MoveBuffer = new MoveData[300];
+
     [Benchmark]
     public BoardData CreateMove()
     {
         BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
-        for (int i = 0; i < 100000000; i++)
+        for (int i = 0; i < 100; i++)
         {
             Helpers.Use(new MoveData(board, 0, 0, PieceType.Queen, false, false, false, false));
         }
@@ -28,7 +30,7 @@ public class MoveBenchmarks
     {
         BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
         MoveData move = new(board,0,0,PieceType.Queen,false,false,false,false);
-        for (int i = 0; i < 100000000; i++)
+        for (int i = 0; i < 100; i++)
         {
             Helpers.Use(move.FromSquareIndex);
             Helpers.Use(move.ToSquareIndex);
@@ -51,7 +53,7 @@ public class MoveBenchmarks
     {
         BoardData board = BoardProvider.Create(BoardProvider.KiwipetePosition);
         MoveData move = new("f3h3", board);
-        for (int i = 0; i < 1000000; i++)
+        for (int i = 0; i < 100; i++)
         {
             Helpers.Use(board.MakeMove( move ));
             board.UnmakeMove();
@@ -64,9 +66,9 @@ public class MoveBenchmarks
     public BoardData GenerateMoves()
     {
         BoardData board = BoardProvider.Create(BoardProvider.KiwipetePosition);
-        for (int i = 0; i < 1000000; i++)
+        for (int i = 0; i < 100; i++)
         {
-            MoveList moves = new(new MoveData[300] );
+            MoveList moves = new(MoveBuffer );
             board.GenerateAllPseudoLegalMoves( ref moves );
         }
 
@@ -77,9 +79,9 @@ public class MoveBenchmarks
     public BoardData GenerateTacticalMoves()
     {
         BoardData board = BoardProvider.Create(BoardProvider.KiwipetePosition);
-        for (int i = 0; i < 1000000; i++)
+        for (int i = 0; i < 100; i++)
         {
-            MoveList moves = new(new MoveData[300] );
+            MoveList moves = new(MoveBuffer );
             board.GenerateTacticalPseudoLegalMoves( ref moves );
         }
 
