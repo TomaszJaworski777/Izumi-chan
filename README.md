@@ -26,10 +26,24 @@
 
 <a href="">
 <img
-  alt="Latest release"
-  src="https://img.shields.io/badge/latest_release-none-blue?style=for-the-badge">
+  alt="Version rated by CCRL"
+  src="https://img.shields.io/badge/ccrl_rated_version-none-blue?style=for-the-badge">
 </a>
 
+<br>
+<br>
+
+<a href="https://github.com/TomaszJaworski777/Izumi-chan/actions/workflows/dotnet-build.yml">
+<img
+  alt="Build status"
+  src="https://github.com/TomaszJaworski777/Izumi-chan/actions/workflows/dotnet-build.yml/badge.svg">
+</a>
+
+<a href="https://github.com/TomaszJaworski777/Izumi-chan/actions/workflows/dotnet-test.yml">
+<img
+  alt="Unit Tests status"
+  src="https://github.com/TomaszJaworski777/Izumi-chan/actions/workflows/dotnet-test.yml/badge.svg">
+</a>
 </div>
 
 ## Ovewview :3
