@@ -1,4 +1,6 @@
-﻿namespace Engine.PieceAttacks.SlidingPieces;
+﻿using System;
+
+namespace Engine.PieceAttacks.SlidingPieces;
 
 //magic numbers used to generate sliding pieces attacks (https://www.chessprogramming.org/Magic_Bitboards)
 public static class MagicNumbers

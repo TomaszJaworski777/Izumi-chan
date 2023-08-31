@@ -1,4 +1,6 @@
-﻿namespace Engine.Evaluation
+﻿using System;
+
+namespace Engine.Evaluation
 {
     public static class EvaluationSheet
     {

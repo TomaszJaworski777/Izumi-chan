@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using Engine.Board;
 using Engine.Data.Bitboards;
 using Engine.Data.Enums;

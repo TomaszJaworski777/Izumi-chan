@@ -1,4 +1,11 @@
-﻿namespace Engine.Board
+﻿#if DEBUG
+using System;
+using Engine.Data.Enums;
+using Engine.Move;
+using Engine.Utils;
+#endif
+
+namespace Engine.Board
 {
     public ref partial struct BoardData
     {
