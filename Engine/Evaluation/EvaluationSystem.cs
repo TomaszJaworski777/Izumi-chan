@@ -74,13 +74,13 @@ public static class EvaluationSystem
             bishopPairEndEval = -bishopPairEndEval;
         }
 
-        //pawn bonuses/punishments
+        //penalty for double pawns
         for (int fileIndex = 0; fileIndex < 8; fileIndex++)
         {
             const ulong fileMask = 0x0101010101010101;
             Bitboard fileBuffer = fileMask << fileIndex;
 
-            //penalty for double pawns
+            
             int whiteDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 0) & fileBuffer)).BitCount;
             if (whiteDoublePawns > 1)
             {

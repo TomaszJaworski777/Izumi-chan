@@ -32,7 +32,7 @@ public class ChessEngine
     public ulong Perft( string fen, int depth, bool divide )
     {
         BoardData board = BoardProvider.Create(fen);
-        PerftTest test = new(board);
+        PerftTest test = new(ref board);
         return test.TestPosition( depth, divide );
     }
 
@@ -40,7 +40,7 @@ public class ChessEngine
     public ulong Perft( int depth, bool divide )
     {
         BoardData board = CreateCurrentBoard();
-        PerftTest test = new(board);
+        PerftTest test = new(ref board);
         return test.TestPosition( depth, divide );
     }
 
@@ -50,7 +50,7 @@ public class ChessEngine
         BoardData board = CreateCurrentBoard();
 
         SearchSystem search = new();
-        return search.FindBestMove( new SearchParameters( board, depth, whiteTime, blackTime, whiteIncrement, blackIncrement, movesToGo ) );
+        return search.FindBestMove( new SearchParameters( ref board, depth, whiteTime, blackTime, whiteIncrement, blackIncrement, movesToGo ) );
     }
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]

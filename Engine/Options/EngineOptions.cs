@@ -13,7 +13,7 @@ public static class EngineOptions
 
     static EngineOptions()
     {
-        AddOption( MoveOverheadKey, new OptionStruct( OptionValueType.Spin, 0, 0, 5000 ) );
+        AddOption( MoveOverheadKey, new OptionStruct( OptionValueType.Spin, 10, 0, 5000 ) );
     }
 
     public static void AddOption(string name, OptionStruct option )

@@ -6,21 +6,21 @@ using Engine.Move;
 namespace Engine.Perft
 {
     [method: MethodImpl( MethodImplOptions.AggressiveInlining )]
-    public ref struct PerftTest( BoardData testBoard )
+    public ref struct PerftTest( ref BoardData testBoard )
     {
         public static bool CancellationToken;
 
-        private readonly BoardData _board = testBoard;
+        private BoardData _board = testBoard;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public ulong TestPosition( int depth, bool divide )
         {
             CancellationToken = false;
-            return InternalTestPosition( _board, depth, divide );
+            return InternalTestPosition( ref _board, depth, divide );
         }
 
         //executes perft test based on the given position (https://www.chessprogramming.org/Perft)
-        private unsafe ulong InternalTestPosition(BoardData board, int depth, bool divide)
+        private unsafe ulong InternalTestPosition(ref BoardData board, int depth, bool divide)
         {
             //counts nodes for final results
             if (depth <= 0)
@@ -43,7 +43,7 @@ namespace Engine.Perft
                 if (!boardCopy.MakeMove( move ))
                     continue;
                 //get perft value of current move and then unmakes the move
-                ulong newResult = InternalTestPosition(boardCopy, depth - 1, false );
+                ulong newResult = InternalTestPosition(ref boardCopy, depth - 1, false );
                 boardCopy.UnmakeMove();
                 //prints divided perft if chosen (https://www.chessprogramming.org/Perft#Divide)
                 if (divide)

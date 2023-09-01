@@ -12,10 +12,10 @@ namespace Engine.Board
     public ref partial struct BoardData
     {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void GenerateAllPseudoLegalMoves( ref MoveList moveList ) => MoveGenerator.GenerateAllPseudoLegalMoves( this, ref moveList );
+        public void GenerateAllPseudoLegalMoves( ref MoveList moveList ) => MoveGenerator.GenerateAllPseudoLegalMoves( ref this, ref moveList );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void GenerateTacticalPseudoLegalMoves( ref MoveList moveList ) => MoveGenerator.GenerateTacticalPseudoLegalMoves( this, ref moveList );
+        public void GenerateTacticalPseudoLegalMoves( ref MoveList moveList ) => MoveGenerator.GenerateTacticalPseudoLegalMoves( ref this, ref moveList );
     }
 }
 
@@ -53,7 +53,7 @@ namespace Engine.Move
         }
 
         //generates all moves without checking if they will leave king in check. (https://www.chessprogramming.org/Pseudo-Legal_Move)
-        public static void GenerateAllPseudoLegalMoves( BoardData board, ref MoveList moves )
+        public static void GenerateAllPseudoLegalMoves( ref BoardData board, ref MoveList moves )
         {
             //prepares some data to save performance accessing it later
             bool isWhiteToMove = board.SideToMove == 0;
@@ -273,7 +273,7 @@ namespace Engine.Move
 
         //generates only tactical moves (https://www.chessprogramming.org/Tactical_Moves) without checking if they will leave king in check.
         //(https://www.chessprogramming.org/Pseudo-Legal_Move)
-        public static void GenerateTacticalPseudoLegalMoves( BoardData board, ref MoveList moves )
+        public static void GenerateTacticalPseudoLegalMoves( ref BoardData board, ref MoveList moves )
         {
             //prepares some data to save performance accessing it later
             Array64<Bitboard> pawnMove;
