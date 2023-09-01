@@ -4,9 +4,12 @@ namespace Engine.Evaluation
 {
     public static class EvaluationSheet
     {
+        public const ushort BishopPairMidgameBonus = 15;
+        public const ushort BishopPairEndgameBonus = 35;
+
         //per pawn
-        public const int DoublePawnMidgamePunishment = -10;
-        public const int DoublePawnEndgamePunishment = -20;
+        public const int DoublePawnMidgamePenalty = -10;
+        public const int DoublePawnEndgamePenalty = -20;
 
         public static ReadOnlySpan<byte> PiecePhase => [ 0, 1, 1, 2, 4, 0 ];
 

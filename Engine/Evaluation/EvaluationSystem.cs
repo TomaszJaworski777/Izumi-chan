@@ -5,16 +5,16 @@ using Engine.Board;
 using Engine.Data.Bitboards;
 
 namespace Engine.Evaluation;
-public class EvaluationSystem
+public static class EvaluationSystem
 {
-    private readonly int _totalPhase = 16 * EvaluationSheet.PiecePhase[0] +
+    private readonly static int _totalPhase = 16 * EvaluationSheet.PiecePhase[0] +
                                        4 * EvaluationSheet.PiecePhase[1] +
                                        4 * EvaluationSheet.PiecePhase[2] +
                                        4 * EvaluationSheet.PiecePhase[3] +
                                        2 * EvaluationSheet.PiecePhase[4] +
                                        2 * EvaluationSheet.PiecePhase[5];
 
-    public int EvaluatePosition( BoardData board, bool debug = false )
+    public static int EvaluatePosition( ref BoardData board, bool debug = false )
     {
         int materialMidEval = 0;
         int materialEndEval = 0;
@@ -22,6 +22,8 @@ public class EvaluationSystem
         int pstsEndEval = 0;
         int doublePawnsMidEval = 0;
         int doubledPawnsEndEval = 0;
+        int bishopPairMidEval = 0;
+        int bishopPairEndEval = 0;
         int phase = _totalPhase;
 
         for (int color = 0; color <= 1; color++)
@@ -41,8 +43,16 @@ public class EvaluationSystem
                 materialMidEval += values.Midgame * buffer.BitCount;
                 materialEndEval += values.Endgame * buffer.BitCount;
 
+                //bishop pair
+                if(pieceIndex == 2)
+                {
+                    bishopPairMidEval += EvaluationSheet.BishopPairMidgameBonus * buffer.BitCount;
+                    bishopPairEndEval += EvaluationSheet.BishopPairEndgameBonus * buffer.BitCount;
+                }
+
                 uint pieceIndexOffset = 128u * pieceIndex;
 
+                //psts
                 while (buffer != 0)
                 {
                     Psts psts = Unsafe.ReadUnaligned<Psts>(ref Unsafe.Add(
@@ -59,6 +69,9 @@ public class EvaluationSystem
 
             pstsMidEval = -pstsMidEval;
             pstsEndEval = -pstsEndEval;
+
+            bishopPairMidEval = -bishopPairMidEval;
+            bishopPairEndEval = -bishopPairEndEval;
         }
 
         //pawn bonuses/punishments
@@ -71,15 +84,15 @@ public class EvaluationSystem
             int whiteDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 0) & fileBuffer)).BitCount;
             if (whiteDoublePawns > 1)
             {
-                doublePawnsMidEval += whiteDoublePawns * EvaluationSheet.DoublePawnMidgamePunishment;
-                doubledPawnsEndEval += whiteDoublePawns * EvaluationSheet.DoublePawnEndgamePunishment;
+                doublePawnsMidEval += whiteDoublePawns * EvaluationSheet.DoublePawnMidgamePenalty;
+                doubledPawnsEndEval += whiteDoublePawns * EvaluationSheet.DoublePawnEndgamePenalty;
             }
 
             int blackDoublePawns = ((Bitboard)(board.GetPieceBitboard(0, 1) & fileBuffer)).BitCount;
             if (blackDoublePawns > 1)
             {
-                doublePawnsMidEval -= blackDoublePawns * EvaluationSheet.DoublePawnMidgamePunishment;
-                doubledPawnsEndEval -= blackDoublePawns * EvaluationSheet.DoublePawnEndgamePunishment;
+                doublePawnsMidEval -= blackDoublePawns * EvaluationSheet.DoublePawnMidgamePenalty;
+                doubledPawnsEndEval -= blackDoublePawns * EvaluationSheet.DoublePawnEndgamePenalty;
             }
         }
 
@@ -91,6 +104,8 @@ public class EvaluationSystem
             Console.WriteLine( $"PSTS Endgame Evaluation: {pstsEndEval}" );
             Console.WriteLine( $"Double pawns Midgame Evaluation: {doublePawnsMidEval}" );
             Console.WriteLine( $"Double pawns Endgame Evaluation: {doubledPawnsEndEval}" );
+            Console.WriteLine( $"Bishop pair Midgame Evaluation: {bishopPairMidEval}" );
+            Console.WriteLine( $"Bishop pair Endgame Evaluation: {bishopPairEndEval}" );
         }
 
         int midgame = materialMidEval + pstsMidEval + doublePawnsMidEval;

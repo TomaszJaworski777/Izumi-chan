@@ -62,9 +62,8 @@ public class ChessEngine
 
     public void DebugEval()
     {
-        EvaluationSystem evaluation = new ();
         BoardData board = CreateCurrentBoard();
-        Console.WriteLine( $"Total evaluation: {evaluation.EvaluatePosition( board, true )}" );
+        Console.WriteLine( $"Total evaluation: {EvaluationSystem.EvaluatePosition(ref board, true )}" );
     }
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
