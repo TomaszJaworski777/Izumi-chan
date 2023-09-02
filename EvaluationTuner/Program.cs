@@ -1,4 +1,5 @@
 ﻿using Engine;
+using System.Numerics;
 
 namespace EvaluationTuner;
 
@@ -9,15 +10,15 @@ internal class Program
     static void Main( string[] args )
     {
         Console.WriteLine( $"Evaluation Tuner v{EngineCredentials.Version}\n" );
+        ModifiableEvaluationSheet sheet = new();
 
-        double kFactor = CalculateKFactor();
+        double kFactor = CalculateKFactor(sheet);
 
         Console.WriteLine( $"K-Factor: {kFactor}\n" );
 
         Thread thread = new Thread(CancelationListener);
         thread.Start();
 
-        ModifiableEvaluationSheet sheet = new();
         while (true)
         {
             sheet = AdjustEvalSheet( sheet, kFactor );
@@ -29,12 +30,11 @@ internal class Program
         sheet.Capture();
     }
 
-    private static double CalculateKFactor()
+    private static double CalculateKFactor( ModifiableEvaluationSheet sheet )
     {
         Console.WriteLine( "Calculating K-factor.." );
 
         double result = 2;
-        ModifiableEvaluationSheet sheet = new();
         double currentError = Tuner.TestValues( sheet, result );
 
         for (int i = 0; i < 15; i++)
@@ -63,48 +63,16 @@ internal class Program
         Console.WriteLine( "Starting next iteration..." );
 
         double currentError = Tuner.TestValues( sheet, kFactor );
+        double upperError = 0;
+        double lowerError = 0;
 
         //DoublePawnMidgamePenalty adjustment
         Console.WriteLine( $"DoublePawnMidgamePenalty" );
-
-        sheet.DoublePawnMidgamePenalty += 1;
-        double upperError = Tuner.TestValues( sheet, kFactor );
-        sheet.DoublePawnMidgamePenalty -= 2;
-        double lowerError = Tuner.TestValues( sheet, kFactor );
-        sheet.DoublePawnMidgamePenalty += 1;
-
-        if (upperError < currentError && upperError <= lowerError)
-        {
-            sheet.DoublePawnMidgamePenalty += 1;
-            currentError = upperError;
-            Console.WriteLine( $"   New error: {currentError}" );
-        } else if (lowerError < currentError)
-        {
-            sheet.DoublePawnMidgamePenalty -= 1;
-            currentError = lowerError;
-            Console.WriteLine( $"   New error: {currentError}" );
-        }
+        ValueTweaker.TweakValueInt( ref sheet.DoublePawnMidgamePenalty, ref sheet, kFactor, ref currentError );
 
         //DoublePawnEndgamePenalty adjustment
         Console.WriteLine( $"DoublePawnEndgamePenalty" );
-
-        sheet.DoublePawnEndgamePenalty += 1;
-        upperError = Tuner.TestValues( sheet, kFactor );
-        sheet.DoublePawnEndgamePenalty -= 2;
-        lowerError = Tuner.TestValues( sheet, kFactor );
-        sheet.DoublePawnEndgamePenalty += 1;
-
-        if (upperError < currentError && upperError <= lowerError)
-        {
-            sheet.DoublePawnEndgamePenalty += 1;
-            currentError = upperError;
-            Console.WriteLine( $"   New error: {currentError}" );
-        } else if (lowerError < currentError)
-        {
-            sheet.DoublePawnEndgamePenalty -= 1;
-            currentError = lowerError;
-            Console.WriteLine( $"   New error: {currentError}" );
-        }
+        ValueTweaker.TweakValueInt( ref sheet.DoublePawnEndgamePenalty, ref sheet, kFactor, ref currentError );
 
         //piece values
         for (int i = 0; i < sheet.PieceValues.Length - 1; i++)
@@ -112,25 +80,8 @@ internal class Program
             if (_cancelationToken)
                 break;
 
-            Console.WriteLine( $"Piece Values {i}/{sheet.PieceValues.Length}" );
-
-            sheet.PieceValues[i] += 1;
-            upperError = Tuner.TestValues( sheet, kFactor );
-            sheet.PieceValues[i] -= 2;
-            lowerError = Tuner.TestValues( sheet, kFactor );
-            sheet.PieceValues[i] += 1;
-
-            if (upperError < currentError && upperError <= lowerError)
-            {
-                sheet.PieceValues[i] += 1;
-                currentError = upperError;
-                Console.WriteLine( $"   New error: {currentError}" );
-            } else if (lowerError < currentError)
-            {
-                sheet.PieceValues[i] -= 1;
-                currentError = lowerError;
-                Console.WriteLine( $"   New error: {currentError}" );
-            }
+            Console.WriteLine( $"Piece Values {i}/{sheet.PieceValues.Length-1}" );
+            ValueTweaker.TweakValueUShort( ref sheet.PieceValues[i], ref sheet, kFactor, ref currentError );
         }
 
         //psts tables
@@ -140,24 +91,7 @@ internal class Program
                 break;
 
             Console.WriteLine( $"PSTS Values {i}/{sheet.PstsTable.Length}" );
-
-            sheet.PstsTable[i] += 1;
-            upperError = Tuner.TestValues( sheet, kFactor );
-            sheet.PstsTable[i] -= 2;
-            lowerError = Tuner.TestValues( sheet, kFactor );
-            sheet.PstsTable[i] += 1;
-
-            if (upperError < currentError && upperError <= lowerError)
-            {
-                sheet.PstsTable[i] += 1;
-                currentError = upperError;
-                Console.WriteLine( $"   New error: {currentError}" );
-            } else if (lowerError < currentError)
-            {
-                sheet.PstsTable[i] -= 1;
-                currentError = lowerError;
-                Console.WriteLine( $"   New error: {currentError}" );
-            }
+            ValueTweaker.TweakValueSByte( ref sheet.PstsTable[i], ref sheet, kFactor, ref currentError );
         }
 
         return sheet;
