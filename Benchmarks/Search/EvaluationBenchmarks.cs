@@ -14,10 +14,9 @@ public class EvaluationBenchmarks
     public BoardData EvaluatePosition()
     {
         BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
-        EvaluationSystem evaluation = new();
         for (int i = 0; i < 100; i++)
         {
-            int score = evaluation.EvaluatePosition(board);
+            int score = EvaluationSystem.EvaluatePosition(ref board);
             Helpers.Use( score );
         }
         return board;

@@ -17,7 +17,7 @@ public class SearchBenchmarks
         SearchSystem search = new();
         for (int i = 0; i < 10; i++)
         {
-            search.FindBestMove( new SearchParameters( board, 5 ) );
+            search.FindBestMove( new SearchParameters( ref board, 5 ) );
         }
         return search;
     }
