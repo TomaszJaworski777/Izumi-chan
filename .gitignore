@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 # Misc engine files
 CutechessFiles/
+EvaluationTuner/output.txt

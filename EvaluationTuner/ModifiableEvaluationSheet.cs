@@ -21,14 +21,13 @@ internal struct ModifiableEvaluationSheet
 
         PiecePhase = EvaluationSheet.PiecePhase.ToArray();
 
-        PieceValues = new ushort[EvaluationSheet.PieceValues.Length];
+        PieceValues = EvaluationSheet.PieceValues.ToArray();
 
         PstsTable = new sbyte[EvaluationSheet.PstsTable.Length];
     } 
 
     public void Capture()
     {
-        FileStream file = File.Create(@"../../../output.txt");
         StringBuilder stringBuilder = new();
 
 
@@ -55,5 +54,7 @@ internal struct ModifiableEvaluationSheet
                 stringBuilder.Append( ", " );
         }
         stringBuilder.Append( $" ];\n\n" );
+
+        File.WriteAllText(@"../../../output.txt", stringBuilder.ToString() );
     }
 }
