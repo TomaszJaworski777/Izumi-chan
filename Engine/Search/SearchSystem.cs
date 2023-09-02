@@ -92,9 +92,9 @@ public class SearchSystem
             return -Infinity;
 
         //gets list of all pseudo moves
-        MoveList moveList = new(stackalloc MoveData[300]);
+        MoveList moveList = new(stackalloc MoveData[218]);
         board.GenerateAllPseudoLegalMoves( ref moveList );
-        MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[300]);
+        MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[218]);
 
         //setup variables for search loop
         int value = -Infinity;
@@ -182,9 +182,9 @@ public class SearchSystem
             return -Infinity;
 
         //gets list of only tactical pseudo moves
-        MoveList moveList = new(stackalloc MoveData[300]);
+        MoveList moveList = new(stackalloc MoveData[256]);
         board.GenerateTacticalPseudoLegalMoves( ref moveList );
-        MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[300]);
+        MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[256]);
 
         //loops through all moves
         for (int moveIndex = 0; moveIndex < selector.Length; moveIndex++)

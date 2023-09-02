@@ -32,7 +32,7 @@ namespace Engine.Perft
                 return 0;
 
             //gets list of all pseudo moves
-            MoveList moveList = new(stackalloc MoveData[300]);
+            MoveList moveList = new(stackalloc MoveData[218]);
             board.GenerateAllPseudoLegalMoves( ref moveList );
 
             //iterates through moves

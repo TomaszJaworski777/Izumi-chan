@@ -9,7 +9,7 @@ using Engine.Utils;
 
 namespace Engine.Board
 {
-    public ref partial struct BoardData
+    public partial struct BoardData
     {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public void GenerateAllPseudoLegalMoves( ref MoveList moveList ) => MoveGenerator.GenerateAllPseudoLegalMoves( ref this, ref moveList );

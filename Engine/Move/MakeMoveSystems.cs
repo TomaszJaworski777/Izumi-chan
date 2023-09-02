@@ -7,7 +7,7 @@ using Engine.Zobrist;
 
 namespace Engine.Board
 {
-    public ref partial struct BoardData
+    public partial struct BoardData
     {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public bool MakeMove(MoveData move)

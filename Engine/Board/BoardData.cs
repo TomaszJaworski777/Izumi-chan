@@ -5,7 +5,7 @@ using Engine.Zobrist;
 
 namespace Engine.Board;
 
-public ref partial struct BoardData
+public partial struct BoardData
 {
     private PieceBoard _pieces; //piece bitboards ot represent board state (https://www.chessprogramming.org/Bitboards). I used denser board solution to reduce size and sped up copy process (https://www.chessprogramming.org/Bitboard_Board-Definition#Denser_Board)
     private PieceLookup _pieceLookup; //mailbox tyle 8x8 array of pieces for easy lookup (https://www.chessprogramming.org/Mailbox)

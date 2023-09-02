@@ -7,7 +7,7 @@ using Engine.Utils;
 
 namespace Engine.Board
 {
-    public ref partial struct BoardData
+    public partial struct BoardData
     {
         //draws board if build is in Debug Mode
         public void Draw()

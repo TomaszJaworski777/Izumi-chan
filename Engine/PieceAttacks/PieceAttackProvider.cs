@@ -6,7 +6,7 @@ using Engine.PieceAttacks.SlidingPieces;
 
 namespace Engine.Board
 {
-    public ref partial struct BoardData
+    public partial struct BoardData
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         //checks if square is attacked, by applying every piece move from this square and masking it with opponent's pieces. (https://www.chessprogramming.org/Square_Attacked_By)
