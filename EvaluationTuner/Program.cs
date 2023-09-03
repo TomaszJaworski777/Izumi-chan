@@ -36,6 +36,7 @@ internal class Program
 
         double result = 2;
         double currentError = Tuner.TestValues( sheet, result );
+        Console.WriteLine( "base set" );
 
         for (int i = 0; i < 15; i++)
         {
@@ -63,8 +64,6 @@ internal class Program
         Console.WriteLine( "Starting next iteration..." );
 
         double currentError = Tuner.TestValues( sheet, kFactor );
-        double upperError = 0;
-        double lowerError = 0;
 
         //DoublePawnMidgamePenalty adjustment
         Console.WriteLine( $"DoublePawnMidgamePenalty" );
