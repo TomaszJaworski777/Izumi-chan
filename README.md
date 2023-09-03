@@ -58,7 +58,7 @@ C-Cuwwentwy suppowted UCI commands:
 * `ucinewgame` - This c-c-command is used t-to infowm the x3 enginye that a nyew game is stawting. It's typicawwy sent befowe setting up the x3 inyitiaw position ow (・`ω´・) when *notices buldge* twansitionying t-to a nyew game within *whispers to self* the x3 same UCI session.
 * `isready` - This is a UCI quewy that is used t-to check if the x3 enginye is weady t-to accept commands. the *runs away* enginye wesponds with `readyok` once it's fuwwy pwepawed t-to weceive ^w^ and pwocess fuwthew instwuctions. OwO
 * `setoption name <name> value <value>` - This c-c-command enyabwes the x3 usew t-to modify vawious enginye settings by specifying the x3 option nyame (case-insensitive) and the x3 cowwesponding vawue that adhewes t-to the x3 option's wuwes.
-    * `option name MOVEOVERHEAD default 10 min 0 max 5000` - This specific option wewates ;;w;; t-to the x3 time that the x3 enginye adds t-to its time manyagew as muv ^w^ uvwhead. Usews c-can adjust this setting within *whispers to self* the x3 definyed ÚwÚ w-wange t-to suit theiw pwefewences and game time contwow.
+    * `option name MoveOverhead default 10 min 0 max 5000` - This specific option wewates ;;w;; t-to the x3 time that the x3 enginye adds t-to its time manyagew as muv ^w^ uvwhead. Usews c-can adjust this setting within *whispers to self* the x3 definyed ÚwÚ w-wange t-to suit theiw pwefewences and game time contwow.
 * `position` - This c-c-command is used t-to set up the x3 boawd's *sweats* position fow anyawysis ow (・`ω´・) pway.
     * `position startpos` - Sets the x3 position t-to the x3 standawd chess ^w^ stawting position.
     * `position fen <fen>` - Sets the x3 position accowding t-to the x3 pwovided F-F-FEN (Fowsyth-Edwawds Nyotation) stwing.
@@ -98,6 +98,8 @@ Aww >w< impwemented UwU enginye f-f-featuwes, togethew *sees bulge* with winkies
   * [Piece-Square Tables](https://www.chessprogramming.org/Piece-Square_Tables)
   * [Tapered Evaluation](https://www.chessprogramming.org/Tapered_Eval)
   * [Doubled Pawns](https://www.chessprogramming.org/Doubled_Pawn)
+  * [Bishop Pair](https://www.chessprogramming.org/Bishop_Pair)
+  * [Automated Tuning](https://www.chessprogramming.org/Automated_Tuning)
 * **Search**
   * [Iterative Deepening](https://www.chessprogramming.org/Iterative_Deepening)
   * [Time management](https://www.chessprogramming.org/Time_Management)
