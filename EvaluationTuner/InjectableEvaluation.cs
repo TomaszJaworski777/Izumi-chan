@@ -1,5 +1,6 @@
 ﻿using Engine.Board;
 using Engine.Data.Bitboards;
+using Engine.Evaluation;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -42,6 +43,13 @@ internal static class InjectableEvaluation
                 //material eval
                 materialMidEval += values.Midgame * buffer.BitCount;
                 materialEndEval += values.Endgame * buffer.BitCount;
+
+                //bishop pair
+                if (pieceIndex == 2)
+                {
+                    bishopPairMidEval += sheet.BishopPairMidgameBonus * buffer.BitCount;
+                    bishopPairEndEval += sheet.BishopPairEndgameBonus * buffer.BitCount;
+                }
 
                 uint pieceIndexOffset = 128u * pieceIndex;
 
@@ -89,8 +97,8 @@ internal static class InjectableEvaluation
             }
         }
 
-        int midgame = materialMidEval + pstsMidEval + doublePawnsMidEval;
-        int endgame = materialEndEval + pstsEndEval + doubledPawnsEndEval;
+        int midgame = materialMidEval + pstsMidEval + doublePawnsMidEval + bishopPairMidEval;
+        int endgame = materialEndEval + pstsEndEval + doubledPawnsEndEval + bishopPairEndEval;
 
         phase = (phase * 256 + totalPhase / 2) / totalPhase;
         return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1);

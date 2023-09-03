@@ -65,14 +65,6 @@ internal class Program
 
         double currentError = Tuner.TestValues( sheet, kFactor );
 
-        //DoublePawnMidgamePenalty adjustment
-        Console.WriteLine( $"DoublePawnMidgamePenalty" );
-        ValueTweaker.TweakValueInt( ref sheet.DoublePawnMidgamePenalty, ref sheet, kFactor, ref currentError );
-
-        //DoublePawnEndgamePenalty adjustment
-        Console.WriteLine( $"DoublePawnEndgamePenalty" );
-        ValueTweaker.TweakValueInt( ref sheet.DoublePawnEndgamePenalty, ref sheet, kFactor, ref currentError );
-
         //piece values
         for (int i = 0; i < sheet.PieceValues.Length - 1; i++)
         {
@@ -92,6 +84,22 @@ internal class Program
             Console.WriteLine( $"PSTS Values {i}/{sheet.PstsTable.Length}" );
             ValueTweaker.TweakValueSByte( ref sheet.PstsTable[i], ref sheet, kFactor, ref currentError );
         }
+
+        //BishopPairMidgameBonus adjustment
+        Console.WriteLine( $"BishopPairMidgameBonus" );
+        ValueTweaker.TweakValueUShort( ref sheet.BishopPairMidgameBonus, ref sheet, kFactor, ref currentError );
+
+        //BishopPairEndgameBonus adjustment
+        Console.WriteLine( $"BishopPairEndgameBonus" );
+        ValueTweaker.TweakValueUShort( ref sheet.BishopPairEndgameBonus, ref sheet, kFactor, ref currentError );
+
+        //DoublePawnMidgamePenalty adjustment
+        Console.WriteLine( $"DoublePawnMidgamePenalty" );
+        ValueTweaker.TweakValueInt( ref sheet.DoublePawnMidgamePenalty, ref sheet, kFactor, ref currentError );
+
+        //DoublePawnEndgamePenalty adjustment
+        Console.WriteLine( $"DoublePawnEndgamePenalty" );
+        ValueTweaker.TweakValueInt( ref sheet.DoublePawnEndgamePenalty, ref sheet, kFactor, ref currentError );
 
         return sheet;
     }

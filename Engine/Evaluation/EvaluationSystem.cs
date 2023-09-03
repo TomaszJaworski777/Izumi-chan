@@ -108,8 +108,8 @@ public static class EvaluationSystem
             Console.WriteLine( $"Bishop pair Endgame Evaluation: {bishopPairEndEval}" );
         }
 
-        int midgame = materialMidEval + pstsMidEval + doublePawnsMidEval;
-        int endgame = materialEndEval + pstsEndEval + doubledPawnsEndEval;
+        int midgame = materialMidEval + pstsMidEval + doublePawnsMidEval + bishopPairMidEval;
+        int endgame = materialEndEval + pstsEndEval + doubledPawnsEndEval + bishopPairEndEval;
 
         phase = (phase * 256 + _totalPhase / 2) / _totalPhase;
         return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1);

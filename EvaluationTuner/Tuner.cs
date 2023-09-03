@@ -41,14 +41,15 @@ internal static class Tuner
     {
         totalError = 0;
         iteratedCount = 0;
-        int dataLength = _trainingEntries.Length / 10;
+        int coreCount = Environment.ProcessorCount - 2;
+        int dataLength = _trainingEntries.Length / coreCount;
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < coreCount; i++)
         {
             int startIndex = i * dataLength;
             int endIndex = (i + 1) * dataLength;
 
-            if (i == 9)
+            if (i == coreCount - 1)
                 endIndex = _trainingEntries.Length;
 
             ThreadPool.QueueUserWorkItem( TestValueThread, new TestValueData
@@ -70,7 +71,7 @@ internal static class Tuner
     }
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
-    private static double Sigmoid( double x ) => 1 / (1 + Math.Pow( Math.E, -x / 222 ));
+    private static double Sigmoid( double x ) => 1 / (1 + Math.Pow( Math.E, -x / 177 ));
 
     private struct TestValueData
     {

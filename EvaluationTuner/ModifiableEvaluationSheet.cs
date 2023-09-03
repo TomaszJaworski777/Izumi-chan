@@ -5,6 +5,9 @@ namespace EvaluationTuner;
 
 internal struct ModifiableEvaluationSheet
 {
+    public ushort BishopPairMidgameBonus;
+    public ushort BishopPairEndgameBonus;
+
     public int DoublePawnMidgamePenalty;
     public int DoublePawnEndgamePenalty;
 
@@ -16,6 +19,9 @@ internal struct ModifiableEvaluationSheet
 
     public ModifiableEvaluationSheet()
     {
+        BishopPairMidgameBonus = 0;
+        BishopPairEndgameBonus = 0;
+
         DoublePawnMidgamePenalty = 0;
         DoublePawnEndgamePenalty = 0;
 
@@ -30,6 +36,8 @@ internal struct ModifiableEvaluationSheet
     {
         StringBuilder stringBuilder = new();
 
+        stringBuilder.Append( $"BishopPairMidgameBonus = {BishopPairMidgameBonus};\n" );
+        stringBuilder.Append( $"BishopPairEndgameBonus = {BishopPairEndgameBonus};\n\n" );
 
         stringBuilder.Append( $"DoublePawnMidgamePenalty = {DoublePawnMidgamePenalty};\n" );
         stringBuilder.Append( $"DoublePawnEndgamePenalty = {DoublePawnEndgamePenalty};\n\n" );
