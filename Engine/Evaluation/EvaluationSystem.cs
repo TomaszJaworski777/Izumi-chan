@@ -44,7 +44,7 @@ public static class EvaluationSystem
                 materialEndEval += values.Endgame * buffer.BitCount;
 
                 //bishop pair
-                if(pieceIndex == 2)
+                if(pieceIndex == 2 && buffer.BitCount >= 2)
                 {
                     bishopPairMidEval += EvaluationSheet.BishopPairMidgameBonus * buffer.BitCount;
                     bishopPairEndEval += EvaluationSheet.BishopPairEndgameBonus * buffer.BitCount;
