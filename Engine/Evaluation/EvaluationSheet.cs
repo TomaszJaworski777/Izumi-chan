@@ -4,6 +4,8 @@ namespace Engine.Evaluation
 {
     public static class EvaluationSheet
     {
+        public const byte TempoBonus = 24;
+
         public const ushort BishopPairMidgameBonus = 21;
         public const ushort BishopPairEndgameBonus = 24;
 

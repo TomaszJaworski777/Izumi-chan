@@ -101,7 +101,7 @@ internal static class InjectableEvaluation
         int endgame = materialEndEval + pstsEndEval + doubledPawnsEndEval + bishopPairEndEval;
 
         phase = (phase * 256 + totalPhase / 2) / totalPhase;
-        return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1);
+        return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1) + sheet.TempoBonus * (256 - phase) / 256;
     }
 
     [StructLayout( LayoutKind.Sequential )]
