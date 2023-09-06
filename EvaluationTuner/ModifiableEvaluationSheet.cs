@@ -27,7 +27,7 @@ internal struct ModifiableEvaluationSheet
 
         PiecePhase = EvaluationSheet.PiecePhase.ToArray();
 
-        PieceValues = EvaluationSheet.PieceValues.ToArray();
+        PieceValues = new ushort[] { 100, 100, 300, 300, 310, 310, 500, 500, 900, 900, 10000, 10000 };
 
         PstsTable = new sbyte[EvaluationSheet.PstsTable.Length];
     } 

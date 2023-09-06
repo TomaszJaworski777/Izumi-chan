@@ -45,7 +45,7 @@ internal static class InjectableEvaluation
                 materialEndEval += values.Endgame * buffer.BitCount;
 
                 //bishop pair
-                if (pieceIndex == 2)
+                if (pieceIndex == 2 && buffer.BitCount >= 2)
                 {
                     bishopPairMidEval += sheet.BishopPairMidgameBonus * buffer.BitCount;
                     bishopPairEndEval += sheet.BishopPairEndgameBonus * buffer.BitCount;
