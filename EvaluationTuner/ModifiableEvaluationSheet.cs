@@ -5,6 +5,8 @@ namespace EvaluationTuner;
 
 internal struct ModifiableEvaluationSheet
 {
+    public byte TempoBonus;
+
     public ushort BishopPairMidgameBonus;
     public ushort BishopPairEndgameBonus;
 

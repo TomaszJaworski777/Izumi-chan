@@ -112,7 +112,7 @@ public static class EvaluationSystem
         int endgame = materialEndEval + pstsEndEval + doubledPawnsEndEval + bishopPairEndEval;
 
         phase = (phase * 256 + _totalPhase / 2) / _totalPhase;
-        return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1);
+        return (midgame * (256 - phase) + endgame * phase) / 256 * (board.SideToMove == 0 ? 1 : -1) + EvaluationSheet.TempoBonus * (256 - phase) / 256;
     }
 
     [StructLayout(LayoutKind.Sequential)]
