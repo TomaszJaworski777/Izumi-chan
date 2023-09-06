@@ -23,11 +23,11 @@ internal class Program
         {
             sheet = AdjustEvalSheet( sheet, kFactor );
 
+            sheet.Capture();
+
             if (_cancelationToken)
                 break;
         }
-
-        sheet.Capture();
     }
 
     private static double CalculateKFactor( ModifiableEvaluationSheet sheet )
