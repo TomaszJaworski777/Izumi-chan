@@ -19,7 +19,7 @@ public readonly ref struct MoveSelector
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
     //score the list of moves for future sort
-    public MoveSelector( MoveList moves, Span<ScoredMove> alloc/*, TranspositionTableEntry? entry*/ )
+    public MoveSelector( MoveList moves, Span<ScoredMove> alloc, MoveData transpositionMove )
     {
         _moves = alloc[..moves.Length];
         ref ScoredMove currentMove = ref MemoryMarshal.GetReference(_moves);
@@ -27,7 +27,7 @@ public readonly ref struct MoveSelector
         foreach (ref MoveData bufferMove in (Span<MoveData>)moves)
         {
             currentMove.Move = bufferMove;
-            currentMove.Score = GetMoveValue( bufferMove/*, entry*/ );
+            currentMove.Score = GetMoveValue( bufferMove, transpositionMove );
             currentMove = ref Unsafe.Add(ref currentMove, 1);
         }
     }
@@ -64,10 +64,10 @@ public readonly ref struct MoveSelector
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
     //scores move
-    private int GetMoveValue( MoveData move/*, TranspositionTableEntry? entry*/ )
+    private int GetMoveValue( MoveData move, MoveData transpositionMove )
     {
-/*        if (entry != null && move.Equals( entry.Value.bestMove ))
-            return int.MaxValue;*/
+        if (!transpositionMove.IsNull && move.Equals( transpositionMove ))
+            return 1_000_000_000;
 
         int result = 0;
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using Engine;
+using Engine.Move;
+using Engine.Search.TranspositionTables;
 
 namespace Interface
 {
@@ -7,6 +9,9 @@ namespace Interface
     {
         static void Main( string[] args )
         {
+            MoveHistory.Reset();
+            TranspositionTable.Reset();
+
             ChessEngine engine = new();
             CommandProcessor generalProcessor = new GeneralCommandProcessor(engine);
             CommandProcessor? interfaceProcessor = null;

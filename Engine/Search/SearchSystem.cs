@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Formats.Tar;
 using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 using Engine.Board;
 using Engine.Evaluation;
 using Engine.Move;
+using Engine.Search.TranspositionTables;
 
 namespace Engine.Search;
 
@@ -31,13 +34,13 @@ public class SearchSystem
         int increment = searchParameters.Board.SideToMove == 0 ? searchParameters.WhiteIncrement : searchParameters.BlackIncrement;
         _timeManager = new TimeManager( time, increment, searchParameters.MovesToGo );
         Stopwatch stopwatch = new();
+        stopwatch.Start();
 
         //implementation of iterative deepening (https://www.chessprogramming.org/Iterative_Deepening)
         for (int currentDepth = 1; currentDepth <= searchParameters.Depth; currentDepth++)
         {
             _nodes = 0;
             long before = GC.GetAllocatedBytesForCurrentThread();
-            stopwatch.Restart();
 
             int bestScore = NegaMax(ref searchParameters.Board, currentDepth, -Infinity, Infinity, 0);
 
@@ -75,10 +78,26 @@ public class SearchSystem
             return 0;
         }
 
+        //first pass TTs
+        ref TranspositionTableEntry entry = ref TranspositionTable.Probe(board.ZobristKey);
+
+        if(movesPlayed > 0 && entry.PositionKey == board.ZobristKey && entry.Depth >= depth)
+        {
+            if (entry.Flag == TTFlag.AlphaChanged)
+                return entry.Score;
+            else if (entry.Flag == TTFlag.BetaCutoff)
+                alpha = Math.Max( alpha, entry.Score );
+            else if (entry.Flag == TTFlag.AlphaUnchanged)
+                beta = Math.Min( beta, entry.Score );
+
+            if (alpha >= beta)
+                return entry.Score;
+        }
+
         //returns eval when at finishing node
         if (depth <= 0)
         {
-            return QuiesenceSearch(ref board, alpha, beta);
+            return QuiesenceSearch(ref board, alpha, beta, movesPlayed);
         }
 
         //every 10k nodes updates the timer to check if engine run out of search time.
@@ -94,11 +113,13 @@ public class SearchSystem
         //gets list of all pseudo moves
         MoveList moveList = new(stackalloc MoveData[218]);
         board.GenerateAllPseudoLegalMoves( ref moveList );
-        MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[218]);
+        MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[218], entry.PositionKey == board.ZobristKey ? entry.BestMove : default);
 
         //setup variables for search loop
-        int value = -Infinity;
+        int bestValue = -Infinity;
         int legalMoveCount = 0;
+        int originalAlpha = alpha;
+        MoveData bestLocalMove = default;
 
         //loops through all moves
         for (int moveIndex = 0; moveIndex < selector.Length; moveIndex++)
@@ -121,18 +142,20 @@ public class SearchSystem
             boardCopy.UnmakeMove();
 
             //if new value is better than current value..
-            if (newValue > value)
+            if (newValue > bestValue)
             {
                 //then override if 
-                value = newValue;
+                bestValue = newValue;
 
                 //and because from our POV we want to maximize alpha then we incease out current alpha 
-                if (value > alpha)
-                    alpha = value;
+                if (bestValue > alpha)
+                    alpha = bestValue;
 
                 //if it's first loop then we want to override our move candidate with best move found
                 if (movesPlayed == 0)
                     _bestRootMoveCandidate = move;
+
+                bestLocalMove = move;
 
                 //beta means the score of the current strongest move for the opponent,
                 //if current move is stronger than opponent move, then there is no need to look further, so we break
@@ -150,14 +173,37 @@ public class SearchSystem
             return 0;
         }
 
-        return value;
+        // Push to TT
+        TranspositionTable.Push( new TranspositionTableEntry
+        {
+            PositionKey = board.ZobristKey,
+            BestMove = bestLocalMove,
+            Score = bestValue,
+            Depth = (byte)depth,
+            Flag = (bestValue >= beta ? TTFlag.BetaCutoff : (bestValue > originalAlpha ? TTFlag.AlphaChanged : TTFlag.AlphaUnchanged))
+        } );
+
+        return bestValue;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     //search method created to extend search for capture moves and remove horizon effect.
     //(https://www.chessprogramming.org/Quiescence_Search) (https://www.chessprogramming.org/Horizon_Effect)
-    private unsafe int QuiesenceSearch(ref BoardData board, int alpha, int beta)
+    private unsafe int QuiesenceSearch(ref BoardData board, int alpha, int beta, int movesPlayed)
     {
+        //first pass TTs
+        if (movesPlayed > 0)
+        {
+            ref TranspositionTableEntry entry = ref TranspositionTable.Probe(board.ZobristKey);
+            if (entry.PositionKey == board.ZobristKey &&
+                ( entry.Flag == TTFlag.AlphaChanged ||
+                entry.Flag == TTFlag.BetaCutoff && entry.Score >= beta ||
+                entry.Flag == TTFlag.AlphaUnchanged && entry.Score <= alpha ))
+            {
+                return entry.Score;
+            }
+        }
+
         //get evaluation fo the position
         int eval = EvaluationSystem.EvaluatePosition(ref board);
         _nodes++;
@@ -184,7 +230,7 @@ public class SearchSystem
         //gets list of only tactical pseudo moves
         MoveList moveList = new(stackalloc MoveData[256]);
         board.GenerateTacticalPseudoLegalMoves( ref moveList );
-        MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[256]);
+        MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[256], default);
 
         //loops through all moves
         for (int moveIndex = 0; moveIndex < selector.Length; moveIndex++)
@@ -196,7 +242,7 @@ public class SearchSystem
                 continue;
 
             //we check cpatures recursivly, and again it's from side's POV, so we have to flip it
-            var score = -QuiesenceSearch(ref boardCopy, -beta, -alpha);
+            var score = -QuiesenceSearch(ref boardCopy, -beta, -alpha, movesPlayed + 1);
 
             //when we come back to this point after recursive negamax, we want to unmake the move,
             //because if was just theoretical move for the sake of search loop

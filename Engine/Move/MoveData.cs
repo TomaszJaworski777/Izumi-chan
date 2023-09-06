@@ -28,6 +28,8 @@ public readonly struct MoveData
 
     public bool IsPromotion { get; }
 
+    public bool IsNull => (FromSquareIndex | ToSquareIndex) == 0;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public MoveData( BoardData board, int from, int to, PieceType promotionPiece, bool isCapture, bool isCastle, bool isEnPassant, bool isPromotion )
     {
