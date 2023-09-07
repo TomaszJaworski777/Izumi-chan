@@ -21,6 +21,8 @@ internal struct ModifiableEvaluationSheet
 
     public ModifiableEvaluationSheet()
     {
+        TempoBonus = 0;
+
         BishopPairMidgameBonus = 0;
         BishopPairEndgameBonus = 0;
 
@@ -37,6 +39,8 @@ internal struct ModifiableEvaluationSheet
     public void Capture()
     {
         StringBuilder stringBuilder = new();
+
+        stringBuilder.Append( $"TempoBonus = {TempoBonus};\n" );
 
         stringBuilder.Append( $"BishopPairMidgameBonus = {BishopPairMidgameBonus};\n" );
         stringBuilder.Append( $"BishopPairEndgameBonus = {BishopPairEndgameBonus};\n\n" );

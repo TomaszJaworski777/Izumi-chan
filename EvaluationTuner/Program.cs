@@ -85,6 +85,10 @@ internal class Program
             ValueTweaker.TweakValueSByte( ref sheet.PstsTable[i], ref sheet, kFactor, ref currentError );
         }
 
+        //TempoBonus adjustment
+        Console.WriteLine( $"TempoBonus" );
+        ValueTweaker.TweakValueByte( ref sheet.TempoBonus, ref sheet, kFactor, ref currentError );
+
         //BishopPairMidgameBonus adjustment
         Console.WriteLine( $"BishopPairMidgameBonus" );
         ValueTweaker.TweakValueUShort( ref sheet.BishopPairMidgameBonus, ref sheet, kFactor, ref currentError );
