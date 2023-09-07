@@ -78,18 +78,24 @@ public class SearchSystem
             return 0;
         }
 
-        //first pass TTs
+        //We are trying to get entry from Transposition Table (https://www.chessprogramming.org/Transposition_Table)
         ref TranspositionTableEntry entry = ref TranspositionTable.Probe(board.ZobristKey);
 
-        if(movesPlayed > 0 && entry.PositionKey == board.ZobristKey && entry.Depth >= depth)
+        //We only want to get Transpostion entry, when we are on root node.
+        //Entry that we get can be for different position that our current one due to the way we extract TT index, so we have to make the check
+        if (movesPlayed > 0 && entry.PositionKey == board.ZobristKey && entry.Depth >= depth)
         {
+            //if last time alpha changed, then stored move in the entry is the best move, so we can return it
             if (entry.Flag == TTFlag.AlphaChanged)
                 return entry.Score;
+            //if we had a beta cutoff in the loop that the entry is from, then we can set our alpha to value from that entity to make sure that cutoff is respected and we wont get worse move
             else if (entry.Flag == TTFlag.BetaCutoff)
                 alpha = Math.Max( alpha, entry.Score );
+            //if alpha did not change, then we set beta to best move found in entry loop to increase chance that this time alpha will change
             else if (entry.Flag == TTFlag.AlphaUnchanged)
                 beta = Math.Min( beta, entry.Score );
 
+            //if after applying values from entry we find out that move is good enough we can return it as TT cutoff
             if (alpha >= beta)
                 return entry.Score;
         }
@@ -191,10 +197,14 @@ public class SearchSystem
     //(https://www.chessprogramming.org/Quiescence_Search) (https://www.chessprogramming.org/Horizon_Effect)
     private unsafe int QuiesenceSearch(ref BoardData board, int alpha, int beta, int movesPlayed)
     {
-        //first pass TTs
+        //We only want to get Transpostion entry, when we are on root node
         if (movesPlayed > 0)
         {
+            //We are trying to get entry from Transposition Table (https://www.chessprogramming.org/Transposition_Table)
             ref TranspositionTableEntry entry = ref TranspositionTable.Probe(board.ZobristKey);
+
+            //Entry that we get can be for different position that our current one due to the way we extract TT index, so we have to make the check
+            //Based on result of the search that current TT entry is from we can check if our current search can be interrupted to avoind unecessary iterations
             if (entry.PositionKey == board.ZobristKey &&
                 ( entry.Flag == TTFlag.AlphaChanged ||
                 entry.Flag == TTFlag.BetaCutoff && entry.Score >= beta ||
