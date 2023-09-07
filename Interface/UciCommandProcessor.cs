@@ -149,7 +149,7 @@ internal class UciCommandProcessor : CommandProcessor
             }
         }
 
-        if(depth != 100)
+        if(depth != 100 || args.Length == 0)
         {
             wTime = int.MaxValue;
             bTime = int.MaxValue;
