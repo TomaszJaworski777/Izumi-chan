@@ -79,4 +79,30 @@ internal static class ValueTweaker
             }
         }
     }
+
+    public static void TweakValueByte( ref byte value, ref ModifiableEvaluationSheet sheet, double kFactor, ref double currentError )
+    {
+        for (int i = 1; i <= 6; i++)
+        {
+            byte change = (byte)(10/i);
+
+            value += change;
+            double upperError = Tuner.TestValues( sheet, kFactor );
+            value -= (byte)(2 * change);
+            double lowerError = Tuner.TestValues( sheet, kFactor );
+            value += change;
+
+            if (upperError < currentError && upperError <= lowerError)
+            {
+                value += change;
+                currentError = upperError;
+                Console.WriteLine( $"   New error: {currentError}" );
+            } else if (lowerError < currentError)
+            {
+                value -= change;
+                currentError = lowerError;
+                Console.WriteLine( $"   New error: {currentError}" );
+            }
+        }
+    }
 }
