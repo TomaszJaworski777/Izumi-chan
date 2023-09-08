@@ -1,29 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Formats.Tar;
 using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 using Engine.Board;
 using Engine.Evaluation;
 using Engine.Move;
+using Engine.Search.PVs;
 using Engine.Search.TranspositionTables;
-using static Engine.Types;
 
 namespace Engine.Search;
 
 public class SearchSystem
 {
-
-    enum NodeType
-    {
-        Root, PV, NonPV
-    }
-
     public static bool CancellationToken;
-
-    //definition of intinity used in the scope of search
-    private const int Infinity = 777_777;
-    private const int MateScore = 777_700;
 
     private MoveData _bestRootMoveCandidate;
     private MoveData _bestRootMove;
@@ -49,7 +37,7 @@ public class SearchSystem
             _nodes = 0;
             long before = GC.GetAllocatedBytesForCurrentThread();
 
-            int bestScore = NegaMax(NodeType.Root, ref searchParameters.Board, currentDepth, -Infinity, Infinity, 0);
+            int bestScore = NegaMax(NodeType.Root, ref searchParameters.Board, currentDepth, -INFINITY, INFINITY, 0);
 
             ulong totalMiliseconds = (ulong)stopwatch.ElapsedMilliseconds;
             ulong nps = _nodes * 1_000 / Math.Clamp(totalMiliseconds, 1, ulong.MaxValue);
@@ -82,12 +70,11 @@ public class SearchSystem
         bool isPV = nodeType != NodeType.NonPV;
         bool isRoot = nodeType == NodeType.Root;
 
+        _nodes++;
+
         //returns 0 if position is drawn through repetition or 50-move. Here it returns 0 even when position is repeated just once, to make sure it won't miss a draw just because of a depth.
         if (movesPlayed > 0 && (MoveHistory.IsRepetition( board.ZobristKey ) || board.HalfMoves >= 100))
-        {
-            _nodes++;
             return 0;
-        }
 
         //We are trying to get entry from Transposition Table (https://www.chessprogramming.org/Transposition_Table)
         ref TranspositionTableEntry entry = ref TranspositionTable.Probe(board.ZobristKey);
@@ -114,7 +101,7 @@ public class SearchSystem
         //returns eval when at finishing node
         if (depth <= 0)
         {
-            return QuiesenceSearch(isPV ? NodeType.PV : NodeType.NonPV, ref board, alpha, beta, movesPlayed);
+            return QuiesenceSearch(isPV ? NodeType.PV : NodeType.NonPV, ref board, alpha, beta);
         }
 
         //every 10k nodes updates the timer to check if engine run out of search time.
@@ -125,7 +112,7 @@ public class SearchSystem
         //breaks the search if cancelation token was invoked (stop command or out of time).
         //Same check will appear in Quiesence Search.
         if (CancellationToken)
-            return -Infinity;
+            return -INFINITY;
 
         //gets list of all pseudo moves
         MoveList moveList = new(stackalloc MoveData[218]);
@@ -133,9 +120,9 @@ public class SearchSystem
         MoveSelector selector = new(moveList, stackalloc MoveSelector.ScoredMove[218], entry.PositionKey == board.ZobristKey ? entry.BestMove : default);
 
         //setup variables for search loop
-        int bestValue = -Infinity;
+        int bestValue = -INFINITY;
         bool foundLegalMove = false;
-        int playedMoves = 0;
+        int localMoveCount = 0;
         int originalAlpha = alpha;
         MoveData bestLocalMove = default;
 
@@ -154,12 +141,16 @@ public class SearchSystem
             // We must give some random initial value to newValue, because the compiler doesn't see
             // that newValue will always be assigned when we are in PV node and playedMoves > 0
 
-            int newValue = -Infinity;
+            int newValue = -INFINITY;
 
-            if (!isPV || playedMoves > 0)
+            //if we are not in a pv node we perform Zero Window Search (zwSearch), but here we use our NegaMax for that purpose
+            //"localMoveCount > 0" exists, because if we are in a PvNode then we still wanna check other non pv moves
+            if (!isPV || localMoveCount > 0)
                 newValue = -NegaMax(NodeType.NonPV, ref boardCopy, depth - 1, -alpha-1, -alpha, movesPlayed + 1);
 
-            if (isPV && (playedMoves == 0 || newValue > alpha))
+            //if we are in a Pv node and we are either in pure pvNode (localMoveCount == 0) or non PvNode we checked in line above breaks alpha (fails low) (newValue > alpha)
+            //we want to run full window search to explore this node
+            if (isPV && (localMoveCount == 0 || newValue > alpha))
                 newValue = -NegaMax(NodeType.PV, ref boardCopy, depth - 1, -beta, -alpha, movesPlayed + 1);
 
 
@@ -167,7 +158,7 @@ public class SearchSystem
             //because if was just theoretical move for the sake of search loop
             boardCopy.UnmakeMove();
 
-            playedMoves++;
+            localMoveCount++;
 
             //if new value is better than current value..
             if (newValue > bestValue)
@@ -184,8 +175,9 @@ public class SearchSystem
                 {
                     bestLocalMove = move;
 
-                    //beta means the score of the current strongest move for the opponent,
-                    //if current move is stronger than opponent move, then there is no need to look further, so we break
+                    //if current move is "too good" and opponent has a way to avoid it or this move is not a PV move (integrated zwSearch)
+                    //(https://www.chessprogramming.org/Principal_Variation_Search#-Quote%20by%20Dennis:~:text=int%20zwSearch(int,hard%2C%20return%20alpha%0A%7D), 
+                    //there is no need to look further, so we fail high and break (beta cutoff)
                     if (!isPV || bestValue >= beta)
                         return bestValue; // TODO: tt save
 
@@ -195,11 +187,11 @@ public class SearchSystem
         }
 
         //if there was no legal moves, then its either checkmate or stalemate
-        if (! foundLegalMove)
+        if (!foundLegalMove)
         {
-            if ((board.SideToMove == White ? board.IsWhiteKingInCheck : board.IsBlackKingInCheck) == 1)
+            if ((board.SideToMove == WHITE ? board.IsWhiteKingInCheck : board.IsBlackKingInCheck) == 1)
                 //we pass moves played here to make sure engine will always follow the quickest way to mate
-                return movesPlayed - MateScore;
+                return movesPlayed - MATE_SCORE;
 
             return 0;
         }
@@ -220,10 +212,11 @@ public class SearchSystem
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     //search method created to extend search for capture moves and remove horizon effect.
     //(https://www.chessprogramming.org/Quiescence_Search) (https://www.chessprogramming.org/Horizon_Effect)
-    private unsafe int QuiesenceSearch(NodeType nodeType, ref BoardData board, int alpha, int beta, int movesPlayed)
+    private unsafe int QuiesenceSearch(NodeType nodeType, ref BoardData board, int alpha, int beta)
     {
-        // yeah im just... drunk
         bool isPV = nodeType != NodeType.NonPV;
+
+        _nodes++;
 
         //We only want to get Transpostion entry, when we are NOT in root node
         if (false) // TODO enable TT back
@@ -243,13 +236,12 @@ public class SearchSystem
         }
 
         // TODO
-        int bestValue = -Infinity;
+        int bestValue = -INFINITY;
 
 
         //get evaluation fo the position
         // FIXME can't do standpat when in check
         int eval = bestValue = EvaluationSystem.EvaluatePosition(ref board);
-        _nodes++;
 
         //if position is better than current opponent best move, the we perform beta cut-off, similar to what we did in negamax
         if (bestValue >= beta)
@@ -268,7 +260,7 @@ public class SearchSystem
         //breaks the search if cancelation token was invoked (stop command or out of time).
         //Same check will appear in Negamax.
         if (CancellationToken)
-            return -Infinity;
+            return -INFINITY;
 
         //gets list of only tactical pseudo moves
         MoveList moveList = new(stackalloc MoveData[256]);
@@ -285,17 +277,20 @@ public class SearchSystem
                 continue;
 
             //we check cpatures recursivly, and again it's from side's POV, so we have to flip it
-            var value = -QuiesenceSearch(nodeType, ref boardCopy, -beta, -alpha, movesPlayed + 1);
+            var value = -QuiesenceSearch(nodeType, ref boardCopy, -beta, -alpha);
 
             //when we come back to this point after recursive negamax, we want to unmake the move,
             //because if was just theoretical move for the sake of search loop
             boardCopy.UnmakeMove();
 
+            //we look for the best value from possible tactical moves
             if (value >= bestValue) {
                 bestValue = value;
 
+                //similarly to NegaMax we seek for alpha improvements
                 if (bestValue > alpha)
                 {
+                    //and if they fail high we want to return value, because it's pointless to search more, because we have beta cutoff
                     if (!isPV || bestValue >= beta)
                         return bestValue; // TODO tt save
 
@@ -304,15 +299,15 @@ public class SearchSystem
             }
         }
 
-        //when all moves checked then return score of the best one, which is stored in alpha
+        //when all moves checked then return score of the best one, fail soft approach
         return bestValue;
     }
 
     private string DisplayScore(int score )
     {
         string scoreString = $"cp {score}";
-        if (Math.Abs( score ) > MateScore / 2)
-            scoreString = $"mate {Math.Ceiling( (MateScore - Math.Abs( score )) / 2f ) * Math.Sign( score )}";
+        if (Math.Abs( score ) > MATE_SCORE / 2)
+            scoreString = $"mate {Math.Ceiling( (MATE_SCORE - Math.Abs( score )) / 2f ) * Math.Sign( score )}";
         return scoreString;
     }
 }
