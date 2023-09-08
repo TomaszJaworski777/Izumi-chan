@@ -34,7 +34,6 @@ internal class GeneralCommandProcessor : CommandProcessor
 
     private void HandlePerftCommand( string[] args )
     {
-        Thread perftThread = new ( PerfThread );
 
         PerftData perftData = new()
         {
@@ -46,12 +45,11 @@ internal class GeneralCommandProcessor : CommandProcessor
         if (args.Length > 1)
             perftData.Fen = args[1] + ' ' + args[2] + ' ' + args[3] + ' ' + args[4] + ' ' + args[5] + ' ' + args[6];
 
-        perftThread.Start( perftData );
+        PerftThread(perftData);
     }
 
     private void HandleSplitPerftCommand( string[] args )
     {
-        Thread perftThread = new ( PerfThread );
 
         PerftData perftData = new()
         {
@@ -63,7 +61,7 @@ internal class GeneralCommandProcessor : CommandProcessor
         if (args.Length > 1)
             perftData.Fen = args[1] + ' ' + args[2] + ' ' + args[3] + ' ' + args[4] + ' ' + args[5] + ' ' + args[6];
 
-        perftThread.Start( perftData );
+        PerftThread(perftData);
     }
 
     private void HandleEvalCommand()
@@ -71,36 +69,22 @@ internal class GeneralCommandProcessor : CommandProcessor
         _chessEngine.DebugEval();
     }
 
-    private void PerfThread( object? data )
+    private void PerftThread( object? data )
     {
         Stopwatch stopwatch = new();
+        stopwatch.Restart();
+
         PerftData perftData = (PerftData)data!;
-        if( !perftData.Divide )
-        {
-            for (int currentDepth = 1; currentDepth <= perftData.Depth; currentDepth++)
-            {
-                stopwatch.Restart();
-                ulong perftResult = perftData.Fen == "" ? _chessEngine.Perft( currentDepth, perftData.Divide ) : _chessEngine.Perft( perftData.Fen, currentDepth, perftData.Divide );
-                double totalMicroseconds = stopwatch.Elapsed.TotalMicroseconds;
-                ulong nps = (ulong)(perftResult * 1_000_000 / totalMicroseconds);
 
-                if (PerftTest.CancellationToken)
-                    return;
+        ulong perftResult = perftData.Fen == "" ? _chessEngine.Perft(perftData.Depth, perftData.Divide) : _chessEngine.Perft(perftData.Fen, perftData.Depth, perftData.Divide);
+        double totalMicroseconds = stopwatch.Elapsed.TotalMicroseconds;
 
-                Console.WriteLine( $"Depth: {currentDepth}, Nodes: {perftResult}, Time: {totalMicroseconds / 1000}ms, Nps {nps}" );
-            }
-        } else
-        {
-            stopwatch.Restart();
-            ulong perftResult = perftData.Fen == "" ? _chessEngine.Perft( perftData.Depth, perftData.Divide ) : _chessEngine.Perft( perftData.Fen, perftData.Depth, perftData.Divide );
-            double totalMicroseconds = stopwatch.Elapsed.TotalMicroseconds;
-            ulong nps = (ulong)(perftResult * 1_000_000 / totalMicroseconds);
+        ulong nps = (ulong)(perftResult * 1_000_000 / totalMicroseconds);
 
-            if (PerftTest.CancellationToken)
-                return;
+        if (PerftTest.CancellationToken)
+            return;
 
-            Console.WriteLine( $"Depth: {perftData.Depth}, Nodes: {perftResult}, Time: {totalMicroseconds / 1000}ms, Nps {nps}" );
-        }
+        Console.WriteLine( $"Depth: {perftData.Depth}, Nodes: {perftResult}, Time: {totalMicroseconds / 1000}ms, Nps {nps}" );
     }
 
     private struct PerftData
