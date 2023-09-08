@@ -55,16 +55,15 @@ namespace Engine.Board
             Console.ForegroundColor = ConsoleColor.Gray;
 
             Console.WriteLine( SideToMove == 0 ? "White to move" : "Black to move" );
-            var whiteQueenCastle = CanWhiteCastleQueenSide > 0 ? 'Q' : '-';
-            var whiteKingCastle = CanWhiteCastleKingSide > 0  ? 'K' : '-';
-            var blackQueenCastle = CanBlackCastleQueenSide > 0  ? 'q' : '-';
-            var blackKingCastle = CanBlackCastleKingSide > 0  ? 'k' : '-';
+            var whiteQueenCastle = CanWhiteCastleQueenSide ? 'Q' : '-';
+            var whiteKingCastle = CanWhiteCastleKingSide  ? 'K' : '-';
+            var blackQueenCastle = CanBlackCastleQueenSide  ? 'q' : '-';
+            var blackKingCastle = CanBlackCastleKingSide  ? 'k' : '-';
             Console.WriteLine( $"Castle Rights: {whiteKingCastle}{whiteQueenCastle}{blackKingCastle}{blackQueenCastle}" );
             Console.WriteLine( $"Half moves: {HalfMoves}, Moves: {Moves}" );
             var enPassantSquareText = EnPassantSquareIndex is 0 ? "-" : SquareHelpers.SquareIndexToString(EnPassantSquareIndex);
             Console.WriteLine( $"En Passant: {enPassantSquareText}" );
-            Console.WriteLine( $"White king in check: {IsWhiteKingInCheck > 0}" );
-            Console.WriteLine( $"Black king in check: {IsBlackKingInCheck > 0}" );
+            Console.WriteLine( $"Stm in check: {IsStmInCheck}" );
             Console.WriteLine( $"Hash: {ZobristKey}" );
             Console.WriteLine( $"Is repeated: {MoveHistory.IsRepetition( ZobristKey )}" );
             Console.WriteLine();
