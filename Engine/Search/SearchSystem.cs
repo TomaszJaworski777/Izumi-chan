@@ -190,7 +190,7 @@ public class SearchSystem
         //if there was no legal moves, then its either checkmate or stalemate
         if (!foundLegalMove)
         {
-            if ((board.SideToMove == WHITE ? board.IsWhiteKingInCheck : board.IsBlackKingInCheck) == 1)
+            if ((board.SideToMove == WHITE ? board.IsWhiteKingInCheck : board.IsBlackKingInCheck))
                 //we pass moves played here to make sure engine will always follow the quickest way to mate
                 return movesPlayed - MATE_SCORE;
 

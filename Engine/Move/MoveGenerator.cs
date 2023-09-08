@@ -178,10 +178,10 @@ namespace Engine.Move
                         case 5:
                         {
                             //castle moves
-                            bool canCurrentSideCastleQueenSide = (isWhiteToMove ? board.CanWhiteCastleQueenSide : board.CanBlackCastleQueenSide) > 0;
-                            bool canCurrentSideCastleKingSide = (isWhiteToMove ? board.CanWhiteCastleKingSide : board.CanBlackCastleKingSide) > 0;
+                            bool canCurrentSideCastleQueenSide = (isWhiteToMove ? board.CanWhiteCastleQueenSide : board.CanBlackCastleQueenSide);
+                            bool canCurrentSideCastleKingSide = (isWhiteToMove ? board.CanWhiteCastleKingSide : board.CanBlackCastleKingSide);
 
-                            if ((isWhiteToMove ? board.IsWhiteKingInCheck : board.IsBlackKingInCheck) == 0)
+                            if (! (isWhiteToMove ? board.IsWhiteKingInCheck : board.IsBlackKingInCheck))
                             {
                                 ulong mask = isWhiteToMove ? QueenSideCastleMask : QueenSideCastleMask ^ QueenSideCastleReverserMask;
 

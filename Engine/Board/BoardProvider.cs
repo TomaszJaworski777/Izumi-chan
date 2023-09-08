@@ -76,17 +76,17 @@ public static class BoardProvider
                 break;
 
             if (castleRights[i] == 'Q')
-                result.CanWhiteCastleQueenSide = 1;
+                result.CanWhiteCastleQueenSide = true;
             else if (castleRights[i] == 'K')
-                result.CanWhiteCastleKingSide = 1;
+                result.CanWhiteCastleKingSide = true;
             else if (castleRights[i] == 'q')
-                result.CanBlackCastleQueenSide = 1;
+                result.CanBlackCastleQueenSide = true;
             else if (castleRights[i] == 'k')
-                result.CanBlackCastleKingSide = 1;
+                result.CanBlackCastleKingSide = true;
         }
 
-        result.IsWhiteKingInCheck = result.IsSquareAttacked( result.GetPieceBitboard( 5, 0 ).LsbIndex, 0 ) ? 1 : 0;
-        result.IsBlackKingInCheck = result.IsSquareAttacked( result.GetPieceBitboard( 5, 1 ).LsbIndex, 1 ) ? 1 : 0;
+        result.IsWhiteKingInCheck = result.IsSquareAttacked( result.GetPieceBitboard( 5, 0 ).LsbIndex, 0 );
+        result.IsBlackKingInCheck = result.IsSquareAttacked( result.GetPieceBitboard( 5, 1 ).LsbIndex, 1 );
 
         //applies en passant square (https://www.chessprogramming.org/En_passant)
         ReadOnlySpan<char> enPassant = fen[split[3]];

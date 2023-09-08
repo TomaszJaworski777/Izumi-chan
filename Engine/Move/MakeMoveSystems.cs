@@ -102,12 +102,12 @@ namespace Engine.Move
             //based on knowlage from check above, defines that current side king is not in check, but also stores if enemy king is in check to use that info later
             if (isWhiteToMove)
             {
-                board.IsWhiteKingInCheck = 0;
-                board.IsBlackKingInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, 1 ).LsbIndex, 1 ) ? 1 : 0;
+                board.IsWhiteKingInCheck = false;
+                board.IsBlackKingInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, 1 ).LsbIndex, 1 );
             } else
             {
-                board.IsWhiteKingInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, 0 ).LsbIndex, 0 ) ? 1 : 0;
-                board.IsBlackKingInCheck = 0;
+                board.IsWhiteKingInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, 0 ).LsbIndex, 0 );
+                board.IsBlackKingInCheck = false;
             }
 
             //swaps side to move
@@ -117,20 +117,20 @@ namespace Engine.Move
             {
                 //updates castle rights if king moved
                 case PieceType.King when isWhiteToMove:
-                    board.CanWhiteCastleKingSide = 0;
-                    board.CanWhiteCastleQueenSide = 0;
+                    board.CanWhiteCastleKingSide = false;
+                    board.CanWhiteCastleQueenSide = false;
                     break;
                 case PieceType.King:
-                    board.CanBlackCastleKingSide = 0;
-                    board.CanBlackCastleQueenSide = 0;
+                    board.CanBlackCastleKingSide = false;
+                    board.CanBlackCastleQueenSide = false;
                     break;
                 //updates castle rights if rook moved
                 case PieceType.Rook when fromIndex == (isWhiteToMove ? 0 : 56):
                 {
                     if (isWhiteToMove)
-                        board.CanWhiteCastleQueenSide = 0;
+                        board.CanWhiteCastleQueenSide = false;
                     else
-                        board.CanBlackCastleQueenSide = 0;
+                        board.CanBlackCastleQueenSide = false;
                     break;
                 }
                 case PieceType.Rook:
@@ -138,9 +138,9 @@ namespace Engine.Move
                     if (fromIndex == (isWhiteToMove ? 7 : 63))
                     {
                         if (isWhiteToMove)
-                            board.CanWhiteCastleKingSide = 0;
+                            board.CanWhiteCastleKingSide = false;
                         else
-                            board.CanBlackCastleKingSide = 0;
+                            board.CanBlackCastleKingSide = false;
                     }
 
                     break;
@@ -153,15 +153,15 @@ namespace Engine.Move
                 if (toIndex == (!isWhiteToMove ? 0 : 56))
                 {
                     if (!isWhiteToMove)
-                        board.CanWhiteCastleQueenSide = 0;
+                        board.CanWhiteCastleQueenSide = false;
                     else
-                        board.CanBlackCastleQueenSide = 0;
+                        board.CanBlackCastleQueenSide = false;
                 } else if (toIndex == (!isWhiteToMove ? 7 : 63))
                 {
                     if (!isWhiteToMove)
-                        board.CanWhiteCastleKingSide = 0;
+                        board.CanWhiteCastleKingSide = false;
                     else
-                        board.CanBlackCastleKingSide = 0;
+                        board.CanBlackCastleKingSide = false;
                 }
             }
 

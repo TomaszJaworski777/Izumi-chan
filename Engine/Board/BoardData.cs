@@ -9,85 +9,51 @@ public partial struct BoardData
 {
     private PieceBoard _pieces; //piece bitboards ot represent board state (https://www.chessprogramming.org/Bitboards). I used denser board solution to reduce size and sped up copy process (https://www.chessprogramming.org/Bitboard_Board-Definition#Denser_Board)
     private PieceLookup _pieceLookup; //mailbox tyle 8x8 array of pieces for easy lookup (https://www.chessprogramming.org/Mailbox)
-    private BitboardInt _miscData; // {castle - 4} {side to move - 1} {white king in check - 1} {black king in check - 1} {moves - 10} {half moves - 7} {en passant - 6} = 30 bit
-
+    
     #region Proporties
     public int EnPassantSquareIndex
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetValueChunk( 0, 63 );
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set => _miscData.SetValueChunk( 0, 63, value );
+        get; set;
     }
     public int HalfMoves
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetValueChunk( 6, 127 );
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set => _miscData.SetValueChunk( 6, 127, value );
+        get; set;
     }
     public int Moves
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetValueChunk( 13, 1023 );
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set => _miscData.SetValueChunk( 13, 1023, value );
+        get; set;
     }
-    public int IsBlackKingInCheck
+    public bool IsBlackKingInCheck
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetBitValue( 23 ) >> 23;
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set { if (value > 0) _miscData.SetBitToOne( 23 ); else _miscData.SetBitToZero( 23 ); }
+        get; set;
     }
-    public int IsWhiteKingInCheck
+    public bool IsWhiteKingInCheck
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetBitValue( 24 ) >> 24;
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set { if (value > 0) _miscData.SetBitToOne( 24 ); else _miscData.SetBitToZero( 24 ); }
+        get; set;
     }
     public int SideToMove
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetBitValue( 25 ) >> 25;
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set { if (value > 0) _miscData.SetBitToOne( 25 ); else _miscData.SetBitToZero( 25 ); }
+        get; set;
     }
-    public int CanWhiteCastleQueenSide
+    public bool CanWhiteCastleQueenSide
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetBitValue( 26 ) >> 26;
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set { if (value > 0) _miscData.SetBitToOne( 26 ); else _miscData.SetBitToZero( 26 ); }
+        get; set;
     }
-    public int CanWhiteCastleKingSide
+    public bool CanWhiteCastleKingSide
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetBitValue( 27 ) >> 27;
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set { if (value > 0) _miscData.SetBitToOne( 27 ); else _miscData.SetBitToZero( 27 ); }
+        get; set;
     }
-    public int CanBlackCastleQueenSide
+    public bool CanBlackCastleQueenSide
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetBitValue( 28 ) >> 28;
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set { if (value > 0) _miscData.SetBitToOne( 28 ); else _miscData.SetBitToZero( 28 ); }
+        get; set;
     }
-    public int CanBlackCastleKingSide
+    public bool CanBlackCastleKingSide
     {
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        get => _miscData.GetBitValue( 29 ) >> 29;
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        set { if (value > 0) _miscData.SetBitToOne( 29 ); else _miscData.SetBitToZero( 29 ); }
+        get; set;
     }
     public ulong ZobristKey
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        set;
+        get; set;
     }
 
     #endregion
@@ -96,7 +62,6 @@ public partial struct BoardData
     {
         _pieces = default;
         _pieceLookup = default;
-        _miscData = default;
         ZobristKey = 0;
 
         foreach (ref PieceType piece in _pieceLookup)

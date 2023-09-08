@@ -38,7 +38,7 @@ public class BoardBenchmarks
         BoardData board = new();
         for (int i = 0; i < 100; i++)
         {
-            board.IsBlackKingInCheck = 0;
+            board.IsBlackKingInCheck = false;
         }
 
         return board;
@@ -50,7 +50,7 @@ public class BoardBenchmarks
         BoardData board = new();
         for (int i = 0; i < 100; i++)
         {
-            board.CanWhiteCastleQueenSide = 0;
+            board.CanWhiteCastleQueenSide = false;
         }
 
         return board;
