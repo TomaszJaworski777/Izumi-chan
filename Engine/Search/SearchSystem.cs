@@ -31,16 +31,17 @@ public class SearchSystem
         Stopwatch stopwatch = new();
         stopwatch.Start();
 
+        _nodes = 0;
+
         //implementation of iterative deepening (https://www.chessprogramming.org/Iterative_Deepening)
         for (int currentDepth = 1; currentDepth <= searchParameters.Depth; currentDepth++)
         {
-            _nodes = 0;
             long before = GC.GetAllocatedBytesForCurrentThread();
 
             int bestScore = NegaMax(NodeType.Root, ref searchParameters.Board, currentDepth, -INFINITY, INFINITY, 0);
 
             ulong totalMiliseconds = (ulong)stopwatch.ElapsedMilliseconds;
-            ulong nps = _nodes * 1_000 / Math.Clamp(totalMiliseconds, 1, ulong.MaxValue);
+            ulong nps = _nodes * 1_000 / Math.Max(totalMiliseconds, 1);
 
             long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - before;
             if (allocatedBytes != 0)
@@ -65,12 +66,11 @@ public class SearchSystem
 
 
     //implementation of NegaMax algorithm (https://www.chessprogramming.org/Negamax)
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private unsafe int NegaMax(NodeType nodeType, ref BoardData board, int depth, int alpha, int beta, int movesPlayed )
     {
         bool isPV = nodeType != NodeType.NonPV;
         bool isRoot = nodeType == NodeType.Root;
-
-        _nodes++;
 
         //returns 0 if position is drawn through repetition or 50-move. Here it returns 0 even when position is repeated just once, to make sure it won't miss a draw just because of a depth.
         if (movesPlayed > 0 && (MoveHistory.IsRepetition( board.ZobristKey ) || board.HalfMoves >= 100))
@@ -135,6 +135,8 @@ public class SearchSystem
             if (!boardCopy.MakeMove( move ))
                 continue;
 
+            _nodes++;
+
             //counts legal moves for checkmate/stalemate check
             foundLegalMove = true;
 
@@ -143,13 +145,12 @@ public class SearchSystem
 
             int newValue = -INFINITY;
 
-            //if we are not in a pv node we perform Zero Window Search (zwSearch), but here we use our NegaMax for that purpose
-            //"localMoveCount > 0" exists, because if we are in a PvNode then we still wanna check other non pv moves
+            // If we are either in a non pv node, or in a pv node where we have played at least one move, do a zero window search
             if (!isPV || localMoveCount > 0)
                 newValue = -NegaMax(NodeType.NonPV, ref boardCopy, depth - 1, -alpha-1, -alpha, movesPlayed + 1);
 
-            //if we are in a Pv node and we are either in pure pvNode (localMoveCount == 0) or non PvNode we checked in line above breaks alpha (fails low) (newValue > alpha)
-            //we want to run full window search to explore this node
+            // If we are in a PV node and we haven't played any move yet, or the zero window search hit alpha
+            // do a search again with normal bounds
             if (isPV && (localMoveCount == 0 || newValue > alpha))
                 newValue = -NegaMax(NodeType.PV, ref boardCopy, depth - 1, -beta, -alpha, movesPlayed + 1);
 
@@ -209,14 +210,12 @@ public class SearchSystem
         return bestValue;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     //search method created to extend search for capture moves and remove horizon effect.
     //(https://www.chessprogramming.org/Quiescence_Search) (https://www.chessprogramming.org/Horizon_Effect)
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private unsafe int QuiesenceSearch(NodeType nodeType, ref BoardData board, int alpha, int beta)
     {
         bool isPV = nodeType != NodeType.NonPV;
-
-        _nodes++;
 
         //We only want to get Transpostion entry, when we are NOT in root node
         if (false) // TODO enable TT back
@@ -275,6 +274,8 @@ public class SearchSystem
             MoveData move = selector.GetMoveForIndex(moveIndex);
             if (!boardCopy.MakeMove( move ))
                 continue;
+
+            _nodes++;
 
             //we check cpatures recursivly, and again it's from side's POV, so we have to flip it
             var value = -QuiesenceSearch(nodeType, ref boardCopy, -beta, -alpha);
