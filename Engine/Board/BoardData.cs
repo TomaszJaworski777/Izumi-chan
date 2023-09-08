@@ -96,27 +96,27 @@ public partial struct BoardData
     }
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
-    public void SetPieceOnSquare( PieceType pieceType, int side, int sqaureIndex ) => SetPieceOnSquare( (int)pieceType, side, sqaureIndex );
+    public void SetPieceOnSquare( PieceType pieceType, int side, int squareIndex ) => SetPieceOnSquare( (int)pieceType, side, squareIndex );
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
-    public void SetPieceOnSquare( int pieceIndex, int side, int sqaureIndex )
+    public void SetPieceOnSquare( int pieceIndex, int side, int squareIndex )
     {
-        _pieces[pieceIndex].SetBitToOne( sqaureIndex );
-        _pieces[6 + side].SetBitToOne( sqaureIndex );
-        _pieceLookup[sqaureIndex] = (PieceType)pieceIndex;
-        ZobristKey ^= ZobristHashing.GetSeed( pieceIndex, side, sqaureIndex );
+        _pieces[pieceIndex].SetBitToOne( squareIndex );
+        _pieces[6 + side].SetBitToOne( squareIndex );
+        _pieceLookup[squareIndex] = (PieceType)pieceIndex;
+        ZobristKey ^= ZobristHashing.GetSeed( pieceIndex, side, squareIndex );
     }
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
-    public void RemovePieceOnSquare( PieceType pieceType, int side, int sqaureIndex ) => RemovePieceOnSquare( (int)pieceType, side, sqaureIndex );
+    public void RemovePieceOnSquare( PieceType pieceType, int side, int squareIndex ) => RemovePieceOnSquare( (int)pieceType, side, squareIndex );
 
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
-    public void RemovePieceOnSquare( int pieceIndex, int side, int sqaureIndex )
+    public void RemovePieceOnSquare( int pieceIndex, int side, int squareIndex )
     {
-        _pieces[pieceIndex].SetBitToZero( sqaureIndex );
-        _pieces[6 + side].SetBitToZero( sqaureIndex );
-        _pieceLookup[sqaureIndex] = PieceType.None;
-        ZobristKey ^= ZobristHashing.GetSeed( pieceIndex, side, sqaureIndex );
+        _pieces[pieceIndex].SetBitToZero( squareIndex );
+        _pieces[6 + side].SetBitToZero( squareIndex );
+        _pieceLookup[squareIndex] = PieceType.None;
+        ZobristKey ^= ZobristHashing.GetSeed( pieceIndex, side, squareIndex );
     }
     #endregion
 }

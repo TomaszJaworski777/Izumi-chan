@@ -73,9 +73,10 @@ public readonly ref struct MoveSelector
 
         if (move.IsCapture)
             result += ((int)move.TargetPieceType + 1) * 100 - (int)move.MovingPieceType; //MVV-LVA (https://www.chessprogramming.org/MVV-LVA)
-        if (move.IsPromotion)
+        
+        if (move.Type == MoveType.Promotion)
             result += ((int)move.PromotionPieceType + 1) * 100;
-        if (move.IsCastle)
+        else if (move.Type == MoveType.Castling)
             result += 1;
 
         return result;

@@ -113,7 +113,7 @@ namespace Engine.Move
                                         {
                                             int lsbIndex = helperMask.LsbIndex;
                                             helperMask &= helperMask - 1;
-                                            moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Pawn, false, false, false, false ) );
+                                            moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Pawn, false, MoveType.Normal) );
                                         }
 
                                         break;
@@ -124,7 +124,7 @@ namespace Engine.Move
                                         int delta = Math.Abs(squareIndex - lsbIndex);
                                         if (delta == 8)
                                         {
-                                            moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, false, false, false, false ) );
+                                            moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, false, MoveType.Normal) );
                                         }
 
                                         break;
@@ -138,13 +138,13 @@ namespace Engine.Move
                                     int lsbIndex = helperMask.LsbIndex;
                                     if ((1UL << squareIndex & rankReverse) > 0)
                                     {
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Knight, false, false, false, true ) );
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Bishop, false, false, false, true ) );
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Rook, false, false, false, true ) );
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Queen, false, false, false, true ) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Knight, false, MoveType.Promotion ) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Bishop, false, MoveType.Promotion) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Rook, false, MoveType.Promotion) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Queen, false, MoveType.Promotion) );
                                     } else
                                     {
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, false, false, false, false ) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, false, MoveType.Normal) );
                                     }
                                 }
                             }
@@ -158,20 +158,20 @@ namespace Engine.Move
                                 helperMask &= helperMask - 1;
                                 if ((1UL << squareIndex & rankReverse) > 0)
                                 {
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Knight, true, false, false, true ) );
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Bishop, true, false, false, true ) );
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Rook, true, false, false, true ) );
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Queen, true, false, false, true ) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Knight, true, MoveType.Promotion ) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Bishop, true, MoveType.Promotion) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Rook, true, MoveType.Promotion) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Queen, true, MoveType.Promotion) );
                                 } else
                                 {
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, true, false, false, false ) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal) );
                                 }
                             }
                             helperMask = attack & 1UL << board.EnPassantSquareIndex & (Rank2 | Rank6);
                             if (helperMask > 0)
                             {
                                 int lsbIndex = helperMask.LsbIndex;
-                                moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, true, false, true, false ) );
+                                moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, true, MoveType.EnPassant) );
                             }
 
                             continue;
@@ -188,14 +188,14 @@ namespace Engine.Move
 
                                 if (canCurrentSideCastleQueenSide && (allPieces & mask) == 0)
                                 {
-                                    moves.Add(new MoveData(board, squareIndex, isWhiteToMove ? 2 : 58, PieceType.None, false, true, false, false));
+                                    moves.Add(new MoveData(board, squareIndex, isWhiteToMove ? 2 : 58, PieceType.None, false, MoveType.Castling));
                                 }
 
                                 mask = isWhiteToMove ? KingSideCastleMask : KingSideCastleMask ^ KingSideCastleReverserMask;
 
                                 if (canCurrentSideCastleKingSide && (allPieces & mask) == 0)
                                 {
-                                    moves.Add(new MoveData(board, squareIndex, isWhiteToMove ? 6 : 62, PieceType.None, false, true, false, false));
+                                    moves.Add(new MoveData(board, squareIndex, isWhiteToMove ? 6 : 62, PieceType.None, false, MoveType.Castling));
                                 }
                             }
 
@@ -206,7 +206,7 @@ namespace Engine.Move
                             {
                                 int lsbIndex = attack.LsbIndex;
                                 attack &= attack - 1;
-                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, false, false, false));
+                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, MoveType.Normal));
                             }
 
                             continue;
@@ -220,7 +220,7 @@ namespace Engine.Move
                             {
                                 int lsbIndex = attack.LsbIndex;
                                 attack &= attack - 1;
-                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, false, false, false));
+                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, MoveType.Normal));
                             }
 
                             continue;
@@ -234,7 +234,7 @@ namespace Engine.Move
                             {
                                 int lsbIndex = attack.LsbIndex;
                                 attack &= attack - 1;
-                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, false, false, false));
+                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, MoveType.Normal));
                             }
 
                             continue;
@@ -248,7 +248,7 @@ namespace Engine.Move
                             {
                                 int lsbIndex = attack.LsbIndex;
                                 attack &= attack - 1;
-                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, false, false, false));
+                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, MoveType.Normal));
                             }
 
                             continue;
@@ -262,7 +262,7 @@ namespace Engine.Move
                             {
                                 int lsbIndex = attack.LsbIndex;
                                 attack &= attack - 1;
-                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, false, false, false));
+                                moves.Add(helperMask.GetBitValue(lsbIndex) > 0 ? new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal) : new MoveData(board, squareIndex, lsbIndex, PieceType.None, false, MoveType.Normal));
                             }
 
                             break;
@@ -329,10 +329,10 @@ namespace Engine.Move
                                     int lsbIndex = helperMask.LsbIndex;
                                     if ((1UL << squareIndex & rankReverse) > 0)
                                     {
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Knight, false, false, false, true ) );
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Bishop, false, false, false, true ) );
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Rook, false, false, false, true ) );
-                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Queen, false, false, false, true ) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Knight, false, MoveType.Promotion ) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Bishop, false, MoveType.Promotion) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Rook, false, MoveType.Promotion) );
+                                        moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Queen, false, MoveType.Promotion) );
                                     }
                                 }
                             }
@@ -346,20 +346,20 @@ namespace Engine.Move
                                 helperMask &= helperMask - 1;
                                 if ((1UL << squareIndex & rankReverse) > 0)
                                 {
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Knight, true, false, false, true ) );
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Bishop, true, false, false, true ) );
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Rook, true, false, false, true ) );
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Queen, true, false, false, true ) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Knight, true, MoveType.Promotion ) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Bishop, true, MoveType.Promotion) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Rook, true, MoveType.Promotion) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.Queen, true, MoveType.Promotion) );
                                 } else
                                 {
-                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, true, false, false, false ) );
+                                    moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal) );
                                 }
                             }
                             helperMask = attack & 1UL << board.EnPassantSquareIndex & (Rank2 | Rank6);
                             if (helperMask > 0)
                             {
                                 int lsbIndex = helperMask.LsbIndex;
-                                moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, true, false, true, false ) );
+                                moves.Add( new MoveData( board, squareIndex, lsbIndex, PieceType.None, true, MoveType.EnPassant) );
                             }
 
                             continue;
@@ -375,7 +375,7 @@ namespace Engine.Move
                                 attack &= attack - 1;
 
                                 if (helperMask.GetBitValue(lsbIndex) > 0)
-                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false));
+                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal));
                             }
 
                             continue;
@@ -391,7 +391,7 @@ namespace Engine.Move
                                 attack &= attack - 1;
 
                                 if (helperMask.GetBitValue(lsbIndex) > 0)
-                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false));
+                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal));
                             }
 
                             continue;
@@ -407,7 +407,7 @@ namespace Engine.Move
                                 attack &= attack - 1;
 
                                 if (helperMask.GetBitValue(lsbIndex) > 0)
-                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false));
+                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal));
                             }
 
                             continue;
@@ -423,7 +423,7 @@ namespace Engine.Move
                                 attack &= attack - 1;
 
                                 if (helperMask.GetBitValue(lsbIndex) > 0)
-                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false));
+                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal));
                             }
 
                             continue;
@@ -439,7 +439,7 @@ namespace Engine.Move
                                 attack &= attack - 1;
 
                                 if (helperMask.GetBitValue(lsbIndex) > 0)
-                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, false, false, false));
+                                    moves.Add(new MoveData(board, squareIndex, lsbIndex, PieceType.None, true, MoveType.Normal));
                             }
 
                             break;

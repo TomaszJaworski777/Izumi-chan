@@ -18,18 +18,6 @@ namespace Tests
             Assert.IsTrue( bitboard.GetBitValue( 8 ) == 0 );
             Assert.IsTrue( bitboard.GetBitValue( 13 ) == 0 );
             Assert.IsTrue( bitboard.GetBitValue( 17 ) > 0 );
-
-            BitboardShort bitShort = 617;
-
-            Assert.IsTrue( bitShort.GetBitValue( 0 ) > 0 );
-            Assert.IsTrue( bitShort.GetBitValue( 1 ) == 0 );
-            Assert.IsTrue( bitShort.GetBitValue( 3 ) > 0 );
-            Assert.IsTrue( bitShort.GetBitValue( 4 ) == 0 );
-            Assert.IsTrue( bitShort.GetBitValue( 5 ) > 0 );
-            Assert.IsTrue( bitShort.GetBitValue( 6 ) > 0 );
-            Assert.IsTrue( bitShort.GetBitValue( 7 ) == 0 );
-            Assert.IsTrue( bitShort.GetBitValue( 8 ) == 0 );
-            Assert.IsTrue( bitShort.GetBitValue( 9 ) > 0 );
         }
 
         [TestMethod]

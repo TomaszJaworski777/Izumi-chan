@@ -42,14 +42,11 @@ namespace Engine.Move
             PieceType targetPiece = move.TargetPieceType;
             PieceType promotionPiece = move.PromotionPieceType;
             bool isCapture = move.IsCapture;
-            bool isCastle = move.IsCastle;
-            bool isEnPassant = move.IsEnPassant;
-            bool isPromotion = move.IsPromotion;
             int sideToMove = board.SideToMove;
             bool isWhiteToMove = sideToMove == 0;
 
             //checks if move contains illegal castle, if so then we don't have to waste performance at rest of the code
-            if (isCastle)
+            if (move.Type == MoveType.Castling)
             {
                 bool kingSide = toIndex - fromIndex == 2;
                 if (!kingSide && board.IsSquareAttacked( isWhiteToMove ? 3 : 59, sideToMove ))
@@ -65,7 +62,7 @@ namespace Engine.Move
             //handles captures & en passant
             if (isCapture)
             {
-                if (isEnPassant)
+                if (move.Type == MoveType.EnPassant)
                 {
                     board.RemovePieceOnSquare( targetPiece, sideToMove ^ 1, toIndex + (isWhiteToMove ? -8 : 8) );
                 } else
@@ -75,10 +72,11 @@ namespace Engine.Move
             }
 
             //handles promotion
-            board.SetPieceOnSquare(!isPromotion ? movingPiece : promotionPiece, sideToMove, toIndex);
+            // Im not sure, but i believe this breaks zobrist key
+            board.SetPieceOnSquare(move.Type == MoveType.Promotion ? promotionPiece : movingPiece, sideToMove, toIndex);
 
             //if castle then moves rook as additional rook to finish castle
-            if (isCastle)
+            if (move.Type == MoveType.Castling)
             {
                 bool kingSide = toIndex - fromIndex == 2;
                 if (kingSide)

@@ -22,16 +22,12 @@ public readonly struct MoveData
 
     public bool IsCapture { get; }
 
-    public bool IsCastle { get; }
-
-    public bool IsEnPassant { get; }
-
-    public bool IsPromotion { get; }
+    public MoveType Type { get; }
 
     public bool IsNull => (FromSquareIndex | ToSquareIndex) == 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public MoveData( BoardData board, int from, int to, PieceType promotionPiece, bool isCapture, bool isCastle, bool isEnPassant, bool isPromotion )
+    public MoveData( BoardData board, int from, int to, PieceType promotionPiece, bool isCapture, MoveType type)
     {
         FromSquareIndex = from;
         ToSquareIndex = to;
@@ -41,11 +37,9 @@ public readonly struct MoveData
         PromotionPieceType = promotionPiece;
 
         IsCapture = isCapture;
-        IsCastle = isCastle;
-        IsEnPassant = isEnPassant;
-        IsPromotion = isPromotion;
+        Type = type;
 
-        if(IsEnPassant)
+        if(type == MoveType.EnPassant)
             TargetPieceType = PieceType.Pawn;
     }
 
@@ -62,22 +56,12 @@ public readonly struct MoveData
 
         //checks capture, if move has a target then it has to be a capture
         IsCapture = TargetPieceType != PieceType.None;
-        //if king moves 2 squares to the side then it has to be castle
-        IsCastle = MovingPieceType is PieceType.King &&
-            Math.Abs( SquareHelpers.SquareIndexToFile( FromSquareIndex ) - SquareHelpers.SquareIndexToFile( ToSquareIndex ) ) is 2;
-        //if pawn is moving to en passant square (https://www.chessprogramming.org/En_passant), and it is in correct rank, then it has to be en passant
-        IsEnPassant = MovingPieceType is PieceType.Pawn && ToSquareIndex == board.EnPassantSquareIndex && SquareHelpers.SquareIndexToRank( FromSquareIndex ) == 4 - board.SideToMove;
-        if (IsEnPassant)
-        {
-            //if its en passant then it also has to be capture
-            IsCapture = true;
-            TargetPieceType = PieceType.Pawn;
-        }
-        //move with 5 characters has to be a promotion
-        IsPromotion = signature.Length is 5;
 
-        if (IsPromotion)
+        //move with 5 characters has to be a promotion
+        if (signature.Length is 5)
         {
+            Type = MoveType.Promotion;
+
             //translate 5th character into piece
             switch (signature[4])
             {
@@ -98,7 +82,21 @@ public readonly struct MoveData
                     PromotionPieceType = PieceType.Queen;
                     break;
             }
-        }
+        } else
+        {
+            //if king moves 2 squares to the side then it has to be castle
+            if (MovingPieceType is PieceType.King &&
+                Math.Abs(FromSquareIndex - ToSquareIndex) is 2)
+                    Type = MoveType.Castling;
+
+            //if pawn is moving to en passant square (https://www.chessprogramming.org/En_passant), and it is in correct rank, then it has to be en passant
+            else if (MovingPieceType is PieceType.Pawn && ToSquareIndex == board.EnPassantSquareIndex && SquareHelpers.SquareIndexToRank(FromSquareIndex) == 4 - board.SideToMove) {
+                //if its en passant then it also has to be capture
+                Type = MoveType.EnPassant;
+                IsCapture = true;
+                TargetPieceType = PieceType.Pawn;
+            }
+        } 
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -107,7 +105,7 @@ public readonly struct MoveData
         StringBuilder result = new();
         result.Append( SquareHelpers.SquareIndexToString( FromSquareIndex ) );
         result.Append( SquareHelpers.SquareIndexToString( ToSquareIndex ) );
-        if (!IsPromotion) return result.ToString();
+        if (Type != MoveType.Promotion) return result.ToString();
         char pieceChar = PromotionPieceType switch
         {
             PieceType.Knight => 'N',
