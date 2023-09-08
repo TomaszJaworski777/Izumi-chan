@@ -26,7 +26,7 @@ public class BoardBenchmarks
         BoardData board = new();
         for (int i = 0; i < 100; i++)
         {
-            Helpers.Use(board.IsStmInCheck);
+            Helpers.Use(board.IsSideToMoveInCheck);
         }
 
         return board;
@@ -38,7 +38,7 @@ public class BoardBenchmarks
         BoardData board = new();
         for (int i = 0; i < 100; i++)
         {
-            board.IsStmInCheck = false;
+            board.IsSideToMoveInCheck = false;
         }
 
         return board;

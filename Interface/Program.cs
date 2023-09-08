@@ -15,8 +15,7 @@ namespace Interface
             ChessEngine engine = new();
             CommandProcessor generalProcessor = new GeneralCommandProcessor(engine);
 
-            // set uci as the default command processor (it is also, for now, the only protocol we have)
-            CommandProcessor? interfaceProcessor = new UciCommandProcessor( engine );
+            CommandProcessor? interfaceProcessor = null;
 #if DEBUG
             Console.WriteLine("DEBUG MODE");
 #endif

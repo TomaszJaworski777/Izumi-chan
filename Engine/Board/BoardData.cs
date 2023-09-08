@@ -23,7 +23,7 @@ public partial struct BoardData
     {
         get; set;
     }
-    public bool IsStmInCheck
+    public bool IsSideToMoveInCheck
     {
         get; set;
     }

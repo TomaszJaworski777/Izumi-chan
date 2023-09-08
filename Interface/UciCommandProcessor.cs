@@ -27,6 +27,8 @@ internal class UciCommandProcessor : CommandProcessor
             Console.WriteLine();
         }
 
+        chessEngine.FindBestMove( 2, int.MinValue, int.MaxValue, 0, 0, TimeManager.TimeDivider );
+
         Console.WriteLine( "uciok" );
     }
 

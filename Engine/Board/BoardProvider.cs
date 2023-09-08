@@ -85,7 +85,7 @@ public static class BoardProvider
                 result.CanBlackCastleKingSide = true;
         }
 
-        result.IsStmInCheck = result.IsSquareAttacked(result.GetPieceBitboard(5, result.SideToMove).LsbIndex, result.SideToMove);
+        result.IsSideToMoveInCheck = result.IsSquareAttacked(result.GetPieceBitboard(5, result.SideToMove).LsbIndex, result.SideToMove);
 
         //applies en passant square (https://www.chessprogramming.org/En_passant)
         ReadOnlySpan<char> enPassant = fen[split[3]];

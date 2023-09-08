@@ -99,7 +99,7 @@ namespace Engine.Move
             }
 
             //checks if opponent king is in check after move
-            board.IsStmInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, sideToMove^1 ).LsbIndex, sideToMove^1 );
+            board.IsSideToMoveInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, sideToMove^1 ).LsbIndex, sideToMove^1 );
 
 
             switch (movingPiece)
