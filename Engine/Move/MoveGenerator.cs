@@ -181,7 +181,7 @@ namespace Engine.Move
                             bool canCurrentSideCastleQueenSide = (isWhiteToMove ? board.CanWhiteCastleQueenSide : board.CanBlackCastleQueenSide);
                             bool canCurrentSideCastleKingSide = (isWhiteToMove ? board.CanWhiteCastleKingSide : board.CanBlackCastleKingSide);
 
-                            if (! (isWhiteToMove ? board.IsWhiteKingInCheck : board.IsBlackKingInCheck))
+                            if (! board.IsStmInCheck)
                             {
                                 ulong mask = isWhiteToMove ? QueenSideCastleMask : QueenSideCastleMask ^ QueenSideCastleReverserMask;
 

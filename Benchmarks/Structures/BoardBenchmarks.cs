@@ -26,7 +26,7 @@ public class BoardBenchmarks
         BoardData board = new();
         for (int i = 0; i < 100; i++)
         {
-            Helpers.Use(board.IsBlackKingInCheck);
+            Helpers.Use(board.IsStmInCheck);
         }
 
         return board;
@@ -38,7 +38,7 @@ public class BoardBenchmarks
         BoardData board = new();
         for (int i = 0; i < 100; i++)
         {
-            board.IsBlackKingInCheck = false;
+            board.IsStmInCheck = false;
         }
 
         return board;

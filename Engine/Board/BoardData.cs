@@ -23,11 +23,7 @@ public partial struct BoardData
     {
         get; set;
     }
-    public bool IsBlackKingInCheck
-    {
-        get; set;
-    }
-    public bool IsWhiteKingInCheck
+    public bool IsStmInCheck
     {
         get; set;
     }

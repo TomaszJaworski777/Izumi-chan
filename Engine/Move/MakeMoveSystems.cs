@@ -59,10 +59,10 @@ namespace Engine.Move
                     return false;
             }
 
-            //removes piece from moving sqaure to then move it to its destination
+            //removes piece from moving square to then move it to its destination
             board.RemovePieceOnSquare( movingPiece, sideToMove, fromIndex );
 
-            //handles captures & en passants
+            //handles captures & en passant
             if (isCapture)
             {
                 if (isEnPassant)
@@ -77,7 +77,7 @@ namespace Engine.Move
             //handles promotion
             board.SetPieceOnSquare(!isPromotion ? movingPiece : promotionPiece, sideToMove, toIndex);
 
-            //if castle then moves rook as aditional rook to finish castle
+            //if castle then moves rook as additional rook to finish castle
             if (isCastle)
             {
                 bool kingSide = toIndex - fromIndex == 2;
@@ -93,25 +93,14 @@ namespace Engine.Move
             }
 
             //checks if king is in check after move, and if so then move is illegal and returns false without applying changes
-            bool isKingInCheck = board.IsSquareAttacked(board.GetPieceBitboard(5, sideToMove).LsbIndex, sideToMove );
-            if (isKingInCheck)
+            if (board.IsSquareAttacked(board.GetPieceBitboard(5, sideToMove).LsbIndex, sideToMove))
             {
                 return false;
             }
 
-            //based on knowlage from check above, defines that current side king is not in check, but also stores if enemy king is in check to use that info later
-            if (isWhiteToMove)
-            {
-                board.IsWhiteKingInCheck = false;
-                board.IsBlackKingInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, 1 ).LsbIndex, 1 );
-            } else
-            {
-                board.IsWhiteKingInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, 0 ).LsbIndex, 0 );
-                board.IsBlackKingInCheck = false;
-            }
+            //checks if opponent king is in check after move
+            board.IsStmInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, sideToMove^1 ).LsbIndex, sideToMove^1 );
 
-            //swaps side to move
-            board.SideToMove ^= 1;
 
             switch (movingPiece)
             {
@@ -178,6 +167,9 @@ namespace Engine.Move
             } else
                 board.HalfMoves++;
             board.Moves++;
+
+            //swaps side to move
+            board.SideToMove ^= 1;
 
             //updates zobrist key based on changes in the position
             board.ZobristKey = ZobristHashing.ModifyKey( board, originalBoard );
