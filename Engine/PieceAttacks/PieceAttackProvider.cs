@@ -8,7 +8,7 @@ namespace Engine.Board
 {
     public partial struct BoardData
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         //checks if square is attacked, by applying every piece move from this square and masking it with opponent's pieces. (https://www.chessprogramming.org/Square_Attacked_By)
         public bool IsSquareAttacked( int squareIndex, int squareColor )
         {
@@ -26,13 +26,13 @@ namespace Engine.Board
 
             //bishop attacks
             attackerPieces = GetPieceBitboard( PieceType.Bishop, squareColor ^ 1 );
-            Bitboard bishopAttacks = PieceAttackProvider.GetBishopAttacks( squareIndex, GetPiecesBitboardForSide(0) | GetPiecesBitboardForSide(1) );
+            Bitboard bishopAttacks = PieceAttackProvider.GetBishopAttacks( squareIndex, GetAllPieces() );
             if ((bishopAttacks & attackerPieces) > 0)
                 return true;
 
             //rook attacks
             attackerPieces = GetPieceBitboard( PieceType.Rook, squareColor ^ 1 );
-            Bitboard rookAttacks = PieceAttackProvider.GetRookAttacks( squareIndex, GetPiecesBitboardForSide(0) | GetPiecesBitboardForSide(1) );
+            Bitboard rookAttacks = PieceAttackProvider.GetRookAttacks( squareIndex, GetAllPieces() );
             if ((rookAttacks & attackerPieces) > 0)
                 return true;
 

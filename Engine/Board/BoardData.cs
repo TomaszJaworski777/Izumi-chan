@@ -65,6 +65,10 @@ public partial struct BoardData
     }
 
     #region Basic Methods
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Bitboard GetAllPieces() => _pieces[6] | _pieces[7];
+
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
     public Bitboard GetPiecesBitboardForSide( int side ) => _pieces[6 + side];
 

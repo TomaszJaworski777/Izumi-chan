@@ -53,6 +53,7 @@ namespace Engine.Move
         }
 
         //generates all moves without checking if they will leave king in check. (https://www.chessprogramming.org/Pseudo-Legal_Move)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static void GenerateAllPseudoLegalMoves( ref BoardData board, ref MoveList moves )
         {
             //prepares some data to save performance accessing it later
@@ -75,7 +76,7 @@ namespace Engine.Move
 
             int sideToMove = board.SideToMove;
 
-            Bitboard allPieces = board.GetPiecesBitboardForSide( 0 ) | board.GetPiecesBitboardForSide( 1 ), 
+            Bitboard allPieces = board.GetAllPieces(), 
                 opponentPieces = board.GetPiecesBitboardForSide( sideToMove ^ 1 ),
                 alliedPiecesInvertMask = ~board.GetPiecesBitboardForSide(sideToMove);
 
@@ -273,6 +274,7 @@ namespace Engine.Move
 
         //generates only tactical moves (https://www.chessprogramming.org/Tactical_Moves) without checking if they will leave king in check.
         //(https://www.chessprogramming.org/Pseudo-Legal_Move)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public static void GenerateTacticalPseudoLegalMoves( ref BoardData board, ref MoveList moves )
         {
             //prepares some data to save performance accessing it later
@@ -295,7 +297,7 @@ namespace Engine.Move
 
             int sideToMove = board.SideToMove;
 
-            Bitboard allPieces = board.GetPiecesBitboardForSide( 0 ) | board.GetPiecesBitboardForSide( 1 ),
+            Bitboard allPieces = board.GetAllPieces(),
                 opponentPieces = board.GetPiecesBitboardForSide( sideToMove ^ 1 ),
                 alliedPiecesInvertMask = ~board.GetPiecesBitboardForSide(sideToMove);
 
