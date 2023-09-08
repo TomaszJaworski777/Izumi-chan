@@ -75,6 +75,9 @@ public partial struct BoardData
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
     public Bitboard GetPieceBitboard( int pieceIndex ) => _pieces[pieceIndex];
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Bitboard GetPieceBitboard(PieceType pieceType) => _pieces[(int) pieceType];
+
     [MethodImpl( MethodImplOptions.AggressiveInlining )]
     public Bitboard GetPieceBitboard( PieceType pieceType, int side ) => GetPieceBitboard( (int)pieceType, side );
 
