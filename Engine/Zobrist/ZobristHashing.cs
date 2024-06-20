@@ -29,13 +29,13 @@ public static class ZobristHashing
         if (board.SideToMove > 0)
             result ^= ZobristSeeds.Seeds[268];
 
-        if (board.CanWhiteCastleQueenSide > 0)
+        if (board.CanWhiteCastleQueenSide)
             result ^= ZobristSeeds.Seeds[269];
-        if (board.CanWhiteCastleKingSide > 0)
+        if (board.CanWhiteCastleKingSide)
             result ^= ZobristSeeds.Seeds[270];
-        if (board.CanBlackCastleQueenSide > 0)
+        if (board.CanBlackCastleQueenSide)
             result ^= ZobristSeeds.Seeds[271];
-        if (board.CanBlackCastleKingSide > 0)
+        if (board.CanBlackCastleKingSide)
             result ^= ZobristSeeds.Seeds[272];
 
         if (board.EnPassantSquareIndex > 0)

@@ -6,6 +6,7 @@ namespace Engine.Options;
 public static class EngineOptions
 {
     public const string MoveOverheadKey = "MoveOverhead";
+    public const string HashKey = "Hash";
 
     private static readonly Dictionary<string, OptionStruct> Options = new(StringComparer.OrdinalIgnoreCase);
 
@@ -14,6 +15,7 @@ public static class EngineOptions
     static EngineOptions()
     {
         AddOption( MoveOverheadKey, new OptionStruct( OptionValueType.Spin, 10, 0, 5000 ) );
+        AddOption( HashKey, new OptionStruct( OptionValueType.Spin, 16, 1, 65536 ) );
     }
 
     public static void AddOption(string name, OptionStruct option )

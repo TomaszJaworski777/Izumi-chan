@@ -32,6 +32,16 @@ namespace Tests
             Assert.IsTrue( bitboard.GetBitValue( 63 ) > 0 );
             bitboard.SetBitToZero( 7 );
             Assert.IsTrue( bitboard.GetBitValue( 7 ) == 0 );
+
+            BitboardShort bitShort = 0;
+            bitShort.SetBitToOne( 7 );
+            Assert.IsTrue( bitShort.GetBitValue( 7 ) > 0 );
+            bitShort.SetBitToOne( 15 );
+            Assert.IsTrue( bitShort.GetBitValue( 15 ) > 0 );
+            bitShort.SetBitToOne( 6 );
+            Assert.IsTrue( bitShort.GetBitValue( 6 ) > 0 );
+            bitShort.SetBitToZero( 7 );
+            Assert.IsTrue( bitShort.GetBitValue( 7 ) == 0 );
         }
 
         [TestMethod]
@@ -40,6 +50,10 @@ namespace Tests
             Bitboard bitboard = 246441;
             Assert.IsTrue( bitboard.GetValueChunk( 14, 7 ) == 7 );
             Assert.IsTrue( bitboard.GetValueChunk( 3, 127 ) == 85 );
+
+            BitboardShort bitShort = 617;
+            Assert.IsTrue( bitShort.GetValueChunk( 5, 3 ) == 3 );
+            Assert.IsTrue( bitShort.GetValueChunk( 0, 15 ) == 9 );
         }
 
         [TestMethod]
@@ -52,6 +66,10 @@ namespace Tests
             bitboard.SetValueChunk( 3, 127, 127 );
             bitboard.SetBitToZero( 10 );
             Assert.IsTrue( bitboard.GetValueChunk( 4, 127 ) == 63 );
+
+            BitboardShort bitShort = 617;
+            bitShort.SetValueChunk( 10, 7, 5 );
+            Assert.IsTrue( bitShort.GetValueChunk( 10, 7 ) == 5 );
         }
     }
 }

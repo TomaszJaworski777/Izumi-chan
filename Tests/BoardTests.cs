@@ -48,7 +48,7 @@ namespace Tests
         {
             BoardData board = BoardProvider.Create(BoardProvider.StartPosition);
             Assert.IsTrue( board.SideToMove == 0 );
-            Assert.IsTrue( board.CanWhiteCastleQueenSide > 0 );
+            Assert.IsTrue( board.CanWhiteCastleQueenSide );
             Assert.IsTrue( board.GetPieceOnSquare(SquareHelpers.StringToSquareIndex("e1"), 0) == PieceType.King );
             Assert.IsTrue( board.GetPieceOnSquare(SquareHelpers.StringToSquareIndex("e1"), 1) == PieceType.None );
             Assert.IsTrue( board.GetPieceOnSquare(SquareHelpers.StringToSquareIndex("e3"), 1) == PieceType.None );

@@ -1,5 +1,7 @@
 ﻿using System;
 using Engine;
+using Engine.Move;
+using Engine.Search.TranspositionTables;
 
 namespace Interface
 {
@@ -7,11 +9,13 @@ namespace Interface
     {
         static void Main( string[] args )
         {
+            MoveHistory.Reset();
+            TranspositionTable.Reset();
+
             ChessEngine engine = new();
             CommandProcessor generalProcessor = new GeneralCommandProcessor(engine);
 
-            // set uci as the default command processor (it is also, for now, the only protocol we have)
-            CommandProcessor? interfaceProcessor = new UciCommandProcessor( engine );
+            CommandProcessor? interfaceProcessor = null;
 #if DEBUG
             Console.WriteLine("DEBUG MODE");
 #endif
