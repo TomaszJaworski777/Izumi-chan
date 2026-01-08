@@ -48,7 +48,7 @@ jobs:
       run: dotnet publish Interface/Interface.csproj -c Release --runtime ${{ matrix.runtime-identifier }} --self-contained /p:PublishSingleFile=true /p:PublishTrimmed=true -o artifacts/${{ matrix.runtime-identifier }}
 
     - name: Upload Izumi-chan-${{ github.run_number }}-${{ matrix.runtime-identifier }} artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: Izumi-chan-${{ github.run_number }}-${{ matrix.runtime-identifier }}
         path: |
