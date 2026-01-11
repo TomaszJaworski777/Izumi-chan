@@ -15,7 +15,6 @@ namespace Engine.Perft
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public ulong TestPosition( int depth, bool divide )
         {
-            CancellationToken = false;
             return InternalTestPosition( ref _board, depth, divide );
         }
 
@@ -26,10 +25,6 @@ namespace Engine.Perft
             if (depth <= 0)
                 return 1UL;
             ulong result = 0;
-
-            //break if cancelation token
-            if (CancellationToken)
-                return 0;
 
             //gets list of all pseudo moves
             MoveList moveList = new(stackalloc MoveData[218]);

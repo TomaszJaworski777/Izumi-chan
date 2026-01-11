@@ -8,42 +8,32 @@ namespace Engine.Board
 {
     public partial struct BoardData
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         //checks if square is attacked, by applying every piece move from this square and masking it with opponent's pieces. (https://www.chessprogramming.org/Square_Attacked_By)
-        public bool IsSquareAttacked( int squareIndex, int squareColor )
+        public bool IsSquareAttacked(int squareIndex, int squareColor)
         {
-            Bitboard colorPawnAttack = PieceAttackProvider.GetPawnAttacks(squareIndex, squareColor);
-            Bitboard attackerPieces = GetPieceBitboard(PieceType.Pawn, squareColor ^ 1);
+            Bitboard attackers = 0;
 
-            //pawn attacks
-            if ((colorPawnAttack & attackerPieces) > 0)
-                return true;
+            // pawn attacks
+            attackers |= PieceAttackProvider.GetPawnAttacks(squareIndex, squareColor) & GetPieceBitboard(PieceType.Pawn);
 
-            //knight attacks
-            attackerPieces = GetPieceBitboard( PieceType.Knight, squareColor ^ 1 );
-            if ((PieceAttackProvider.GetKnightAttacks( squareIndex ) & attackerPieces) > 0)
-                return true;
+            // knight attacks
+            attackers |= PieceAttackProvider.GetKnightAttacks(squareIndex) & GetPieceBitboard(PieceType.Knight);
 
-            //bishop attacks
-            attackerPieces = GetPieceBitboard( PieceType.Bishop, squareColor ^ 1 );
-            Bitboard bishopAttacks = PieceAttackProvider.GetBishopAttacks( squareIndex, GetPiecesBitboardForSide(0) | GetPiecesBitboardForSide(1) );
-            if ((bishopAttacks & attackerPieces) > 0)
-                return true;
+            // bishop and queen attacks
+            attackers |= PieceAttackProvider.GetBishopAttacks(squareIndex, GetAllPieces()) 
+                & (GetPieceBitboard(PieceType.Bishop) | GetPieceBitboard(PieceType.Queen));
 
-            //rook attacks
-            attackerPieces = GetPieceBitboard( PieceType.Rook, squareColor ^ 1 );
-            Bitboard rookAttacks = PieceAttackProvider.GetRookAttacks( squareIndex, GetPiecesBitboardForSide(0) | GetPiecesBitboardForSide(1) );
-            if ((rookAttacks & attackerPieces) > 0)
-                return true;
+            // rook and queen attacks
+            attackers |= PieceAttackProvider.GetRookAttacks(squareIndex, GetAllPieces())
+                & (GetPieceBitboard(PieceType.Rook) | GetPieceBitboard(PieceType.Queen));
 
-            //queen attacks, created on the fly based on bishop and rook results to increase performance
-            attackerPieces = GetPieceBitboard( PieceType.Queen, squareColor ^ 1 );
-            if (((bishopAttacks | rookAttacks) & attackerPieces) > 0)
-                return true;
+            attackers |= PieceAttackProvider.GetKingAttacks(squareIndex) & GetPieceBitboard(PieceType.King);
 
-            //king attacks
-            attackerPieces = GetPieceBitboard( PieceType.King, squareColor ^ 1 );
-            return (PieceAttackProvider.GetKingAttacks( squareIndex ) & attackerPieces) > 0;
+            // We have calculated attackers to the square for both sides. Now filter
+            attackers &= GetPiecesBitboardForSide(squareColor ^ 1);
+
+            return attackers != 0;
         }
     }
 }

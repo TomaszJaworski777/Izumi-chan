@@ -119,7 +119,7 @@ public class MoveTests
         BoardData board = BoardProvider.Create( BoardProvider.StartPosition );
         MoveList list = new(stackalloc MoveData[300]);
         board.GenerateAllPseudoLegalMoves( ref list );
-        MoveSelector selector = new(list, stackalloc MoveSelector.ScoredMove[300]);
+        MoveSelector selector = new(list, stackalloc MoveSelector.ScoredMove[300], default);
 
         Assert.IsTrue( selector.Length == list.Length );
 

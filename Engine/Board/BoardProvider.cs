@@ -66,7 +66,7 @@ public static class BoardProvider
         }
 
         //applies side to move from FEN. I decided to store it as an int for ease of extracting data from arrays.
-        result.SideToMove = fen[split[1]][0] == 'w' ? 0 : 1;
+        result.SideToMove = fen[split[1]][0] == 'w' ? WHITE : BLACK;
 
         //applies castle rights from FEN. I set them to one here, but remember that .GetBitValue() from bitboard does not have to return 0 or 1, cuz output is not shifted.
         ReadOnlySpan<char> castleRights = fen[split[2]];
@@ -76,17 +76,16 @@ public static class BoardProvider
                 break;
 
             if (castleRights[i] == 'Q')
-                result.CanWhiteCastleQueenSide = 1;
+                result.CanWhiteCastleQueenSide = true;
             else if (castleRights[i] == 'K')
-                result.CanWhiteCastleKingSide = 1;
+                result.CanWhiteCastleKingSide = true;
             else if (castleRights[i] == 'q')
-                result.CanBlackCastleQueenSide = 1;
+                result.CanBlackCastleQueenSide = true;
             else if (castleRights[i] == 'k')
-                result.CanBlackCastleKingSide = 1;
+                result.CanBlackCastleKingSide = true;
         }
 
-        result.IsWhiteKingInCheck = result.IsSquareAttacked( result.GetPieceBitboard( 5, 0 ).LsbIndex, 0 ) ? 1 : 0;
-        result.IsBlackKingInCheck = result.IsSquareAttacked( result.GetPieceBitboard( 5, 1 ).LsbIndex, 1 ) ? 1 : 0;
+        result.IsSideToMoveInCheck = result.IsSquareAttacked(result.GetPieceBitboard(5, result.SideToMove).LsbIndex, result.SideToMove);
 
         //applies en passant square (https://www.chessprogramming.org/En_passant)
         ReadOnlySpan<char> enPassant = fen[split[3]];

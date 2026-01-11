@@ -6,6 +6,7 @@ using Engine.Board;
 using Engine.Move;
 using Engine.Options;
 using Engine.Search;
+using Engine.Search.TranspositionTables;
 
 namespace Interface;
 
@@ -25,6 +26,8 @@ internal class UciCommandProcessor : CommandProcessor
 
             Console.WriteLine();
         }
+
+        chessEngine.FindBestMove( 2, int.MinValue, int.MaxValue, 0, 0, TimeManager.TimeDivider );
 
         Console.WriteLine( "uciok" );
     }
@@ -70,7 +73,7 @@ internal class UciCommandProcessor : CommandProcessor
     private void HandleNewGameCommand()
     {
         MoveHistory.Reset();
-        //TT reset
+        TranspositionTable.Reset();
     }
 
     private void HandleIsReadyCommand()
@@ -148,7 +151,7 @@ internal class UciCommandProcessor : CommandProcessor
             }
         }
 
-        if(depth != 100)
+        if(depth != 100 || args.Length == 0)
         {
             wTime = int.MaxValue;
             bTime = int.MaxValue;

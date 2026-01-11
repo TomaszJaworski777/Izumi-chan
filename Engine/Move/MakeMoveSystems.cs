@@ -42,14 +42,11 @@ namespace Engine.Move
             PieceType targetPiece = move.TargetPieceType;
             PieceType promotionPiece = move.PromotionPieceType;
             bool isCapture = move.IsCapture;
-            bool isCastle = move.IsCastle;
-            bool isEnPassant = move.IsEnPassant;
-            bool isPromotion = move.IsPromotion;
             int sideToMove = board.SideToMove;
             bool isWhiteToMove = sideToMove == 0;
 
             //checks if move contains illegal castle, if so then we don't have to waste performance at rest of the code
-            if (isCastle)
+            if (move.Type == MoveType.Castling)
             {
                 bool kingSide = toIndex - fromIndex == 2;
                 if (!kingSide && board.IsSquareAttacked( isWhiteToMove ? 3 : 59, sideToMove ))
@@ -59,13 +56,13 @@ namespace Engine.Move
                     return false;
             }
 
-            //removes piece from moving sqaure to then move it to its destination
+            //removes piece from moving square to then move it to its destination
             board.RemovePieceOnSquare( movingPiece, sideToMove, fromIndex );
 
-            //handles captures & en passants
+            //handles captures & en passant
             if (isCapture)
             {
-                if (isEnPassant)
+                if (move.Type == MoveType.EnPassant)
                 {
                     board.RemovePieceOnSquare( targetPiece, sideToMove ^ 1, toIndex + (isWhiteToMove ? -8 : 8) );
                 } else
@@ -75,10 +72,11 @@ namespace Engine.Move
             }
 
             //handles promotion
-            board.SetPieceOnSquare(!isPromotion ? movingPiece : promotionPiece, sideToMove, toIndex);
+            // Im not sure, but i believe this breaks zobrist key
+            board.SetPieceOnSquare(move.Type == MoveType.Promotion ? promotionPiece : movingPiece, sideToMove, toIndex);
 
-            //if castle then moves rook as aditional rook to finish castle
-            if (isCastle)
+            //if castle then moves rook as additional rook to finish castle
+            if (move.Type == MoveType.Castling)
             {
                 bool kingSide = toIndex - fromIndex == 2;
                 if (kingSide)
@@ -93,44 +91,33 @@ namespace Engine.Move
             }
 
             //checks if king is in check after move, and if so then move is illegal and returns false without applying changes
-            bool isKingInCheck = board.IsSquareAttacked(board.GetPieceBitboard(5, sideToMove).LsbIndex, sideToMove );
-            if (isKingInCheck)
+            if (board.IsSquareAttacked(board.GetPieceBitboard(5, sideToMove).LsbIndex, sideToMove))
             {
                 return false;
             }
 
-            //based on knowlage from check above, defines that current side king is not in check, but also stores if enemy king is in check to use that info later
-            if (isWhiteToMove)
-            {
-                board.IsWhiteKingInCheck = 0;
-                board.IsBlackKingInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, 1 ).LsbIndex, 1 ) ? 1 : 0;
-            } else
-            {
-                board.IsWhiteKingInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, 0 ).LsbIndex, 0 ) ? 1 : 0;
-                board.IsBlackKingInCheck = 0;
-            }
+            //checks if opponent king is in check after move
+            board.IsSideToMoveInCheck = board.IsSquareAttacked( board.GetPieceBitboard( 5, sideToMove^1 ).LsbIndex, sideToMove^1 );
 
-            //swaps side to move
-            board.SideToMove ^= 1;
 
             switch (movingPiece)
             {
                 //updates castle rights if king moved
                 case PieceType.King when isWhiteToMove:
-                    board.CanWhiteCastleKingSide = 0;
-                    board.CanWhiteCastleQueenSide = 0;
+                    board.CanWhiteCastleKingSide = false;
+                    board.CanWhiteCastleQueenSide = false;
                     break;
                 case PieceType.King:
-                    board.CanBlackCastleKingSide = 0;
-                    board.CanBlackCastleQueenSide = 0;
+                    board.CanBlackCastleKingSide = false;
+                    board.CanBlackCastleQueenSide = false;
                     break;
                 //updates castle rights if rook moved
                 case PieceType.Rook when fromIndex == (isWhiteToMove ? 0 : 56):
                 {
                     if (isWhiteToMove)
-                        board.CanWhiteCastleQueenSide = 0;
+                        board.CanWhiteCastleQueenSide = false;
                     else
-                        board.CanBlackCastleQueenSide = 0;
+                        board.CanBlackCastleQueenSide = false;
                     break;
                 }
                 case PieceType.Rook:
@@ -138,9 +125,9 @@ namespace Engine.Move
                     if (fromIndex == (isWhiteToMove ? 7 : 63))
                     {
                         if (isWhiteToMove)
-                            board.CanWhiteCastleKingSide = 0;
+                            board.CanWhiteCastleKingSide = false;
                         else
-                            board.CanBlackCastleKingSide = 0;
+                            board.CanBlackCastleKingSide = false;
                     }
 
                     break;
@@ -153,15 +140,15 @@ namespace Engine.Move
                 if (toIndex == (!isWhiteToMove ? 0 : 56))
                 {
                     if (!isWhiteToMove)
-                        board.CanWhiteCastleQueenSide = 0;
+                        board.CanWhiteCastleQueenSide = false;
                     else
-                        board.CanBlackCastleQueenSide = 0;
+                        board.CanBlackCastleQueenSide = false;
                 } else if (toIndex == (!isWhiteToMove ? 7 : 63))
                 {
                     if (!isWhiteToMove)
-                        board.CanWhiteCastleKingSide = 0;
+                        board.CanWhiteCastleKingSide = false;
                     else
-                        board.CanBlackCastleKingSide = 0;
+                        board.CanBlackCastleKingSide = false;
                 }
             }
 
@@ -178,6 +165,9 @@ namespace Engine.Move
             } else
                 board.HalfMoves++;
             board.Moves++;
+
+            //swaps side to move
+            board.SideToMove ^= 1;
 
             //updates zobrist key based on changes in the position
             board.ZobristKey = ZobristHashing.ModifyKey( board, originalBoard );
